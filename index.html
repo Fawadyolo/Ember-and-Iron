@@ -4858,6 +4858,112 @@ const products = [
   }
 ];
 
+// ===== Shopify Storefront API =====
+const SHOPIFY_DOMAIN = 't9qx0t-69.myshopify.com';
+const SHOPIFY_STOREFRONT_TOKEN = 'e80c114f34e2640d4af7dce00b11ebb8';
+const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2026-04/graphql.json`;
+
+// Shopify variant IDs keyed by our SKU (e.g. 'EMB-001' -> 'gid://shopify/ProductVariant/xxx')
+// Populated after loadShopifyProducts() runs
+const shopifyVariantIds = {};
+
+async function shopifyFetch(query, variables) {
+  try {
+    const res = await fetch(SHOPIFY_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
+      },
+      body: JSON.stringify({ query, variables })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    if (json.errors) throw new Error(json.errors[0].message);
+    return json.data;
+  } catch (e) {
+    console.warn('[Shopify]', e.message);
+    return null;
+  }
+}
+
+async function loadShopifyProducts() {
+  const data = await shopifyFetch(
+    `query GetProducts($first: Int!) {
+      products(first: $first) {
+        nodes {
+          id
+          title
+          description
+          variants(first: 5) {
+            nodes {
+              id
+              sku
+              price { amount currencyCode }
+              availableForSale
+              quantityAvailable
+            }
+          }
+        }
+      }
+    }`,
+    { first: 50 }
+  );
+
+  if (!data || !data.products || !data.products.nodes.length) {
+    console.info('[Shopify] No products found — running on demo data');
+    return;
+  }
+
+  data.products.nodes.forEach(sp => {
+    sp.variants.nodes.forEach(v => {
+      if (!v.sku) return;
+      shopifyVariantIds[v.sku] = v.id;          // store variant GID
+      const local = products.find(p => p.id === v.sku);
+      if (local) {
+        const price = Math.round(parseFloat(v.price.amount));
+        if (price > 0) local.price = price;     // live price
+        local.stock = v.availableForSale
+          ? (v.quantityAvailable ?? local.stock)
+          : 0;                                  // live stock
+      }
+    });
+  });
+
+  // Re-render with live data and update checkout button label
+  renderProducts();
+  renderAccessories();
+  renderPackages();
+  const btn = document.querySelector('button.place-order');
+  if (btn && Object.keys(shopifyVariantIds).length) {
+    btn.innerHTML = 'Checkout with Shopify <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  }
+  console.info('[Shopify] Products synced. Variants:', Object.keys(shopifyVariantIds));
+}
+
+async function createShopifyCart() {
+  const lines = Object.values(cart)
+    .filter(item => !item.isPackage && shopifyVariantIds[item.id])
+    .map(item => ({ merchandiseId: shopifyVariantIds[item.id], quantity: item.qty }));
+
+  if (!lines.length) return null;
+
+  const data = await shopifyFetch(
+    `mutation CartCreate($lines: [CartLineInput!]!) {
+      cartCreate(input: { lines: $lines }) {
+        cart { id checkoutUrl }
+        userErrors { field message }
+      }
+    }`,
+    { lines }
+  );
+
+  if (data?.cartCreate?.userErrors?.length) {
+    console.warn('[Shopify] Cart errors:', data.cartCreate.userErrors);
+  }
+  return data?.cartCreate?.cart?.checkoutUrl || null;
+}
+
 // ===== Media helper: real image if uploaded, else line-art SVG =====
 function mediaFor(item, opts) {
   opts = opts || {};
@@ -6313,6 +6419,29 @@ function setupValidationListeners() {
 }
 
 function placeOrder() {
+  // If Shopify products are loaded, redirect to Shopify-hosted checkout
+  const cartItems = Object.values(cart).filter(i => !i.isPackage);
+  const allHaveVariants = cartItems.length > 0 &&
+    cartItems.every(i => shopifyVariantIds[i.id]);
+
+  if (allHaveVariants) {
+    const btn = document.querySelector('button.place-order');
+    if (btn) { btn.disabled = true; btn.textContent = 'Redirecting to Shopify…'; }
+    createShopifyCart().then(url => {
+      if (url) {
+        window.location.href = url;
+      } else {
+        showToast('Could not create Shopify checkout — please try again');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = 'Checkout with Shopify <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+        }
+      }
+    });
+    return;
+  }
+
+  // Fallback: simulated checkout (no Shopify products configured yet)
   let ok = true;
   let firstErrorEl = null;
   Object.keys(VALIDATORS).forEach(id => {
@@ -6751,6 +6880,7 @@ renderProducts();
 renderPackages();
 renderAccessories();
 loadCart();
+loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
 updateCartUI();
 updateWishlistUI();
 renderRecentlyViewed();
