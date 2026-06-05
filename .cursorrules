@@ -1,0 +1,35 @@
+# Cursor rules — Ember & Iron storefront
+#
+# The canonical guide is AGENTS.md. Read it first and follow it.
+# This file is a short pointer so Cursor picks up the same rules.
+
+You are working on the **Ember & Iron** BBQ e‑commerce storefront.
+
+CANONICAL DOCS (read before editing):
+- AGENTS.md       → rules, architecture, conventions, gotchas (source of truth)
+- ARCHITECTURE.md → how the single HTML file is structured internally
+- BRAND.md        → product catalog, brand voice, palette, SEO keywords
+- README.md       → overview + path to production
+
+NON‑NEGOTIABLE RULES:
+1. Vanilla only — no frameworks, no build step, no npm, no CSS libraries.
+2. All app code lives in `index.html` (the only exception is
+   `product-images.js`, which holds base64 image data).
+3. It is a client‑side SPA: "pages" are `.view` divs toggled by `switchView()`
+   with History‑API routing (`ROUTES`). There is no server.
+4. Commerce is simulated (payment, orders, email, inventory, analytics are
+   front‑end stubs). Production target is headless Shopify.
+5. Theme is token‑driven ("cast‑iron steel", Figtree font). Use the `:root` CSS
+   custom properties — never hard‑code a hex colour.
+6. Product image tiles MUST stay light (`--media`): the line‑art is dark ink and
+   photos use `mix-blend-mode: multiply`, so a dark tile hides them.
+7. Don't regress accessibility, WCAG‑AA contrast, or the JSON‑LD structured data.
+8. The customer‑account/login feature was removed — the store is guest‑only.
+   Don't reintroduce it unless asked.
+
+WORKFLOW:
+- The HTML is ~240 KB — search/locate before editing; make small, exact edits.
+- After any change (especially scripted edits to the `products` array or JSON‑LD),
+  serve over HTTP and check the browser console — one syntax error blanks the app.
+- Keep the on‑page FAQ and the FAQPage JSON‑LD in sync.
+- Product names contain `"` — escape them in HTML attributes and JSON.

@@ -1,0 +1,17 @@
+# robots.txt — Ember & Iron
+User-agent: *
+Allow: /
+
+# Keep personal / transactional routes out of the index
+Disallow: /checkout
+Disallow: /order-confirmed
+Disallow: /orders
+Disallow: /account
+Disallow: /wishlist
+Disallow: /*?q=          # internal search result pages
+
+# Be polite to aggressive crawlers
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+Sitemap: https://emberandiron.pk/sitemap.xml
