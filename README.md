@@ -24,6 +24,31 @@ That's it. No install, no compile.
 
 ---
 
+## Deploy (get a live URL)
+
+This is a static site — host it free anywhere. **It must be served at a domain
+root** (`/`), because the app uses root‑absolute URLs for routing
+(`/accessories`, `/product/EMB-011`).
+
+**Netlify / Cloudflare Pages — recommended, cleanest:**
+drag this folder onto <https://app.netlify.com/drop>, or connect the GitHub repo.
+The included **`_redirects`** (`/* /index.html 200`) makes deep links and hard
+refreshes work, with proper 200 responses. You get a root URL like
+`ember-and-iron.netlify.app`.
+
+**GitHub Pages:** works **only at the domain root** — i.e. with a **custom
+domain** (e.g. `emberandiron.pk`) attached, or a user/org site repo
+(`username.github.io`). A bare *project* page (`username.github.io/ember-and-iron/`)
+serves under a sub‑path and will mis‑route this app. The included **`404.html`**
+(a copy of `index.html`) is the deep‑link fallback Pages uses. **If you edit
+`index.html`, regenerate it:** `cp index.html 404.html`.
+
+> Custom domain (`emberandiron.pk`): point DNS at the host, then update the
+> placeholder domain across `index.html` (canonical/OG/JSON‑LD), `sitemap.xml`
+> and `robots.txt`.
+
+---
+
 ## Project files
 
 | File | What it is |
