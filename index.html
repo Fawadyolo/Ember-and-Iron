@@ -123,7 +123,7 @@
    "@type": "ItemList",
    "@id": "https://emberandiron.pk/#catalog",
    "name": "BBQ Grills, Smokers & Charcoal Accessories",
-   "numberOfItems": 11,
+   "numberOfItems": 12,
    "itemListElement": [
     {
      "@type": "ListItem",
@@ -456,6 +456,30 @@
        "seller": {
         "@id": "https://emberandiron.pk/#org"
        }
+      }
+     }
+    },
+    {
+     "@type": "ListItem",
+     "position": 12,
+     "item": {
+      "@type": "Product",
+      "@id": "https://emberandiron.pk/product/EMB-020#product",
+      "name": "Brass Cleaning Brush",
+      "sku": "EMB-020",
+      "description": "Solid brass-bristle brush for deep-cleaning grates, burners and cast iron.",
+      "brand": {
+       "@type": "Brand",
+       "name": "Ember & Iron"
+      },
+      "category": "BBQ & Grilling Accessories",
+      "image": "https://emberandiron.pk/images/EMB-020.jpg",
+      "url": "https://emberandiron.pk/product/EMB-020",
+      "aggregateRating": {
+       "@type": "AggregateRating",
+       "ratingValue": 4.7,
+       "reviewCount": 14,
+       "bestRating": 5
       }
      }
     }
@@ -4855,6 +4879,18 @@ const products = [
     stock: 40,
     rating: 4.5,
     reviewCount: 94
+  },
+  {
+    id: 'EMB-020',
+    name: 'Brass Cleaning Brush',
+    cat: 'accessories',
+    desc: 'Solid brass-bristle brush for deep-cleaning grates, burners and cast iron.',
+    price: 0,
+    tag: 'new',
+    art: 'brassbrush',
+    stock: 25,
+    rating: 4.7,
+    reviewCount: 14
   }
 ];
 
@@ -5165,6 +5201,20 @@ function artSvg(type) {
         <rect x="22" y="124" width="22" height="14" rx="3" fill="${stroke}" fill-opacity="0.06"/>
         <line x1="28" y1="69" x2="40" y2="69"/>
         <line x1="28" y1="131" x2="40" y2="131"/>
+      </svg>`;
+    case 'brassbrush':
+      return `<svg class="product-art" viewBox="0 0 200 200" fill="none" stroke="${stroke}" stroke-width="1.4">
+        <path d="M60 58 Q100 42 140 58" stroke-width="2"/>
+        <rect x="56" y="56" width="88" height="24" rx="12"/>
+        <line x1="74" y1="68" x2="126" y2="68" stroke-dasharray="1.5 3"/>
+        <rect x="62" y="84" width="76" height="16" rx="2"/>
+        <line x1="70" y1="100" x2="70" y2="132"/>
+        <line x1="80" y1="100" x2="79" y2="137"/>
+        <line x1="90" y1="100" x2="90" y2="134"/>
+        <line x1="100" y1="100" x2="100" y2="139"/>
+        <line x1="110" y1="100" x2="110" y2="134"/>
+        <line x1="120" y1="100" x2="121" y2="137"/>
+        <line x1="130" y1="100" x2="130" y2="132"/>
       </svg>`;
     case 'grillbrush':
       return `<svg class="product-art" viewBox="0 0 200 200" fill="none" stroke="${stroke}" stroke-width="1.4">
