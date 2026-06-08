@@ -3687,7 +3687,7 @@
     padding: 0;
     min-height: 86vh;
     overflow: hidden;
-    background: radial-gradient(130% 110% at 22% 62%, #3a1c0e 0%, #20140d 52%, #16110d 100%); /* warm "forge" placeholder until the video loads */
+    background: var(--solid);              /* fallback before the video loads */
   }
   .hero-bg-video {
     position: absolute;
@@ -3728,6 +3728,7 @@
   }
 </style>
 <script defer src="product-images.js"></script>
+{{ content_for_header }}
 </head>
 <body>
 
@@ -3786,8 +3787,8 @@
 <!-- Hero -->
 <main id="main-content" tabindex="-1">
 <section class="hero hero-video">
-  <video class="hero-bg-video" id="hero-video" muted loop playsinline preload="none" aria-hidden="true">
-    <source data-src="hero-forge.mp4" type="video/mp4">
+  <video class="hero-bg-video" id="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src="hero-forge.mp4" type="video/mp4">
   </video>
   <div class="hero-scrim"></div>
   <div class="hero-text">
@@ -6940,29 +6941,14 @@ showCookieBannerIfNeeded();
 if (getCookieConsent() === 'accept') initAnalytics();
 initRouter();
 
-// Hero video: DEFER loading until after first paint so the 3 MB clip doesn't
-// block the initial page load. The warm "forge" gradient placeholder shows
-// instantly; the video then streams in and plays.
+// Ensure the muted hero video autoplays (some browsers need an explicit play())
 (function(){
   const v = document.getElementById('hero-video');
   if (!v) return;
   v.muted = true;
-  let started = false;
-  const startVideo = () => {
-    if (started) return; started = true;
-    const src = v.querySelector('source[data-src]');
-    if (src && !src.src) { src.src = src.getAttribute('data-src'); }
-    v.preload = 'auto';
-    v.load();
-    const p = v.play(); if (p && p.catch) p.catch(() => {});
-  };
-  const tryPlay = () => { if (!started) return; const p = v.play(); if (p && p.catch) p.catch(() => {}); };
-  // Kick off only after the page has fully loaded (or on idle), not during render
-  const schedule = () => (window.requestIdleCallback
-    ? requestIdleCallback(startVideo, { timeout: 1500 })
-    : setTimeout(startVideo, 300));
-  if (document.readyState === 'complete') schedule();
-  else window.addEventListener('load', schedule);
+  const tryPlay = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+  tryPlay();
+  document.addEventListener('DOMContentLoaded', tryPlay);
   // Pause when scrolled well past the hero to save resources; resume when back
   window.addEventListener('scroll', () => {
     if (!document.getElementById('view-shop').classList.contains('active')) return;
@@ -6994,5 +6980,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 })();
 </script>
+<div style="display:none" aria-hidden="true">{{ content_for_layout }}</div>
 </body>
 </html>
