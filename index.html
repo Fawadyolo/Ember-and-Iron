@@ -4249,228 +4249,6 @@
   </footer>
 </div><!-- /view-policy -->
 
-<!-- Checkout view -->
-<div class="view" id="view-checkout">
-  <div class="announce">
-    <span>Secure checkout</span>
-    <span class="dot"></span>
-    <span class="full">All orders ship within 48 hours</span>
-  </div>
-  <header>
-    <div class="header-inner" style="grid-template-columns: 1fr auto 1fr;">
-      <div></div>
-      <div class="logo" onclick="goHome()" role="link" tabindex="0">Ember <span class="ampersand">&amp;</span> Iron</div>
-      <div></div>
-    </div>
-  </header>
-  <div class="checkout-page">
-    <button class="checkout-back" onclick="backToShop()">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
-      Back to shop
-    </button>
-
-    <div class="checkout-head">
-      <h1><em>Checkout</em></h1>
-      <div class="steps">
-        <span>Cart</span>
-        <span class="sep">/</span>
-        <span class="active">Details</span>
-        <span class="sep">/</span>
-        <span>Confirmation</span>
-      </div>
-    </div>
-
-    <div class="checkout-grid">
-      <div class="checkout-form">
-        <!-- Contact -->
-        <div class="section">
-          <div class="section-title"><span class="num">1</span>Contact</div>
-          <div class="form-row two">
-            <div class="field">
-              <label>Email</label>
-              <input type="email" id="co-email" placeholder="your@email.com">
-              <span class="err-msg" id="co-email-err"></span>
-            </div>
-            <div class="field">
-              <label>Phone</label>
-              <input type="tel" id="co-phone" placeholder="+92 300 0000000">
-              <span class="err-msg" id="co-phone-err"></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Shipping -->
-        <div class="section">
-          <div class="section-title"><span class="num">2</span>Shipping address</div>
-          <div class="form-row two">
-            <div class="field">
-              <label>First name</label>
-              <input type="text" id="co-fname">
-              <span class="err-msg" id="co-fname-err"></span>
-            </div>
-            <div class="field">
-              <label>Last name</label>
-              <input type="text" id="co-lname">
-              <span class="err-msg" id="co-lname-err"></span>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Street address</label>
-              <input type="text" id="co-addr" placeholder="House, street, area">
-              <span class="err-msg" id="co-addr-err"></span>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Apartment, suite (optional)</label>
-              <input type="text" id="co-addr2">
-            </div>
-          </div>
-          <div class="form-row three">
-            <div class="field">
-              <label>City</label>
-              <select id="co-city">
-                <option>Lahore</option>
-                <option>Karachi</option>
-                <option>Islamabad</option>
-                <option>Rawalpindi</option>
-                <option>Faisalabad</option>
-                <option>Multan</option>
-                <option>Peshawar</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Postal code</label>
-              <input type="text" id="co-zip">
-              <span class="err-msg" id="co-zip-err"></span>
-            </div>
-            <div class="field">
-              <label>Country</label>
-              <input type="text" value="Pakistan" disabled>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Delivery notes (optional)</label>
-              <textarea id="co-notes" rows="2" placeholder="Landmarks, gate codes, preferred time"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Payment -->
-        <div class="section">
-          <div class="section-title"><span class="num">3</span>Payment</div>
-          <div class="payment-options">
-            <label class="pay-opt selected" data-method="cod">
-              <input type="radio" name="payment" value="cod" checked>
-              <div class="pay-info">
-                <div class="pay-name">Cash on delivery</div>
-                <div class="pay-desc">Pay in cash when your order arrives</div>
-              </div>
-              <span class="pay-icon">COD</span>
-            </label>
-            <label class="pay-opt" data-method="card">
-              <input type="radio" name="payment" value="card">
-              <div class="pay-info">
-                <div class="pay-name">Credit / debit card</div>
-                <div class="pay-desc">Visa, Mastercard, all Pakistani banks</div>
-              </div>
-              <span class="pay-icon">VISA · MC</span>
-            </label>
-            <label class="pay-opt" data-method="bank">
-              <input type="radio" name="payment" value="bank">
-              <div class="pay-info">
-                <div class="pay-name">Bank transfer</div>
-                <div class="pay-desc">IBFT / online transfer — instructions emailed</div>
-              </div>
-              <span class="pay-icon">IBFT</span>
-            </label>
-            <label class="pay-opt" data-method="easypaisa">
-              <input type="radio" name="payment" value="easypaisa">
-              <div class="pay-info">
-                <div class="pay-name">Easypaisa / JazzCash</div>
-                <div class="pay-desc">Mobile wallet payment</div>
-              </div>
-              <span class="pay-icon">WALLET</span>
-            </label>
-          </div>
-          <div class="card-fields" id="card-fields">
-            <div class="field full">
-              <label>Card number <span class="card-brand" id="card-brand"></span></label>
-              <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="23" inputmode="numeric" autocomplete="cc-number">
-              <span class="err-msg" id="card-number-err"></span>
-            </div>
-            <div class="field full">
-              <label>Cardholder name</label>
-              <input type="text" id="card-name" autocomplete="cc-name">
-              <span class="err-msg" id="card-name-err"></span>
-            </div>
-            <div class="field">
-              <label>Expiry</label>
-              <input type="text" id="card-expiry" placeholder="MM / YY" maxlength="7" inputmode="numeric" autocomplete="cc-exp">
-              <span class="err-msg" id="card-expiry-err"></span>
-            </div>
-            <div class="field">
-              <label>CVC</label>
-              <input type="text" id="card-cvc" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc">
-              <span class="err-msg" id="card-cvc-err"></span>
-            </div>
-            <div class="field">
-              <label>ZIP</label>
-              <input type="text" id="card-zip" autocomplete="postal-code">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Order summary -->
-      <div class="order-summary">
-        <h3>Order <em>summary</em></h3>
-        <div class="summary-items" id="summary-items"></div>
-        <div class="promo-row" id="promo-row">
-          <input type="text" id="promo-input" placeholder="Promo code" autocomplete="off" maxlength="20" onkeydown="if(event.key==='Enter'){event.preventDefault();applyPromo();}">
-          <button type="button" onclick="applyPromo()">Apply</button>
-        </div>
-        <div class="promo-feedback" id="promo-feedback"></div>
-        <div class="promo-applied" id="promo-applied" style="display:none;">
-          <div><span class="code" id="promo-code-text"></span> · <span id="promo-desc-text"></span></div>
-          <button type="button" onclick="removePromo()">Remove</button>
-        </div>
-        <div class="totals-row">
-          <span>Subtotal</span>
-          <span id="co-subtotal">PKR 0</span>
-        </div>
-        <div class="totals-row" id="co-discount-row" style="display:none;">
-          <span>Discount <span id="co-discount-code"></span></span>
-          <span class="ember-text" id="co-discount">— PKR 0</span>
-        </div>
-        <div class="totals-row">
-          <span>Shipping</span>
-          <span id="co-shipping">—</span>
-        </div>
-        <div class="totals-row">
-          <span>GST (17%)</span>
-          <span id="co-tax">PKR 0</span>
-        </div>
-        <div class="totals-row grand">
-          <span class="label">Total</span>
-          <span id="co-total">PKR 0</span>
-        </div>
-        <button class="place-order" onclick="placeOrder()">
-          Place order
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-        <div class="secure-note">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="10" rx="1"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
-          Secured by 256-bit encryption
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Success view -->
 <div class="view" id="view-success">
   <header>
@@ -6230,7 +6008,6 @@ const ROUTES = {
   'view-shop':        { path: '/' },
   'view-accessories': { path: '/accessories' },
   'view-wishlist':    { path: '/wishlist' },
-  'view-checkout':    { path: '/checkout' },
   'view-success':     { path: '/order-confirmed' },
   'view-orders':      { path: '/orders' },
   'view-product':     { path: null }  // dynamic by id
@@ -6335,11 +6112,19 @@ function trackPageView(viewId) {
   console.log('[analytics] page view:', viewId || 'unknown');
 }
 
-function showCheckout() {
-  if (Object.keys(cart).length === 0) return;
-  closeCart();
-  renderCheckoutSummary();
-  switchView('view-checkout');
+// Checkout goes straight to Shopify's hosted checkout (no custom checkout page).
+async function showCheckout() {
+  const items = Object.values(cart);
+  if (items.length === 0) return;
+  const btn = document.getElementById('checkout-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Taking you to checkout…'; }
+  let url = null;
+  try { url = await createShopifyCart(); }
+  catch (e) { console.warn('[checkout] Shopify cart failed', e); }
+  if (url) { window.location.href = url; return; }   // → Shopify-hosted checkout
+  // No matching Shopify variants (store not configured / unreachable)
+  showToast('Checkout is unavailable right now — please try again shortly.');
+  if (btn) { btn.disabled = false; btn.textContent = 'Proceed to checkout'; }
 }
 
 function backToShop() {
@@ -6934,8 +6719,6 @@ loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
 updateCartUI();
 updateWishlistUI();
 renderRecentlyViewed();
-setupValidationListeners();
-attachCardFormatters();
 showCookieBannerIfNeeded();
 if (getCookieConsent() === 'accept') initAnalytics();
 initRouter();
