@@ -1,0 +1,62 @@
+{% layout 'product' %}
+{%- assign v = product.selected_or_first_available_variant -%}
+<div class="wrap">
+  <nav class="crumb">
+    <a href="{{ routes.root_url }}">Home</a> /
+    {%- if product.type != blank %} <a href="{{ routes.collections_url }}/{{ product.type | handle }}">{{ product.type }}</a> /{% endif %}
+    {{ product.title }}
+  </nav>
+  <article class="pdp">
+    <div class="pdp-grid">
+      <div class="pdp-media">
+        {%- if product.featured_image -%}
+          <img src="{{ product.featured_image | image_url: width: 900 }}"
+               alt="{{ product.featured_image.alt | default: product.title | escape }}"
+               width="900" height="900" loading="eager" decoding="async">
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag }}
+        {%- endif -%}
+      </div>
+      <div class="pdp-info">
+        {%- if product.type != blank -%}<div class="pdp-cat">{{ product.type }}</div>{%- endif -%}
+        <h1>{{ product.title }}</h1>
+        <div class="pdp-price">{{ v.price | money }}</div>
+        {%- if product.available -%}
+          <div class="pdp-avail"><span class="dot"></span>In stock &mdash; delivered across Pakistan</div>
+        {%- else -%}
+          <div class="pdp-avail out"><span class="dot"></span>Currently sold out</div>
+        {%- endif -%}
+        <div class="pdp-cta">
+          {%- form 'product', product -%}
+            <input type="hidden" name="id" value="{{ v.id }}">
+            <button type="submit" class="btn"{% unless product.available %} disabled{% endunless %}>
+              {% if product.available %}Add to cart{% else %}Sold out{% endif %}
+            </button>
+          {%- endform -%}
+          <a class="btn btn-ghost" href="{{ routes.root_url }}">Browse full store</a>
+        </div>
+        <div class="pdp-desc">{{ product.description }}</div>
+        <div class="pdp-meta">SKU: {{ v.sku | default: product.handle }} &middot; Free delivery on orders over PKR 12,000</div>
+      </div>
+    </div>
+  </article>
+</div>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
+  {% if product.featured_image %}"image": {{ product.featured_image | image_url: width: 1200 | prepend: "https:" | json }},{% endif %}
+  "sku": {{ v.sku | json }},
+  "brand": { "@type": "Brand", "name": "Ember & Iron" },
+  "offers": {
+    "@type": "Offer",
+    "price": {{ v.price | divided_by: 100.0 | json }},
+    "priceCurrency": {{ cart.currency.iso_code | json }},
+    "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition",
+    "url": {{ product.url | prepend: request.origin | json }}
+  }
+}
+</script>

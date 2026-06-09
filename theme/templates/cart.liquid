@@ -1,0 +1,22 @@
+{% layout 'product' %}
+<div class="wrap">
+  <nav class="crumb"><a href="{{ routes.root_url }}">Home</a> / Cart</nav>
+  <header class="coll-head"><h1>Your cart</h1></header>
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" novalidate>
+      {%- for item in cart.items -%}
+        <div class="cart-row">
+          <a href="{{ item.url }}">{{ item.product.title }}</a>
+          <span>{{ item.quantity }} &times; {{ item.price | money }}</span>
+          <span>{{ item.final_line_price | money }}</span>
+        </div>
+      {%- endfor -%}
+      <div class="cart-foot">
+        <strong>Total: {{ cart.total_price | money }}</strong>
+        <button type="submit" name="checkout" class="btn">Checkout &rarr;</button>
+      </div>
+    </form>
+  {%- else -%}
+    <p style="padding:24px 0;color:var(--ink-soft)">Your cart is empty. <a href="{{ routes.root_url }}" style="color:var(--ember)">Browse the store &rarr;</a></p>
+  {%- endif -%}
+</div>
