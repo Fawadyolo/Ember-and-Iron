@@ -767,6 +767,9 @@
     .hero-visual { aspect-ratio: 1/1; }
     .products { grid-template-columns: repeat(2, 1fr); }
     .editorial-inner { grid-template-columns: 1fr; gap: 48px; padding: 0; }
+    .editorial-inner > * { min-width: 0; }
+    .editorial-stats { padding: 28px 24px; gap: 24px; }
+    .stat .num { font-size: 44px; }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
     section.module, .editorial { padding: 56px 24px; }
     .module-head { flex-direction: column; align-items: flex-start; gap: 14px; }

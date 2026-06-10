@@ -146,6 +146,26 @@ const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2026-04/graphql.json`;
 // Populated after loadShopifyProducts() runs
 const shopifyVariantIds = {};
 
+// Baked Shopify URL handles so product links are crawlable in the static HTML
+// (real SEO hrefs before/without the live sync; sync keeps them fresh via p.handle)
+const PRODUCT_HANDLES = {
+  'EMB-001': '24-collapsible-grill',
+  'EMB-002': '30-collapsible-grill',
+  'EMB-003': '24-collapsible-grill-with-grilling-top',
+  'EMB-004': '30-collapsible-grill-with-grilling-top',
+  'EMB-010': 'lump-charcoal-10kg',
+  'EMB-011': 'instant-read-meat-thermometer',
+  'EMB-013': 'fire-starter',
+  'EMB-016': 'bbq-grill-brush',
+  'EMB-018': 'handheld-bbq-air-blower',
+  'EMB-019': 'charcoal-bag-5kg',
+  'EMB-020': 'brass-cleaning-brush'
+};
+function productUrl(p) {
+  const h = p && (p.handle || PRODUCT_HANDLES[p.id]);
+  return h ? '/products/' + h : '/product/' + (p && p.id);
+}
+
 async function shopifyFetch(query, variables) {
   try {
     const res = await fetch(SHOPIFY_API_URL, {
@@ -237,6 +257,15 @@ async function loadShopifyProducts() {
     const liveImg = sp.featuredImage && sp.featuredImage.url;
     if (liveImg) window.PRODUCT_IMAGES[sku] = liveImg;   // live Shopify photo wins when available
 
+    // Bundle products (PKG-###) belong to `packages`, not the product grids.
+    // Shopify owns the bundle price once synced — checkout always matches display.
+    const pkgLocal = packages.find(function (k) { return k.id === sku; });
+    if (pkgLocal) {
+      if (price > 0) { pkgLocal.price = price; pkgLocal.shopifyPriced = true; }
+      pkgLocal.handle = sp.handle;
+      return;
+    }
+
     const local = products.find(function (p) { return p.id === sku; });
     if (local) {
       if (sp.title) local.name = sp.title;
@@ -274,7 +303,7 @@ async function loadShopifyProducts() {
 
 async function createShopifyCart() {
   const lines = Object.values(cart)
-    .filter(item => !item.isPackage && shopifyVariantIds[item.id])
+    .filter(item => shopifyVariantIds[item.id])
     .map(item => ({ merchandiseId: shopifyVariantIds[item.id], quantity: item.qty }));
 
   if (!lines.length) return null;
@@ -927,13 +956,13 @@ function productCardHtml(p, idPrefix) {
         <button class="wishlist-btn ${wished ? 'active' : ''}" data-wid="${p.id}" onclick="toggleWishlist('${p.id}', event)" aria-label="${wished ? 'Remove from wishlist' : 'Save to wishlist'}" aria-pressed="${wished}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <span class="art-clickable" onclick="showProduct(event, '${p.id}')" role="link" aria-label="View ${p.name}">${mediaFor(p)}</span>
+        <a class="art-clickable" href="${productUrl(p)}" onclick="showProduct(event, '${p.id}')" aria-label="View ${p.name}">${mediaFor(p)}</a>
       </div>
       <div class="product-meta">
         <span>${p.id}</span>
         <span>${p.cat}</span>
       </div>
-      <h3><a href="#" class="product-name-link" onclick="showProduct(event, '${p.id}')">${p.name}</a></h3>
+      <h3><a href="${productUrl(p)}" class="product-name-link" onclick="showProduct(event, '${p.id}')">${p.name}</a></h3>
       <p class="desc">${p.desc}</p>
       <div class="stock-indicator ${s.cls}" aria-label="${s.label}">
         <span class="dot" aria-hidden="true"></span>${s.label}
@@ -996,8 +1025,8 @@ const packages = [
     desc: 'A collapsible grill with the essentials. For first cookouts and small balconies.',
     grillId: 'EMB-001',
     accessoryIds: ['EMB-019', 'EMB-013', 'EMB-016'],
-    originalPrice: 23500,
-    price: 21500,
+    originalPrice: 11648,
+    price: 10480,
     art: 'portable'
   },
   {
@@ -1007,8 +1036,8 @@ const packages = [
     desc: 'A collapsible grill with a grilling top plus everything for unhurried Sunday cookouts.',
     grillId: 'EMB-003',
     accessoryIds: ['EMB-010', 'EMB-011'],
-    originalPrice: 62500,
-    price: 54000,
+    originalPrice: 12197,
+    price: 10980,
     art: 'tabletop'
   },
   {
@@ -1018,8 +1047,8 @@ const packages = [
     desc: 'Our largest collapsible grill with the precision tools serious cookouts demand.',
     grillId: 'EMB-004',
     accessoryIds: ['EMB-011', 'EMB-018', 'EMB-010', 'EMB-013', 'EMB-016'],
-    originalPrice: 185800,
-    price: 169000,
+    originalPrice: 16745,
+    price: 15070,
     art: 'tabletop'
   },
   {
@@ -1029,8 +1058,8 @@ const packages = [
     desc: 'A collapsible grill with every accessory in the workshop. The set built once, kept forever.',
     grillId: 'EMB-001',
     accessoryIds: ['EMB-010', 'EMB-011', 'EMB-013', 'EMB-016', 'EMB-018', 'EMB-019'],
-    originalPrice: 314100,
-    price: 295000,
+    originalPrice: 14045,
+    price: 12640,
     art: 'portable'
   }
 ];
@@ -1351,7 +1380,9 @@ function renderPackages() {
     const memberSum = (grill ? grill.price : 0) + accessories.reduce((s, a) => s + a.price, 0);
     if (grill && grill.price > 0 && memberSum > 0) {
       pkg.originalPrice = memberSum;
-      pkg.price = Math.round(memberSum * (1 - BUNDLE_DISCOUNT) / 10) * 10;
+      // Shopify is the bundle-price source of truth once synced; the 10%
+      // formula is only the pre-sync / offline fallback.
+      if (!pkg.shopifyPriced) pkg.price = Math.round(memberSum * (1 - BUNDLE_DISCOUNT) / 10) * 10;
     }
     const savings = pkg.originalPrice - pkg.price;
     const itemCount = 1 + accessories.length;

@@ -480,7 +480,7 @@
   <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu">✕</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'catalog')">Shop</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showAccessories(event)">Accessories</button>
-  <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'how-to')">How to Grills</button>
+  <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'how-to')">How to Grill</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showWishlist(event)">Saved items</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showPolicy(event, 'contact')">Contact</button>
 </nav>
@@ -500,8 +500,8 @@
   <div class="header-inner">
     <nav class="primary">
       <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-      <a href="#" onclick="showAccessories(event)">Accessories</a>
-      <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+      <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+      <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
     </nav>
     <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -682,9 +682,9 @@
       <div class="footer-col">
         <h4>Shop</h4>
         <ul>
-          <li><a href="#" onclick="showShop(event, 'catalog')">All collection</a></li>
-          <li><a href="#" onclick="showShop(event, 'catalog')">Grills</a></li>
-          <li><a href="#" onclick="showAccessories(event)">Accessories</a></li>
+          <li><a href="/collections/frontpage" onclick="showShop(event, 'catalog')">All collection</a></li>
+          <li><a href="/collections/grills" onclick="showShop(event, 'catalog')">Grills</a></li>
+          <li><a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a></li>
           <li><a href="#" onclick="showShop(event, 'bundles')">Bundles</a></li>
           <li><a href="#" onclick="showWishlist(event)">Wishlist</a></li>
         </ul>
@@ -701,19 +701,19 @@
       <div class="footer-col">
         <h4>Help</h4>
         <ul>
-          <li><a href="#" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+          <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
           <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
           <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-          <li><a href="#" onclick="showPolicy(event, 'contact')">Contact</a></li>
+          <li><a href="/pages/contact" onclick="showPolicy(event, 'contact')">Contact</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="logo-mini">Ember &amp; Iron</div>
       <div class="footer-legal">
-        <a href="#" onclick="showPolicy(event, 'privacy')">Privacy</a>
-        <a href="#" onclick="showPolicy(event, 'terms')">Terms</a>
-        <a href="#" onclick="showPolicy(event, 'returns')">Returns</a>
+        <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">Privacy</a>
+        <a href="/policies/terms-of-service" onclick="showPolicy(event, 'terms')">Terms</a>
+        <a href="/policies/refund-policy" onclick="showPolicy(event, 'returns')">Returns</a>
         <a href="#" onclick="showPolicy(event, 'faq')">FAQ</a>
         <span>© 2026 · Lahore, PK · CN-30924</span>
       </div>
@@ -734,8 +734,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -812,9 +812,9 @@
         <div class="footer-col">
           <h4>Shop</h4>
           <ul>
-            <li><a href="#" onclick="showShop(event, 'catalog')">All collection</a></li>
-            <li><a href="#" onclick="showShop(event, 'catalog')">Grills</a></li>
-            <li><a href="#" onclick="showAccessories(event)">Accessories</a></li>
+            <li><a href="/collections/frontpage" onclick="showShop(event, 'catalog')">All collection</a></li>
+            <li><a href="/collections/grills" onclick="showShop(event, 'catalog')">Grills</a></li>
+            <li><a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -829,10 +829,10 @@
         <div class="footer-col">
           <h4>Help</h4>
           <ul>
-            <li><a href="#" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+            <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
             <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
             <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-            <li><a href="#" onclick="showPolicy(event, 'contact')">Contact</a></li>
+            <li><a href="/pages/contact" onclick="showPolicy(event, 'contact')">Contact</a></li>
           </ul>
         </div>
       </div>
@@ -855,8 +855,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -905,8 +905,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -957,9 +957,9 @@
         <div class="footer-col">
           <h4>Shop</h4>
           <ul>
-            <li><a href="#" onclick="showShop(event, 'catalog')">All collection</a></li>
-            <li><a href="#" onclick="showShop(event, 'catalog')">Grills</a></li>
-            <li><a href="#" onclick="showAccessories(event)">Accessories</a></li>
+            <li><a href="/collections/frontpage" onclick="showShop(event, 'catalog')">All collection</a></li>
+            <li><a href="/collections/grills" onclick="showShop(event, 'catalog')">Grills</a></li>
+            <li><a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -967,24 +967,24 @@
           <ul>
             <li><a href="#" onclick="showPolicy(event, 'about')">Our workshop</a></li>
             <li><a href="#" onclick="showPolicy(event, 'faq')">FAQ</a></li>
-            <li><a href="#" onclick="showPolicy(event, 'contact')">Contact</a></li>
+            <li><a href="/pages/contact" onclick="showPolicy(event, 'contact')">Contact</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Help</h4>
           <ul>
-            <li><a href="#" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+            <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
             <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
             <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-            <li><a href="#" onclick="showPolicy(event, 'returns')">Returns</a></li>
+            <li><a href="/policies/refund-policy" onclick="showPolicy(event, 'returns')">Returns</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
         <div class="logo-mini">Ember &amp; Iron</div>
         <div class="footer-legal">
-          <a href="#" onclick="showPolicy(event, 'privacy')">Privacy</a>
-          <a href="#" onclick="showPolicy(event, 'terms')">Terms</a>
+          <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">Privacy</a>
+          <a href="/policies/terms-of-service" onclick="showPolicy(event, 'terms')">Terms</a>
           <span>© 2026 · Lahore, PK · CN-30924</span>
         </div>
       </div>
@@ -1039,8 +1039,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -1088,8 +1088,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -1127,8 +1127,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -1208,8 +1208,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -1257,7 +1257,7 @@
 
 <!-- Cookie consent banner -->
 <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
-  <p>We use cookies to remember your cart, wishlist, and to understand how the store is used. See our <a href="#" onclick="showPolicy(event, 'privacy')">privacy policy</a>.</p>
+  <p>We use cookies to remember your cart, wishlist, and to understand how the store is used. See our <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">privacy policy</a>.</p>
   <div class="actions">
     <button type="button" class="decline" onclick="setCookieConsent('decline')">Decline</button>
     <button type="button" class="accept" onclick="setCookieConsent('accept')">Accept all</button>

@@ -1238,6 +1238,9 @@
     .hero-visual { aspect-ratio: 1/1; }
     .products { grid-template-columns: repeat(2, 1fr); }
     .editorial-inner { grid-template-columns: 1fr; gap: 48px; padding: 0; }
+    .editorial-inner > * { min-width: 0; }
+    .editorial-stats { padding: 28px 24px; gap: 24px; }
+    .stat .num { font-size: 44px; }
     .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
     section.module, .editorial { padding: 56px 24px; }
     .module-head { flex-direction: column; align-items: flex-start; gap: 14px; }
@@ -3659,7 +3662,7 @@
   <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu">✕</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'catalog')">Shop</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showAccessories(event)">Accessories</button>
-  <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'how-to')">How to Grills</button>
+  <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'how-to')">How to Grill</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showWishlist(event)">Saved items</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showPolicy(event, 'contact')">Contact</button>
 </nav>
@@ -3679,8 +3682,8 @@
   <div class="header-inner">
     <nav class="primary">
       <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-      <a href="#" onclick="showAccessories(event)">Accessories</a>
-      <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+      <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+      <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
     </nav>
     <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -3861,9 +3864,9 @@
       <div class="footer-col">
         <h4>Shop</h4>
         <ul>
-          <li><a href="#" onclick="showShop(event, 'catalog')">All collection</a></li>
-          <li><a href="#" onclick="showShop(event, 'catalog')">Grills</a></li>
-          <li><a href="#" onclick="showAccessories(event)">Accessories</a></li>
+          <li><a href="/collections/frontpage" onclick="showShop(event, 'catalog')">All collection</a></li>
+          <li><a href="/collections/grills" onclick="showShop(event, 'catalog')">Grills</a></li>
+          <li><a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a></li>
           <li><a href="#" onclick="showShop(event, 'bundles')">Bundles</a></li>
           <li><a href="#" onclick="showWishlist(event)">Wishlist</a></li>
         </ul>
@@ -3880,19 +3883,19 @@
       <div class="footer-col">
         <h4>Help</h4>
         <ul>
-          <li><a href="#" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+          <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
           <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
           <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-          <li><a href="#" onclick="showPolicy(event, 'contact')">Contact</a></li>
+          <li><a href="/pages/contact" onclick="showPolicy(event, 'contact')">Contact</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="logo-mini">Ember &amp; Iron</div>
       <div class="footer-legal">
-        <a href="#" onclick="showPolicy(event, 'privacy')">Privacy</a>
-        <a href="#" onclick="showPolicy(event, 'terms')">Terms</a>
-        <a href="#" onclick="showPolicy(event, 'returns')">Returns</a>
+        <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">Privacy</a>
+        <a href="/policies/terms-of-service" onclick="showPolicy(event, 'terms')">Terms</a>
+        <a href="/policies/refund-policy" onclick="showPolicy(event, 'returns')">Returns</a>
         <a href="#" onclick="showPolicy(event, 'faq')">FAQ</a>
         <span>© 2026 · Lahore, PK · CN-30924</span>
       </div>
@@ -3913,8 +3916,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -3991,9 +3994,9 @@
         <div class="footer-col">
           <h4>Shop</h4>
           <ul>
-            <li><a href="#" onclick="showShop(event, 'catalog')">All collection</a></li>
-            <li><a href="#" onclick="showShop(event, 'catalog')">Grills</a></li>
-            <li><a href="#" onclick="showAccessories(event)">Accessories</a></li>
+            <li><a href="/collections/frontpage" onclick="showShop(event, 'catalog')">All collection</a></li>
+            <li><a href="/collections/grills" onclick="showShop(event, 'catalog')">Grills</a></li>
+            <li><a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -4008,10 +4011,10 @@
         <div class="footer-col">
           <h4>Help</h4>
           <ul>
-            <li><a href="#" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+            <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
             <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
             <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-            <li><a href="#" onclick="showPolicy(event, 'contact')">Contact</a></li>
+            <li><a href="/pages/contact" onclick="showPolicy(event, 'contact')">Contact</a></li>
           </ul>
         </div>
       </div>
@@ -4034,8 +4037,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -4084,8 +4087,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -4136,9 +4139,9 @@
         <div class="footer-col">
           <h4>Shop</h4>
           <ul>
-            <li><a href="#" onclick="showShop(event, 'catalog')">All collection</a></li>
-            <li><a href="#" onclick="showShop(event, 'catalog')">Grills</a></li>
-            <li><a href="#" onclick="showAccessories(event)">Accessories</a></li>
+            <li><a href="/collections/frontpage" onclick="showShop(event, 'catalog')">All collection</a></li>
+            <li><a href="/collections/grills" onclick="showShop(event, 'catalog')">Grills</a></li>
+            <li><a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a></li>
           </ul>
         </div>
         <div class="footer-col">
@@ -4146,24 +4149,24 @@
           <ul>
             <li><a href="#" onclick="showPolicy(event, 'about')">Our workshop</a></li>
             <li><a href="#" onclick="showPolicy(event, 'faq')">FAQ</a></li>
-            <li><a href="#" onclick="showPolicy(event, 'contact')">Contact</a></li>
+            <li><a href="/pages/contact" onclick="showPolicy(event, 'contact')">Contact</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Help</h4>
           <ul>
-            <li><a href="#" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+            <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
             <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
             <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-            <li><a href="#" onclick="showPolicy(event, 'returns')">Returns</a></li>
+            <li><a href="/policies/refund-policy" onclick="showPolicy(event, 'returns')">Returns</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
         <div class="logo-mini">Ember &amp; Iron</div>
         <div class="footer-legal">
-          <a href="#" onclick="showPolicy(event, 'privacy')">Privacy</a>
-          <a href="#" onclick="showPolicy(event, 'terms')">Terms</a>
+          <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">Privacy</a>
+          <a href="/policies/terms-of-service" onclick="showPolicy(event, 'terms')">Terms</a>
           <span>© 2026 · Lahore, PK · CN-30924</span>
         </div>
       </div>
@@ -4218,8 +4221,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -4267,8 +4270,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -4306,8 +4309,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -4387,8 +4390,8 @@
     <div class="header-inner">
       <nav class="primary">
         <a href="#catalog" onclick="showShop(event, 'catalog')">Shop</a>
-        <a href="#" onclick="showAccessories(event)">Accessories</a>
-        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grills</a>
+        <a href="/collections/accessories" onclick="showAccessories(event)">Accessories</a>
+        <a href="#how-to" onclick="showShop(event, 'how-to')">How to Grill</a>
       </nav>
       <button class="mobile-menu-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
           <span></span><span></span><span></span>
@@ -4436,7 +4439,7 @@
 
 <!-- Cookie consent banner -->
 <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
-  <p>We use cookies to remember your cart, wishlist, and to understand how the store is used. See our <a href="#" onclick="showPolicy(event, 'privacy')">privacy policy</a>.</p>
+  <p>We use cookies to remember your cart, wishlist, and to understand how the store is used. See our <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">privacy policy</a>.</p>
   <div class="actions">
     <button type="button" class="decline" onclick="setCookieConsent('decline')">Decline</button>
     <button type="button" class="accept" onclick="setCookieConsent('accept')">Accept all</button>
@@ -4591,6 +4594,26 @@ const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2026-04/graphql.json`;
 // Populated after loadShopifyProducts() runs
 const shopifyVariantIds = {};
 
+// Baked Shopify URL handles so product links are crawlable in the static HTML
+// (real SEO hrefs before/without the live sync; sync keeps them fresh via p.handle)
+const PRODUCT_HANDLES = {
+  'EMB-001': '24-collapsible-grill',
+  'EMB-002': '30-collapsible-grill',
+  'EMB-003': '24-collapsible-grill-with-grilling-top',
+  'EMB-004': '30-collapsible-grill-with-grilling-top',
+  'EMB-010': 'lump-charcoal-10kg',
+  'EMB-011': 'instant-read-meat-thermometer',
+  'EMB-013': 'fire-starter',
+  'EMB-016': 'bbq-grill-brush',
+  'EMB-018': 'handheld-bbq-air-blower',
+  'EMB-019': 'charcoal-bag-5kg',
+  'EMB-020': 'brass-cleaning-brush'
+};
+function productUrl(p) {
+  const h = p && (p.handle || PRODUCT_HANDLES[p.id]);
+  return h ? '/products/' + h : '/product/' + (p && p.id);
+}
+
 async function shopifyFetch(query, variables) {
   try {
     const res = await fetch(SHOPIFY_API_URL, {
@@ -4682,6 +4705,15 @@ async function loadShopifyProducts() {
     const liveImg = sp.featuredImage && sp.featuredImage.url;
     if (liveImg) window.PRODUCT_IMAGES[sku] = liveImg;   // live Shopify photo wins when available
 
+    // Bundle products (PKG-###) belong to `packages`, not the product grids.
+    // Shopify owns the bundle price once synced — checkout always matches display.
+    const pkgLocal = packages.find(function (k) { return k.id === sku; });
+    if (pkgLocal) {
+      if (price > 0) { pkgLocal.price = price; pkgLocal.shopifyPriced = true; }
+      pkgLocal.handle = sp.handle;
+      return;
+    }
+
     const local = products.find(function (p) { return p.id === sku; });
     if (local) {
       if (sp.title) local.name = sp.title;
@@ -4719,7 +4751,7 @@ async function loadShopifyProducts() {
 
 async function createShopifyCart() {
   const lines = Object.values(cart)
-    .filter(item => !item.isPackage && shopifyVariantIds[item.id])
+    .filter(item => shopifyVariantIds[item.id])
     .map(item => ({ merchandiseId: shopifyVariantIds[item.id], quantity: item.qty }));
 
   if (!lines.length) return null;
@@ -5372,13 +5404,13 @@ function productCardHtml(p, idPrefix) {
         <button class="wishlist-btn ${wished ? 'active' : ''}" data-wid="${p.id}" onclick="toggleWishlist('${p.id}', event)" aria-label="${wished ? 'Remove from wishlist' : 'Save to wishlist'}" aria-pressed="${wished}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <span class="art-clickable" onclick="showProduct(event, '${p.id}')" role="link" aria-label="View ${p.name}">${mediaFor(p)}</span>
+        <a class="art-clickable" href="${productUrl(p)}" onclick="showProduct(event, '${p.id}')" aria-label="View ${p.name}">${mediaFor(p)}</a>
       </div>
       <div class="product-meta">
         <span>${p.id}</span>
         <span>${p.cat}</span>
       </div>
-      <h3><a href="#" class="product-name-link" onclick="showProduct(event, '${p.id}')">${p.name}</a></h3>
+      <h3><a href="${productUrl(p)}" class="product-name-link" onclick="showProduct(event, '${p.id}')">${p.name}</a></h3>
       <p class="desc">${p.desc}</p>
       <div class="stock-indicator ${s.cls}" aria-label="${s.label}">
         <span class="dot" aria-hidden="true"></span>${s.label}
@@ -5441,8 +5473,8 @@ const packages = [
     desc: 'A collapsible grill with the essentials. For first cookouts and small balconies.',
     grillId: 'EMB-001',
     accessoryIds: ['EMB-019', 'EMB-013', 'EMB-016'],
-    originalPrice: 23500,
-    price: 21500,
+    originalPrice: 11648,
+    price: 10480,
     art: 'portable'
   },
   {
@@ -5452,8 +5484,8 @@ const packages = [
     desc: 'A collapsible grill with a grilling top plus everything for unhurried Sunday cookouts.',
     grillId: 'EMB-003',
     accessoryIds: ['EMB-010', 'EMB-011'],
-    originalPrice: 62500,
-    price: 54000,
+    originalPrice: 12197,
+    price: 10980,
     art: 'tabletop'
   },
   {
@@ -5463,8 +5495,8 @@ const packages = [
     desc: 'Our largest collapsible grill with the precision tools serious cookouts demand.',
     grillId: 'EMB-004',
     accessoryIds: ['EMB-011', 'EMB-018', 'EMB-010', 'EMB-013', 'EMB-016'],
-    originalPrice: 185800,
-    price: 169000,
+    originalPrice: 16745,
+    price: 15070,
     art: 'tabletop'
   },
   {
@@ -5474,8 +5506,8 @@ const packages = [
     desc: 'A collapsible grill with every accessory in the workshop. The set built once, kept forever.',
     grillId: 'EMB-001',
     accessoryIds: ['EMB-010', 'EMB-011', 'EMB-013', 'EMB-016', 'EMB-018', 'EMB-019'],
-    originalPrice: 314100,
-    price: 295000,
+    originalPrice: 14045,
+    price: 12640,
     art: 'portable'
   }
 ];
@@ -5796,7 +5828,9 @@ function renderPackages() {
     const memberSum = (grill ? grill.price : 0) + accessories.reduce((s, a) => s + a.price, 0);
     if (grill && grill.price > 0 && memberSum > 0) {
       pkg.originalPrice = memberSum;
-      pkg.price = Math.round(memberSum * (1 - BUNDLE_DISCOUNT) / 10) * 10;
+      // Shopify is the bundle-price source of truth once synced; the 10%
+      // formula is only the pre-sync / offline fallback.
+      if (!pkg.shopifyPriced) pkg.price = Math.round(memberSum * (1 - BUNDLE_DISCOUNT) / 10) * 10;
     }
     const savings = pkg.originalPrice - pkg.price;
     const itemCount = 1 + accessories.length;

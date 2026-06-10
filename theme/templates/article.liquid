@@ -1,0 +1,29 @@
+{% layout 'product' %}
+<div class="wrap">
+  <nav class="crumb"><a href="{{ routes.root_url }}">Home</a> / <a href="{{ blog.url }}">{{ blog.title }}</a> / {{ article.title }}</nav>
+  <article style="max-width:720px">
+    <header class="coll-head">
+      <h1>{{ article.title }}</h1>
+      <div class="pdp-cat" style="margin-top:10px">{{ article.published_at | date: '%-d %B %Y' }}{% if article.author != blank %} · {{ article.author }}{% endif %}</div>
+    </header>
+    {%- if article.image -%}
+      <div class="pdp-media" style="margin:16px 0 24px;min-height:0">
+        <img src="{{ article.image | image_url: width: 1100 }}" alt="{{ article.title | escape }}" width="1100" loading="eager" decoding="async">
+      </div>
+    {%- endif -%}
+    <div class="pdp-desc">
+      {{ article.content }}
+    </div>
+  </article>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": {{ article.title | json }},
+      "datePublished": {{ article.published_at | date: '%Y-%m-%d' | json }},
+      {% if article.image %}"image": {{ article.image | image_url: width: 1100 | prepend: 'https:' | json }},{% endif %}
+      "author": { "@type": "Organization", "name": "Ember & Iron" },
+      "publisher": { "@type": "Organization", "name": "Ember & Iron", "url": {{ shop.url | json }} }
+    }
+  </script>
+</div>

@@ -1,0 +1,10 @@
+{% layout 'product' %}
+<div class="wrap">
+  <nav class="crumb"><a href="{{ routes.root_url }}">Home</a> / {{ page.title }}</nav>
+  <header class="coll-head">
+    <h1>{{ page.title }}</h1>
+  </header>
+  <div class="pdp-desc" style="max-width:720px">
+    {{ page.content }}
+  </div>
+</div>
