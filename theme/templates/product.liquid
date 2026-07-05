@@ -9,7 +9,29 @@
   <article class="pdp">
     <div class="pdp-grid">
       <div class="pdp-media">
-        {%- if product.featured_image -%}
+        {%- if product.images.size > 1 -%}
+          {%- comment -%} Multi-image gallery: main stage + scrollable thumbnails {%- endcomment -%}
+          <div class="pdp-art pgal" data-count="{{ product.images.size }}" data-i="0" role="group" aria-label="{{ product.images.size }} product photos">
+            {%- for image in product.images -%}
+              <img class="pgal-slide{% if forloop.first %} on{% endif %}"
+                   src="{{ image | image_url: width: 1000 }}"
+                   alt="{{ image.alt | default: product.title | escape }} &mdash; photo {{ forloop.index }}"
+                   width="1000" height="1000"
+                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async"
+                   data-i="{{ forloop.index0 }}">
+            {%- endfor -%}
+            <button type="button" class="pgal-nav prev" onclick="emberGalleryStep(-1)" aria-label="Previous photo">&lsaquo;</button>
+            <button type="button" class="pgal-nav next" onclick="emberGalleryStep(1)" aria-label="Next photo">&rsaquo;</button>
+            <div class="pgal-count"><span class="pgal-cur">1</span> / {{ product.images.size }}</div>
+          </div>
+          <div class="pgal-thumbs">
+            {%- for image in product.images -%}
+              <button type="button" class="pgal-thumb{% if forloop.first %} on{% endif %}" data-i="{{ forloop.index0 }}" onclick="emberGalleryGo({{ forloop.index0 }})" aria-label="Show photo {{ forloop.index }}">
+                <img src="{{ image | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy" decoding="async">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- elsif product.featured_image -%}
           <img src="{{ product.featured_image | image_url: width: 900 }}"
                alt="{{ product.featured_image.alt | default: product.title | escape }}"
                width="900" height="900" loading="eager" decoding="async">
@@ -41,13 +63,64 @@
     </div>
   </article>
 </div>
+
+{%- comment -%} Gallery styles + behaviour (self-contained; no theme.js/.css dependency) {%- endcomment -%}
+<style>
+  .pdp-art.pgal { display: block; padding: 0; position: relative; }
+  .pgal-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; opacity: 0; transition: opacity .3s ease; }
+  .pgal-slide.on { opacity: 1; }
+  .pgal-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(22,17,13,.5); color: #fff; font-size: 24px; line-height: 0; cursor: pointer; z-index: 3; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease; }
+  .pgal-nav:hover { background: var(--ember-deep, #bb3d12); }
+  .pgal-nav.prev { left: 12px; } .pgal-nav.next { right: 12px; }
+  .pgal-count { position: absolute; right: 12px; bottom: 12px; z-index: 3; font-weight: 700; font-size: 12px; letter-spacing: .04em; color: #fff; background: rgba(22,17,13,.5); padding: 5px 10px; border-radius: 999px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+  .pgal-thumbs { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x proximity; }
+  .pgal-thumb { flex: 0 0 auto; width: 66px; height: 66px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--paper-light, #44484c); cursor: pointer; scroll-snap-align: start; transition: border-color .2s ease; }
+  .pgal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pgal-thumb.on { border-color: var(--ember, #e8571f); }
+  .pgal-thumb:hover { border-color: var(--muted, #beb8ae); }
+  @media (max-width: 640px) { .pgal-thumb { width: 54px; height: 54px; } .pgal-nav { width: 34px; height: 34px; font-size: 20px; } }
+</style>
+<script>
+(function () {
+  function gal() { return document.querySelector('.pdp-art.pgal'); }
+  window.emberGalleryGo = function (i) {
+    var el = gal(); if (!el) return;
+    var n = parseInt(el.dataset.count, 10) || 1;
+    i = ((i % n) + n) % n; el.dataset.i = i;
+    el.querySelectorAll('.pgal-slide').forEach(function (s) { s.classList.toggle('on', +s.dataset.i === i); });
+    var media = el.parentNode;
+    media.querySelectorAll('.pgal-thumb').forEach(function (t) { t.classList.toggle('on', +t.dataset.i === i); });
+    var cur = el.querySelector('.pgal-cur'); if (cur) cur.textContent = i + 1;
+    var at = media.querySelector('.pgal-thumb[data-i="' + i + '"]');
+    if (at && at.scrollIntoView) at.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  };
+  window.emberGalleryStep = function (d) { var el = gal(); if (el) emberGalleryGo((parseInt(el.dataset.i, 10) || 0) + d); };
+  document.addEventListener('keydown', function (e) {
+    if (!gal()) return;
+    if (e.key === 'ArrowLeft') emberGalleryStep(-1);
+    else if (e.key === 'ArrowRight') emberGalleryStep(1);
+  });
+  document.addEventListener('DOMContentLoaded', function () {
+    var el = gal(); if (!el) return; var x0 = null;
+    el.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    el.addEventListener('touchend', function (e) {
+      if (x0 == null) return;
+      var dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) emberGalleryStep(dx < 0 ? 1 : -1);
+      x0 = null;
+    }, { passive: true });
+  });
+})();
+</script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
   "@type": "Product",
   "name": {{ product.title | json }},
   "description": {{ product.description | strip_html | truncate: 300 | json }},
-  {% if product.featured_image %}"image": {{ product.featured_image | image_url: width: 1200 | prepend: "https:" | json }},{% endif %}
+  {%- if product.images.size > 0 -%}
+  "image": [{% for image in product.images %}{{ image | image_url: width: 1200 | prepend: "https:" | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+  {%- endif -%}
   "sku": {{ v.sku | json }},
   "brand": { "@type": "Brand", "name": "Ember & Iron" },
   "offers": {
