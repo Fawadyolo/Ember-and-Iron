@@ -74,7 +74,7 @@
   .pgal { display: flex; flex-direction: column; gap: 12px; }
   /* Main image — self-sized square so it can never collapse */
   .pgal-main { position: relative; width: 100%; aspect-ratio: 1 / 1; background: var(--paper-light, #241c16); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; overflow: hidden; cursor: zoom-in; }
-  .pgal-main > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; }
+  .pgal-main > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .pgal-zoom { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(22,17,13,.55); color: #fff; cursor: pointer; z-index: 2; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease; }
   .pgal-zoom:hover { background: var(--ember-deep, #bb3d12); }
   /* Thumbnails */
