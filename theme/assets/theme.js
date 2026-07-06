@@ -2327,3 +2327,116 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { passive: true });
 })();
+
+// ---- Motion layer: scroll reveals ----
+// Classes are added here, not in the markup, so a no-JS load (and crawlers)
+// see the page fully rendered. Skipped entirely under reduced motion.
+(function(){
+  if (!('IntersectionObserver' in window) ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('js-motion');
+
+  document.querySelectorAll('.module-head, .editorial-inner > div:first-child, .footer-cta')
+    .forEach(el => el.classList.add('reveal'));
+  document.querySelectorAll('.products, .bundles-grid, .howto-grid, .editorial-stats')
+    .forEach(el => el.classList.add('reveal-group'));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      en.target.classList.add('in');
+      io.unobserve(en.target);
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .reveal-group').forEach(el => io.observe(el));
+})();
+
+// ---- Hero ember drift ----
+// A sparse canvas of rising embers between the video and the headline.
+// Deferred to idle (same first-paint budget rule as the hero video), paused
+// when the hero is off-screen or the tab is hidden.
+(function(){
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const hero = document.querySelector('.hero.hero-video');
+  if (!hero) return;
+  const canvas = document.createElement('canvas');
+  canvas.className = 'hero-embers';
+  canvas.setAttribute('aria-hidden', 'true');
+  hero.insertBefore(canvas, hero.querySelector('.hero-text'));
+  const ctx = canvas.getContext('2d');
+  const css = getComputedStyle(document.documentElement);
+  const palette = ['--ember', '--flame', '--amber']
+    .map(v => css.getPropertyValue(v).trim())
+    .filter(c => /^#[0-9a-f]{6}$/i.test(c));
+  if (!palette.length) palette.push('#E8571F');
+
+  let W = 0, H = 0;
+  const size = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = hero.clientWidth; H = hero.clientHeight;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+
+  const parts = [];
+  const spawn = (anywhere) => ({
+    x: Math.random() * W,
+    y: anywhere ? Math.random() * H : H + 8,
+    r: 0.9 + Math.random() * 1.9,
+    v: 14 + Math.random() * 30,
+    amp: 8 + Math.random() * 20,
+    ph: Math.random() * Math.PI * 2,
+    fl: 1 + Math.random() * 2.5,
+    a: 0.22 + Math.random() * 0.4,
+    col: palette[Math.floor(Math.random() * palette.length)],
+    t: 0,
+  });
+
+  let running = false, raf = 0, last = 0, heroVisible = true;
+  const tick = (now) => {
+    if (!running) return;
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < parts.length; i++) {
+      const p = parts[i];
+      p.t += dt;
+      p.y -= p.v * dt;
+      if (p.y < -10) { parts[i] = spawn(false); continue; }
+      const x = p.x + Math.sin(p.t * 0.9 + p.ph) * p.amp;
+      const flick = 0.7 + 0.3 * Math.sin(p.t * p.fl * 6.28 + p.ph);
+      const rise = Math.min(p.t / 1.2, 1);                          // ease in after spawn
+      const headroom = Math.min(Math.max(p.y / (H * 0.3), 0), 1);   // fade near the top
+      ctx.globalAlpha = p.a * flick * rise * headroom;
+      const g = ctx.createRadialGradient(x, p.y, 0, x, p.y, p.r * 3);
+      g.addColorStop(0, p.col);
+      g.addColorStop(1, p.col + '00');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, p.y, p.r * 3, 0, 6.29);
+      ctx.fill();
+    }
+    raf = requestAnimationFrame(tick);
+  };
+  const play = () => { if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(tick); };
+  const stop = () => { running = false; cancelAnimationFrame(raf); };
+  const sync = () => ((heroVisible && !document.hidden) ? play() : stop());
+
+  const start = () => {
+    size();
+    for (let i = 0; i < 22; i++) parts.push(spawn(true));
+    window.addEventListener('resize', size);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((en) => { heroVisible = en[0].isIntersecting; sync(); }).observe(hero);
+    }
+    document.addEventListener('visibilitychange', sync);
+    sync();
+  };
+  const schedule = () => (window.requestIdleCallback
+    ? requestIdleCallback(start, { timeout: 2000 })
+    : setTimeout(start, 400));
+  if (document.readyState === 'complete') schedule();
+  else window.addEventListener('load', schedule);
+})();

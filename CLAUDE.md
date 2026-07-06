@@ -19,6 +19,9 @@
 - [`BRAND.md`](./BRAND.md) — catalog, voice, palette, SEO keywords
 - [`SHOPIFY.md`](./SHOPIFY.md) — Shopify/headless plan, Meta Pixel, the
   `shopify-dev-mcp` dev tool, access/token safety, `npx` cache gotcha
+- [`marketing/PLAYBOOK.md`](./marketing/PLAYBOOK.md) — marketing ops: tool→job
+  map (Higgsfield/Meta/Shopify/Blender), credit costs, launch order, and the
+  project skills `/product-stills`, `/product-ad`, `/social-reel`
 - [`README.md`](./README.md) — overview + production path
 
 ## Claude Code working notes

@@ -3181,3 +3181,55 @@
     .hero.hero-video { min-height: 76vh; }
     .hero.hero-video .hero-text { padding: 84px 24px; }
   }
+
+  /* ============================================================
+     MOTION LAYER — quiet ember drift + scroll reveals.
+     The .reveal/.reveal-group classes are added by JS, never in
+     markup, so a no-JS load (and crawlers) see everything; the
+     whole layer is disabled under prefers-reduced-motion.
+     ============================================================ */
+  .hero-embers {
+    position: absolute;
+    inset: 0;
+    width: 100%;  /* canvas is replaced: inset alone won't stretch it */
+    height: 100%;
+    z-index: 1; /* above the scrim (same z, later in DOM), below .hero-text */
+    pointer-events: none;
+  }
+
+  /* hero copy settles in once per load */
+  html.js-motion .hero-text > * {
+    opacity: 0;
+    animation: hero-rise 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+  html.js-motion .hero-text > *:nth-child(2) { animation-delay: 0.12s; }
+  html.js-motion .hero-text > *:nth-child(3) { animation-delay: 0.24s; }
+  html.js-motion .hero-text > *:nth-child(4) { animation-delay: 0.36s; }
+  @keyframes hero-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* scroll reveals — singles, and grids whose children stagger */
+  html.js-motion .reveal,
+  html.js-motion .reveal-group > * {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  html.js-motion .reveal.in,
+  html.js-motion .reveal-group.in > * {
+    opacity: 1;
+    transform: none;
+  }
+  html.js-motion .reveal-group.in > *:nth-child(2) { transition-delay: 0.08s; }
+  html.js-motion .reveal-group.in > *:nth-child(3) { transition-delay: 0.16s; }
+  html.js-motion .reveal-group.in > *:nth-child(4) { transition-delay: 0.24s; }
+  html.js-motion .reveal-group.in > *:nth-child(n+5) { transition-delay: 0.3s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js-motion .hero-text > * { animation: none; opacity: 1; }
+    html.js-motion .reveal,
+    html.js-motion .reveal-group > * { opacity: 1; transform: none; transition: none; }
+    .hero-embers { display: none; }
+  }
