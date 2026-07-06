@@ -1,5 +1,6 @@
 {% layout 'product' %}
 {%- assign v = product.selected_or_first_available_variant -%}
+{%- assign first = product.images.first -%}
 <div class="wrap">
   <nav class="crumb">
     <a href="{{ routes.root_url }}">Home</a> /
@@ -9,32 +10,30 @@
   <article class="pdp">
     <div class="pdp-grid">
       <div class="pdp-media">
-        {%- if product.images.size > 1 -%}
-          {%- comment -%} Multi-image gallery: main stage + scrollable thumbnails {%- endcomment -%}
-          <div class="pdp-art pgal" data-count="{{ product.images.size }}" data-i="0" role="group" aria-label="{{ product.images.size }} product photos">
-            {%- for image in product.images -%}
-              <img class="pgal-slide{% if forloop.first %} on{% endif %}"
-                   src="{{ image | image_url: width: 1000 }}"
-                   alt="{{ image.alt | default: product.title | escape }} &mdash; photo {{ forloop.index }}"
-                   width="1000" height="1000"
-                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async"
-                   data-i="{{ forloop.index0 }}">
-            {%- endfor -%}
-            <button type="button" class="pgal-nav prev" onclick="emberGalleryStep(-1)" aria-label="Previous photo">&lsaquo;</button>
-            <button type="button" class="pgal-nav next" onclick="emberGalleryStep(1)" aria-label="Next photo">&rsaquo;</button>
-            <div class="pgal-count"><span class="pgal-cur">1</span> / {{ product.images.size }}</div>
-          </div>
-          <div class="pgal-thumbs">
-            {%- for image in product.images -%}
-              <button type="button" class="pgal-thumb{% if forloop.first %} on{% endif %}" data-i="{{ forloop.index0 }}" onclick="emberGalleryGo({{ forloop.index0 }})" aria-label="Show photo {{ forloop.index }}">
-                <img src="{{ image | image_url: width: 160 }}" alt="" width="80" height="80" loading="lazy" decoding="async">
+        {%- if product.images.size > 0 -%}
+          <div class="pgal">
+            <div class="pgal-main" id="pgalMain">
+              <img id="pgalMainImg"
+                   src="{{ first | image_url: width: 1200 }}"
+                   alt="{{ first.alt | default: product.title | escape }}"
+                   width="1200" height="1200" loading="eager" decoding="async">
+              <button type="button" class="pgal-zoom" aria-label="Zoom image">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
               </button>
-            {%- endfor -%}
+            </div>
+            {%- if product.images.size > 1 -%}
+              <div class="pgal-thumbs" aria-label="Product photos">
+                {%- for image in product.images -%}
+                  <button type="button" class="pgal-thumb{% if forloop.first %} on{% endif %}"
+                          data-full="{{ image | image_url: width: 1600 }}"
+                          data-alt="{{ image.alt | default: product.title | escape }}"
+                          aria-label="Show photo {{ forloop.index }}">
+                    <img src="{{ image | image_url: width: 200 }}" alt="" width="90" height="90" loading="lazy" decoding="async">
+                  </button>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
           </div>
-        {%- elsif product.featured_image -%}
-          <img src="{{ product.featured_image | image_url: width: 900 }}"
-               alt="{{ product.featured_image.alt | default: product.title | escape }}"
-               width="900" height="900" loading="eager" decoding="async">
         {%- else -%}
           {{ 'product-1' | placeholder_svg_tag }}
         {%- endif -%}
@@ -64,50 +63,95 @@
   </article>
 </div>
 
-{%- comment -%} Gallery styles + behaviour (self-contained; no theme.js/.css dependency) {%- endcomment -%}
+{%- comment -%} Zoom lightbox (top-level so it overlays everything) {%- endcomment -%}
+<div class="pgal-lightbox" id="pgalZoom" aria-hidden="true">
+  <button type="button" class="pgal-lb-close" aria-label="Close">&times;</button>
+  <img id="pgalZoomImg" src="" alt="" width="1600" height="1600">
+  <div class="pgal-lb-hint">Click image to zoom &middot; Esc to close</div>
+</div>
+
 <style>
-  .pdp-art.pgal { display: block; padding: 0; position: relative; }
-  .pgal-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; opacity: 0; transition: opacity .3s ease; }
-  .pgal-slide.on { opacity: 1; }
-  .pgal-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(22,17,13,.5); color: #fff; font-size: 24px; line-height: 0; cursor: pointer; z-index: 3; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease; }
-  .pgal-nav:hover { background: var(--ember-deep, #bb3d12); }
-  .pgal-nav.prev { left: 12px; } .pgal-nav.next { right: 12px; }
-  .pgal-count { position: absolute; right: 12px; bottom: 12px; z-index: 3; font-weight: 700; font-size: 12px; letter-spacing: .04em; color: #fff; background: rgba(22,17,13,.5); padding: 5px 10px; border-radius: 999px; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
-  .pgal-thumbs { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x proximity; }
-  .pgal-thumb { flex: 0 0 auto; width: 66px; height: 66px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--paper-light, #44484c); cursor: pointer; scroll-snap-align: start; transition: border-color .2s ease; }
-  .pgal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pgal { display: flex; flex-direction: column; gap: 12px; }
+  /* Main image — self-sized square so it can never collapse */
+  .pgal-main { position: relative; width: 100%; aspect-ratio: 1 / 1; background: var(--paper-light, #241c16); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; overflow: hidden; cursor: zoom-in; }
+  .pgal-main > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; }
+  .pgal-zoom { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(22,17,13,.55); color: #fff; cursor: pointer; z-index: 2; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease; }
+  .pgal-zoom:hover { background: var(--ember-deep, #bb3d12); }
+  /* Thumbnails */
+  .pgal-thumbs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x proximity; }
+  .pgal-thumb { flex: 0 0 auto; width: 72px; height: 72px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--paper-light, #241c16); cursor: pointer; scroll-snap-align: start; transition: border-color .2s ease; }
+  .pgal-thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .pgal-thumb.on { border-color: var(--ember, #e8571f); }
   .pgal-thumb:hover { border-color: var(--muted, #beb8ae); }
-  @media (max-width: 640px) { .pgal-thumb { width: 54px; height: 54px; } .pgal-nav { width: 34px; height: 34px; font-size: 20px; } }
+  /* Zoom lightbox */
+  .pgal-lightbox { position: fixed; inset: 0; z-index: 99999; background: rgba(10,8,6,.94); display: none; align-items: center; justify-content: center; }
+  .pgal-lightbox.open { display: flex; }
+  .pgal-lightbox > img { max-width: 92vw; max-height: 92vh; object-fit: contain; cursor: zoom-in; transition: transform .2s ease; will-change: transform; }
+  .pgal-lightbox > img.zoomed { transform: scale(2.4); cursor: zoom-out; }
+  .pgal-lb-close { position: fixed; top: 16px; right: 20px; width: 46px; height: 46px; border: 0; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; font-size: 28px; line-height: 1; cursor: pointer; z-index: 100000; }
+  .pgal-lb-close:hover { background: rgba(255,255,255,.26); }
+  .pgal-lb-hint { position: fixed; bottom: 18px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.66); font-size: 13px; letter-spacing: .03em; pointer-events: none; }
+  @media (max-width: 640px) { .pgal-thumb { width: 60px; height: 60px; } .pgal-lb-hint { font-size: 12px; } }
 </style>
 <script>
 (function () {
-  function gal() { return document.querySelector('.pdp-art.pgal'); }
-  window.emberGalleryGo = function (i) {
-    var el = gal(); if (!el) return;
-    var n = parseInt(el.dataset.count, 10) || 1;
-    i = ((i % n) + n) % n; el.dataset.i = i;
-    el.querySelectorAll('.pgal-slide').forEach(function (s) { s.classList.toggle('on', +s.dataset.i === i); });
-    var media = el.parentNode;
-    media.querySelectorAll('.pgal-thumb').forEach(function (t) { t.classList.toggle('on', +t.dataset.i === i); });
-    var cur = el.querySelector('.pgal-cur'); if (cur) cur.textContent = i + 1;
-    var at = media.querySelector('.pgal-thumb[data-i="' + i + '"]');
-    if (at && at.scrollIntoView) at.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
-  };
-  window.emberGalleryStep = function (d) { var el = gal(); if (el) emberGalleryGo((parseInt(el.dataset.i, 10) || 0) + d); };
+  function mainImg() { return document.getElementById('pgalMainImg'); }
+  function overlay() { return document.getElementById('pgalZoom'); }
+  function zoomImg() { return document.getElementById('pgalZoomImg'); }
+
+  function selectThumb(btn) {
+    var full = btn.getAttribute('data-full');
+    var alt = btn.getAttribute('data-alt') || '';
+    var mi = mainImg();
+    if (mi && full) { mi.src = full; mi.alt = alt; }
+    var all = document.querySelectorAll('.pgal-thumb');
+    for (var i = 0; i < all.length; i++) all[i].classList.toggle('on', all[i] === btn);
+    if (btn.scrollIntoView) btn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  }
+  function openZoom() {
+    var mi = mainImg(); if (!mi) return;
+    var zi = zoomImg();
+    zi.src = mi.currentSrc || mi.src; zi.alt = mi.alt;
+    zi.classList.remove('zoomed'); zi.style.transformOrigin = 'center center';
+    overlay().classList.add('open'); overlay().setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeZoom() {
+    var ov = overlay(); if (!ov) return;
+    ov.classList.remove('open'); ov.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('click', function (e) {
+    var thumb = e.target.closest && e.target.closest('.pgal-thumb');
+    if (thumb) { selectThumb(thumb); return; }
+    if (e.target.closest && (e.target.closest('.pgal-zoom') || e.target.closest('.pgal-main'))) { openZoom(); return; }
+    if (e.target.closest && e.target.closest('.pgal-lb-close')) { closeZoom(); return; }
+    var ov = overlay();
+    if (ov && e.target === ov) closeZoom();
+  });
   document.addEventListener('keydown', function (e) {
-    if (!gal()) return;
-    if (e.key === 'ArrowLeft') emberGalleryStep(-1);
-    else if (e.key === 'ArrowRight') emberGalleryStep(1);
+    if (e.key === 'Escape') { closeZoom(); return; }
+    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && document.querySelector('.pgal-thumb')) {
+      var list = Array.prototype.slice.call(document.querySelectorAll('.pgal-thumb'));
+      var idx = 0;
+      for (var i = 0; i < list.length; i++) if (list[i].classList.contains('on')) idx = i;
+      idx = (idx + (e.key === 'ArrowRight' ? 1 : -1) + list.length) % list.length;
+      selectThumb(list[idx]);
+    }
   });
   document.addEventListener('DOMContentLoaded', function () {
-    var el = gal(); if (!el) return; var x0 = null;
-    el.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
-    el.addEventListener('touchend', function (e) {
-      if (x0 == null) return;
-      var dx = e.changedTouches[0].clientX - x0;
-      if (Math.abs(dx) > 40) emberGalleryStep(dx < 0 ? 1 : -1);
-      x0 = null;
+    var zi = zoomImg(); if (!zi) return;
+    zi.addEventListener('click', function (e) { e.stopPropagation(); this.classList.toggle('zoomed'); });
+    zi.addEventListener('mousemove', function (e) {
+      if (!this.classList.contains('zoomed')) return;
+      var r = this.getBoundingClientRect();
+      this.style.transformOrigin = ((e.clientX - r.left) / r.width * 100) + '% ' + ((e.clientY - r.top) / r.height * 100) + '%';
+    });
+    zi.addEventListener('touchmove', function (e) {
+      if (!this.classList.contains('zoomed') || !e.touches[0]) return;
+      var r = this.getBoundingClientRect();
+      this.style.transformOrigin = ((e.touches[0].clientX - r.left) / r.width * 100) + '% ' + ((e.touches[0].clientY - r.top) / r.height * 100) + '%';
     }, { passive: true });
   });
 })();
