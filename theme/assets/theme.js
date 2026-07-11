@@ -2285,7 +2285,14 @@ initRouter();
   const startVideo = () => {
     if (started) return; started = true;
     const src = v.querySelector('source[data-src]');
-    if (src && !src.src) { src.src = src.getAttribute('data-src'); }
+    if (src && !src.src) {
+      // Phones get the portrait render (1080x1920) when one is provided
+      const mobile = window.matchMedia('(max-width: 760px)').matches;
+      const mSrc = src.getAttribute('data-src-mobile');
+      src.src = (mobile && mSrc) ? mSrc : src.getAttribute('data-src');
+      const mPoster = v.getAttribute('data-poster-mobile');
+      if (mobile && mPoster) v.poster = mPoster;
+    }
     v.preload = 'auto';
     v.load();
     const p = v.play(); if (p && p.catch) p.catch(() => {});
@@ -2347,8 +2354,24 @@ document.addEventListener('DOMContentLoaded', () => {
       en.target.classList.add('in');
       io.unobserve(en.target);
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal, .reveal-group').forEach(el => io.observe(el));
+
+  // Safety net: tall grids (taller than ~8x the viewport slice a phone shows)
+  // and SPA view switches can slip past the observer — force-reveal anything
+  // still hidden shortly after a view becomes active.
+  const pinActive = () => {
+    document.querySelectorAll('.view.active .reveal:not(.in), .view.active .reveal-group:not(.in)')
+      .forEach(el => el.classList.add('in'));
+  };
+  new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.target.classList && m.target.classList.contains('view') && m.target.classList.contains('active')) {
+        setTimeout(pinActive, 350);
+        return;
+      }
+    }
+  }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
 })();
 
 // ---- Hero ember drift ----

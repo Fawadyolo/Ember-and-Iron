@@ -26,8 +26,17 @@
     .site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
     .brand{font-weight:800;letter-spacing:-0.01em;font-size:1.15rem;color:var(--on-dark)}
     .brand em{color:var(--ember);font-style:normal}
-    .site-nav a{margin-left:22px;color:var(--ink-soft);font-weight:500;font-size:0.95rem}
+    .site-nav{display:flex;align-items:center;gap:22px}
+    .site-nav a{color:var(--ink-soft);font-weight:500;font-size:0.95rem;white-space:nowrap}
     .site-nav a:hover{color:var(--ember)}
+    .cart-link em{font-style:normal;display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;margin-left:6px;border-radius:999px;background:var(--ember);color:#fff;font-size:.72rem;font-weight:800;vertical-align:2px}
+    @media(max-width:520px){
+      .wrap{padding:0 20px}
+      .site-head .wrap{height:56px}
+      .brand{font-size:1rem;white-space:nowrap}
+      .site-nav{gap:14px}
+      .site-nav a{font-size:.85rem}
+    }
     .site-foot{border-top:1px solid var(--line);margin-top:72px;padding:38px 0;color:var(--muted-soft);font-size:0.9rem}
     .site-foot .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
     .site-foot a:hover{color:var(--ember)}
@@ -75,10 +84,10 @@
   <header class="site-head">
     <div class="wrap">
       <a href="{{ routes.root_url }}" class="brand">Ember <em>&amp;</em> Iron</a>
-      <nav class="site-nav">
-        <a href="{{ routes.root_url }}">Home</a>
+      <nav class="site-nav" aria-label="Store">
         <a href="{{ collections.grills.url }}">Grills</a>
         <a href="{{ collections.accessories.url }}">Accessories</a>
+        <a href="{{ routes.cart_url }}" class="cart-link" aria-label="Cart, {{ cart.item_count }} items">Cart{% if cart.item_count > 0 %}<em>{{ cart.item_count }}</em>{% endif %}</a>
       </nav>
     </div>
   </header>

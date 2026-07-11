@@ -89,7 +89,7 @@
 
         {%- if product.description != blank -%}
           <details class="pdp-detail" open>
-            <summary>About this {{ product.type | default: 'product' | downcase }}</summary>
+            <summary>About this product</summary>
             <div class="pdp-desc">{{ product.description }}</div>
           </details>
         {%- endif -%}
