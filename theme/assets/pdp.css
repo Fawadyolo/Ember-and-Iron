@@ -1,0 +1,53 @@
+/* Wider media column so the vertical thumb strip + main image both fit */
+  .pdp-grid { grid-template-columns: minmax(0, 600px) 1fr; }
+  /* Gallery: vertical thumbnail strip on the left, main image on the right */
+  .pgal { display: flex; gap: 12px; align-items: flex-start; }
+  .pgal-thumbs { display: flex; flex-direction: column; gap: 10px; flex: 0 0 72px; max-height: 516px; overflow-y: auto; padding-right: 2px; }
+  .pgal-thumb { flex: 0 0 auto; width: 72px; height: 72px; padding: 0; border: 2px solid transparent; border-radius: 10px; overflow: hidden; background: var(--paper-light, #241c16); cursor: pointer; transition: border-color .2s ease; }
+  .pgal-thumb > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pgal-thumb.on { border-color: var(--ember, #e8571f); }
+  .pgal-thumb:hover { border-color: var(--muted, #beb8ae); }
+  .pgal-main { position: relative; flex: 1; aspect-ratio: 1 / 1; background: var(--paper-light, #241c16); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; overflow: hidden; cursor: zoom-in; }
+  .pgal-main > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pgal-zoom { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: rgba(22,17,13,.55); color: #fff; cursor: pointer; z-index: 2; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); transition: background .2s ease; }
+  .pgal-zoom:hover { background: var(--ember-deep, #bb3d12); }
+  /* Price with struck-through compare-at */
+  .pdp-price { display: flex; align-items: baseline; gap: 12px; margin: 8px 0; }
+  .pdp-was { color: var(--muted-soft); text-decoration: line-through; font-size: 1rem; font-weight: 500; }
+  /* Short intro + Read more */
+  .pdp-intro-wrap { margin: 10px 0 4px; }
+  .pdp-intro { position: relative; max-height: 5.1em; overflow: hidden; color: var(--ink-soft); transition: max-height .25s ease; }
+  .pdp-intro p { margin: 0 0 5px; }
+  .pdp-intro::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1.8em; background: linear-gradient(rgba(58,61,64,0), var(--paper)); pointer-events: none; transition: opacity .2s ease; }
+  .pdp-intro.open { max-height: 120em; }
+  .pdp-intro.open::after, .pdp-intro.noclamp::after { opacity: 0; }
+  .pdp-intro.noclamp { max-height: none; }
+  .pdp-readmore { margin-top: 4px; background: none; border: 0; color: var(--ember); font-weight: 600; cursor: pointer; padding: 0; font-size: .9rem; font-family: inherit; }
+  .pdp-readmore:hover { color: var(--ember-deep); }
+  /* Features | Ideal For side by side */
+  .pdp-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 40px; margin: 12px 0 2px; }
+  .pdp-sec h3 { color: var(--ink); font-size: .95rem; margin: 0 0 6px; font-weight: 700; }
+  .pdp-sec ul { list-style: none; padding: 0; margin: 0; }
+  .pdp-sec li { position: relative; padding-left: 18px; color: var(--ink-soft); font-size: .9rem; margin: 4px 0; }
+  .pdp-sec li::before { content: ""; position: absolute; left: 0; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--ember); }
+  .pdp-sec p { grid-column: 1 / -1; color: var(--muted-soft); font-size: .85rem; margin-top: 8px; }
+  /* Zoom lightbox */
+  .pgal-lightbox { position: fixed; inset: 0; z-index: 99999; background: rgba(10,8,6,.94); display: none; align-items: center; justify-content: center; }
+  .pgal-lightbox.open { display: flex; }
+  .pgal-lightbox > img { max-width: 92vw; max-height: 92vh; object-fit: contain; cursor: zoom-in; transition: transform .2s ease; will-change: transform; }
+  .pgal-lightbox > img.zoomed { transform: scale(2.4); cursor: zoom-out; }
+  .pgal-lb-close { position: fixed; top: 16px; right: 20px; width: 46px; height: 46px; border: 0; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; font-size: 28px; line-height: 1; cursor: pointer; z-index: 100000; }
+  .pgal-lb-close:hover { background: rgba(255,255,255,.26); }
+  .pgal-lb-hint { position: fixed; bottom: 18px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.66); font-size: 13px; letter-spacing: .03em; pointer-events: none; }
+  /* Compact spacing overrides (tighten the base .pdp-* rhythm) */
+  .pdp { padding: 14px 0; }
+  .pdp-info h1 { margin-bottom: 3px; line-height: 1.1; }
+  .pdp-avail { margin-bottom: 10px; }
+  .pdp-cta { margin: 4px 0 2px; }
+  .pdp-meta { margin-top: 12px; padding-top: 12px; }
+  @media (max-width: 900px) { .pdp-sections { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) {
+    .pgal { flex-direction: column-reverse; }
+    .pgal-thumbs { flex-direction: row; flex: 0 0 auto; max-height: none; width: 100%; overflow-x: auto; }
+    .pgal-lb-hint { font-size: 12px; }
+  }

@@ -469,6 +469,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&display=swap" rel="stylesheet">
 {{ 'theme.css' | asset_url | stylesheet_tag }}
 {{ content_for_header }}
 </head>
@@ -606,7 +607,7 @@
 </section>
 
 <!-- How to Grill -->
-<section class="module" id="how-to" style="background: var(--paper-light); border-top: 1px solid var(--line);">
+<section class="module" id="how-to">
   <div class="module-inner">
     <div class="module-head">
       <h2>How to <em>grill</em></h2>
@@ -1264,7 +1265,7 @@
   </div>
 </div>
 
-{{ 'theme.js' | asset_url | script_tag }}
+<script src="{{ 'theme.js' | asset_url }}" defer></script>
 <div style="display:none" aria-hidden="true">{{ content_for_layout }}</div>
 </body>
 </html>

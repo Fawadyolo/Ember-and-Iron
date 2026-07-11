@@ -1,20 +1,20 @@
 
   :root {
-    --paper: #3A3D40;          /* cast-iron steel page */
-    --paper-light: #44484C;    /* raised steel surfaces (cards, inputs, summary) */
+    --paper: #16110D;          /* forged charcoal — solid brand page */
+    --paper-light: #221B15;    /* raised warm surfaces (cards, inputs, summary) */
     --media: #F3F0E8;          /* light tiles for product art + photos */
-    --ink: #ECE7DD;            /* foreground text — warm off-white */
-    --ink-soft: #D3CDC3;
-    --muted: #BEB8AE;
-    --muted-soft: #ADA79D;
-    --solid: #16110D;          /* charcoal — solid dark elements/buttons */
+    --ink: #F2EBDE;            /* foreground text — warm off-white */
+    --ink-soft: #D9CFBF;
+    --muted: #B7AA95;
+    --muted-soft: #A09280;
+    --solid: #0D0906;          /* near-black — solid dark elements/buttons */
     --on-dark: #F4EFE6;        /* light text on dark elements */
-    --ember: #E8571F;          /* glowing ember accent (brighter for steel) */
+    --ember: #E8571F;          /* glowing ember accent */
     --ember-deep: #BB3D12;
     --amber: #EE9A33;
-    --forest: #16110D;         /* charcoal slabs (announce, editorial, footer accents) */
-    --line: rgba(255, 255, 255, 0.13);
-    --line-strong: rgba(255, 255, 255, 0.28);
+    --forest: #0D0906;         /* darker slabs (announce, editorial, footer accents) */
+    --line: rgba(242, 235, 222, 0.14);
+    --line-strong: rgba(242, 235, 222, 0.30);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -3233,3 +3233,116 @@
     html.js-motion .reveal-group > * { opacity: 1; transform: none; transition: none; }
     .hero-embers { display: none; }
   }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   FORGED — premium overrides (solid charcoal, Anton/Fraunces display,
+   Traeger-style hero). Appended last so it wins the cascade.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ---- display typography: industrial caps + flame italic accent ---- */
+.hero h1,
+.module-head h2,
+.editorial h2,
+.footer-brand,
+.bundles-module h2 {
+  font-family: 'Anton', 'Figtree', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  line-height: .98;
+}
+.module-head h2 em,
+.editorial h2 em,
+.hero h1 em {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -.01em;
+  color: var(--ember);
+  padding-right: .06em;
+}
+
+/* ---- hero: full-bleed 16:9 film that melts into the solid page ---- */
+.hero.hero-video {
+  aspect-ratio: 16 / 9;
+  min-height: 560px;
+  max-height: 88vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+}
+.hero.hero-video .hero-scrim {
+  background:
+    radial-gradient(118% 118% at 50% 42%, rgba(22,17,13,0) 38%, var(--paper) 99%),
+    linear-gradient(0deg, var(--paper) 0%, rgba(22,17,13,0) 22%),
+    linear-gradient(180deg, rgba(22,17,13,.6) 0%, rgba(22,17,13,0) 24%);
+}
+.hero.hero-video .hero-text {
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.hero.hero-video .hero-text h1 {
+  font-size: clamp(3rem, 7.2vw, 6.4rem);
+  color: #F6F1E7;
+  text-shadow: 0 2px 30px rgba(0,0,0,.5);
+}
+.hero.hero-video .hero-eyebrow {
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.hero.hero-video .hero-eyebrow::before { display: none; }
+.hero.hero-video .hero-sub {
+  margin: 18px auto 30px;
+  max-width: 560px;
+}
+.hero.hero-video .hero-actions { justify-content: center; }
+@media (max-width: 760px) {
+  .hero.hero-video { aspect-ratio: auto; min-height: 78vh; }
+}
+
+/* ---- buttons: one confident CTA language ---- */
+.btn-primary, .btn-hero, .add-btn, button.place-order {
+  border-radius: 12px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-primary:hover, .btn-hero:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(232, 87, 31, .32);
+}
+.btn-hero { padding: 18px 38px; font-size: 1rem; }
+
+/* ---- solid sections: no tinted slabs, one continuous material ---- */
+section.module#how-to { background: var(--paper) !important; border-top: 1px solid var(--line) !important; }
+.editorial { background: var(--forest); }
+.footer { background: var(--forest); }
+
+/* ---- premium finish ---- */
+.product, .bundle-card, .card {
+  border-radius: 16px;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+.product:hover, .bundle-card:hover, .card:hover {
+  border-color: var(--line-strong);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .38);
+}
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+::selection { background: var(--ember); color: #fff; }
+
+/* ---- hide every scrollbar "guide" on horizontal rails ---- */
+.pgal-thumbs, .rail-track, [class*="thumbs"] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.pgal-thumbs::-webkit-scrollbar, .rail-track::-webkit-scrollbar, [class*="thumbs"]::-webkit-scrollbar {
+  display: none;
+}

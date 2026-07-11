@@ -3,24 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#3A3D40">
+  <meta name="theme-color" content="#16110D">
   <title>{{ page_title }}</title>
   {%- if page_description -%}<meta name="description" content="{{ page_description | escape }}">{%- endif -%}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&display=swap" rel="stylesheet">
   {{ content_for_header }}
   <style>
     :root{
-      --paper:#3A3D40;--paper-light:#44484C;--media:#F3F0E8;--ink:#ECE7DD;--ink-soft:#D3CDC3;
-      --muted:#BEB8AE;--muted-soft:#ADA79D;--solid:#16110D;--on-dark:#F4EFE6;--ember:#E8571F;
-      --ember-deep:#BB3D12;--amber:#EE9A33;--line:rgba(255,255,255,0.13);--line-strong:rgba(255,255,255,0.28);
+      --paper:#16110D;--paper-light:#221B15;--media:#F3F0E8;--ink:#F2EBDE;--ink-soft:#D9CFBF;
+      --muted:#B7AA95;--muted-soft:#A09280;--solid:#0D0906;--on-dark:#F4EFE6;--ember:#E8571F;
+      --ember-deep:#BB3D12;--amber:#EE9A33;--line:rgba(242,235,222,0.14);--line-strong:rgba(242,235,222,0.30);
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Figtree',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
-    .wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+    .wrap{max-width:100%;margin:0;padding:0 40px}
     .site-head{position:sticky;top:0;z-index:10;background:rgba(22,17,13,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
     .site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
     .brand{font-weight:800;letter-spacing:-0.01em;font-size:1.15rem;color:var(--on-dark)}
@@ -38,9 +39,9 @@
     .crumb{padding:24px 0 0;color:var(--muted-soft);font-size:0.85rem}
     .crumb a:hover{color:var(--ember)}
     .pdp{padding:24px 0}
-    .pdp-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
-    .pdp-media{background:var(--media);border-radius:16px;padding:32px;display:flex;align-items:center;justify-content:center;min-height:420px}
-    .pdp-media img,.pdp-media svg{border-radius:8px;object-fit:contain;max-height:460px;width:auto}
+    .pdp-grid{display:grid;grid-template-columns:minmax(0,520px) 1fr;gap:48px;align-items:start}
+    .pdp-media{display:block}
+    .pdp-media svg{width:100%;height:auto;border-radius:8px}
     .pdp-cat{text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--muted-soft);margin-bottom:8px}
     .pdp-info h1{font-size:2.1rem;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:var(--on-dark);margin-bottom:6px}
     .pdp-price{font-size:1.6rem;font-weight:800;color:var(--ember);margin:14px 0}
@@ -67,7 +68,7 @@
     .cart-row{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);color:var(--ink-soft)}
     .cart-foot{display:flex;justify-content:space-between;align-items:center;padding-top:20px;flex-wrap:wrap;gap:16px}
     .cart-foot strong{font-size:1.2rem;color:var(--ink)}
-    @media (max-width:760px){.pdp-grid{grid-template-columns:1fr;gap:24px}.pdp-media{min-height:300px}}
+    @media (max-width:760px){.pdp-grid{grid-template-columns:1fr;gap:24px}}
   </style>
 </head>
 <body>
