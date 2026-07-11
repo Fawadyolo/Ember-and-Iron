@@ -3291,12 +3291,6 @@
   color: #F6F1E7;
   text-shadow: 0 2px 30px rgba(0,0,0,.5);
 }
-.hero.hero-video .hero-eyebrow {
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-.hero.hero-video .hero-eyebrow::before { display: none; }
 .hero.hero-video .hero-sub {
   margin: 18px auto 30px;
   max-width: 560px;
@@ -3345,4 +3339,27 @@ section.module#how-to { background: var(--paper) !important; border-top: 1px sol
 }
 .pgal-thumbs::-webkit-scrollbar, .rail-track::-webkit-scrollbar, [class*="thumbs"]::-webkit-scrollbar {
   display: none;
+}
+
+
+/* ---- announce bar: rotating ticker (3 messages, CSS-only) ---- */
+.announce { position: relative; height: 33px; padding: 0; overflow: hidden; }
+.announce .announce-msg {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transform: translateY(10px);
+  animation: announce-cycle 10.5s infinite;
+}
+.announce .announce-msg:nth-child(2) { animation-delay: 3.5s; }
+.announce .announce-msg:nth-child(3) { animation-delay: 7s; }
+@keyframes announce-cycle {
+  0%    { opacity: 0; transform: translateY(10px); }
+  3.5%  { opacity: 1; transform: none; }
+  30%   { opacity: 1; transform: none; }
+  33.5% { opacity: 0; transform: translateY(-10px); }
+  100%  { opacity: 0; transform: translateY(-10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .announce .announce-msg { animation: none; }
+  .announce .announce-msg:first-child { opacity: 1; transform: none; }
 }
