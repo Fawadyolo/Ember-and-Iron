@@ -2274,36 +2274,30 @@ showCookieBannerIfNeeded();
 if (getCookieConsent() === 'accept') initAnalytics();
 initRouter();
 
-// Hero video: DEFER loading until after first paint so the 3 MB clip doesn't
-// block the initial page load. The warm "forge" gradient placeholder shows
-// instantly; the video then streams in and plays.
+// Hero video: the <source media=...> pair in the markup lets the preload scanner
+// pick the right render and start fetching within ~100ms of navigation. It used
+// to be JS-assigned behind window.onload, which put the hero behind every
+// analytics script on the page — ~10s on live. Don't reintroduce that gate:
+// preload/autoplay already keep the clip off the critical path.
 (function(){
   const v = document.getElementById('hero-video');
   if (!v) return;
   v.muted = true;
-  let started = false;
-  const startVideo = () => {
-    if (started) return; started = true;
-    const src = v.querySelector('source[data-src]');
-    if (src && !src.src) {
-      // Phones get the portrait render (1080x1920) when one is provided
-      const mobile = window.matchMedia('(max-width: 760px)').matches;
-      const mSrc = src.getAttribute('data-src-mobile');
-      src.src = (mobile && mSrc) ? mSrc : src.getAttribute('data-src');
-      const mPoster = v.getAttribute('data-poster-mobile');
-      if (mobile && mPoster) v.poster = mPoster;
-    }
-    v.preload = 'auto';
-    v.load();
+  const nearHero = () => window.scrollY <= window.innerHeight * 1.2;
+  const tryPlay = () => {
+    if (!nearHero()) return;
     const p = v.play(); if (p && p.catch) p.catch(() => {});
   };
-  const tryPlay = () => { if (!started) return; const p = v.play(); if (p && p.catch) p.catch(() => {}); };
-  // Kick off only after the page has fully loaded (or on idle), not during render
-  const schedule = () => (window.requestIdleCallback
-    ? requestIdleCallback(startVideo, { timeout: 1500 })
-    : setTimeout(startVideo, 300));
-  if (document.readyState === 'complete') schedule();
-  else window.addEventListener('load', schedule);
+  tryPlay();
+  // Autoplay gets refused outright in iOS Low Power Mode and some data-saver
+  // modes, even when muted. Without a retry the hero sits frozen on its poster
+  // for the whole session, so recover on the first interaction or tab refocus.
+  let everPlayed = false;
+  v.addEventListener('playing', () => { everPlayed = true; }, { once: true });
+  const retry = () => { if (!everPlayed) tryPlay(); };
+  ['pointerdown', 'touchstart', 'keydown'].forEach(evt =>
+    window.addEventListener(evt, retry, { passive: true }));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) retry(); });
   // Pause when scrolled well past the hero to save resources; resume when back
   window.addEventListener('scroll', () => {
     if (!document.getElementById('view-shop').classList.contains('active')) return;
