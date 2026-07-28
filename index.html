@@ -769,6 +769,16 @@
     background: var(--line);
     border: 1px solid var(--line);
   }
+  /* BBQ Grills & Smokers: two products per row, block centered in the layout */
+  #product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 884px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  @media (max-width: 560px) {
+    #product-grid { grid-template-columns: 1fr; max-width: 440px; }
+  }
   .product {
     background: var(--paper);
     padding: 28px;
@@ -3570,15 +3580,18 @@
   .hero-actions { gap: 20px; }
   /* Bold, fire-coloured primary CTA (mirrors whiskit's prominent Shop Now) */
   .hero .btn-hero {
-    background: var(--ember-deep);
+    background: rgba(187, 61, 18, 0.5); /* --ember-deep #BB3D12 at 50% opacity */
     color: #fff;
+    /* theme.css uppercases every CTA via a global rule index.html doesn't carry;
+       scoped here so the hero matches the store without restyling other buttons */
+    text-transform: uppercase;
     font-weight: 600;
     font-size: 15px;
     padding: 18px 32px;
     border-radius: 4px;
     white-space: nowrap;
   }
-  .hero .btn-hero:hover { background: #8F2C0B; }
+  .hero .btn-hero:hover { background: rgba(187, 61, 18, 0.72); }
   .hero .btn-text {
     color: var(--ink);
     font-weight: 500;
@@ -3668,11 +3681,49 @@
   .hero.hero-video .hero-sub { color: rgba(250,246,239,0.92); max-width: 540px; }
   .hero.hero-video .hero-eyebrow { color: rgba(250,246,239,0.82); }
   .hero.hero-video .hero-eyebrow::before { background: var(--ember); }
-  .hero.hero-video .btn-text { color: #FAF6EF; border-bottom-color: rgba(250,246,239,0.55); }
-  .hero.hero-video .btn-text:hover { color: var(--ember); border-bottom-color: var(--ember); }
+  .hero.hero-video .btn-text {
+    color: #FAF6EF;
+    background: rgba(183, 65, 14, 0.5); /* #B7410E at 50% opacity */
+    border: none;
+    border-radius: 4px;
+    padding: 18px 26px;
+    /* match the "Shop grills" button font (as it renders in the hero) */
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .hero.hero-video .btn-text:hover { color: #FAF6EF; background: rgba(183, 65, 14, 0.72); }
   @media (max-width: 900px) {
     .hero.hero-video { min-height: 76vh; }
     .hero.hero-video .hero-text { padding: 84px 24px; }
+  }
+  /* Mobile: two compact buttons side by side, centered near the lower hero.
+     `section.` prefix lifts specificity above the later .hero.hero-video cascade. */
+  @media (max-width: 560px) {
+    section.hero.hero-video { align-items: flex-end; }
+    section.hero.hero-video .hero-text { padding: 0 14px 44px; }
+    section.hero.hero-video .hero-actions {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    section.hero.hero-video .hero-actions .btn-hero,
+    section.hero.hero-video .hero-actions .btn-text {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 200px;
+      padding: 10px 8px;
+      font-size: 10px;
+      letter-spacing: .02em;
+      gap: 5px;
+      white-space: nowrap;
+      justify-content: center;
+      text-align: center;
+    }
+    section.hero.hero-video .hero-actions .btn-hero svg { width: 11px; height: 11px; }
   }
 
   /* ============================================================
@@ -3802,8 +3853,7 @@
   </script>
   <div class="hero-scrim"></div>
   <div class="hero-text">
-    <h1>Real Fire.<br><em>Real Flavour.</em><span class="sr-only"> Hand-built BBQ charcoal grills, smokers and fire tools in Pakistan — for Eid, tikka, camping, picnics, winter cookouts and outdoor hosting.</span></h1>
-    <p class="hero-sub">Hand-welded charcoal grills, smokers and fire tools — made for Eid tikka, winter cookouts, camping trips and every gathering around the fire.</p>
+    <h1 class="sr-only">Real Fire. Real Flavour. Hand-built BBQ charcoal grills, smokers and fire tools in Pakistan — for Eid, tikka, camping, picnics, winter cookouts and outdoor hosting.</h1>
     <div class="hero-actions">
       <button class="btn-primary btn-hero" onclick="document.getElementById('catalog').scrollIntoView()">
         Shop grills
