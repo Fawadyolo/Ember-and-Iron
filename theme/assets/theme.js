@@ -2372,14 +2372,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.view.active .reveal:not(.in), .view.active .reveal-group:not(.in)')
       .forEach(el => el.classList.add('in'));
   };
-  new MutationObserver((muts) => {
+  // Watch only the view containers for their active-class flip, not the whole
+  // <body> subtree — the old subtree observer fired its callback on every class
+  // change anywhere on the page (hovers, toggles, animations), needless main-
+  // thread work. The views are static, so binding each one directly is enough.
+  const viewObserver = new MutationObserver((muts) => {
     for (const m of muts) {
-      if (m.target.classList && m.target.classList.contains('view') && m.target.classList.contains('active')) {
+      if (m.target.classList && m.target.classList.contains('active')) {
         setTimeout(pinActive, 350);
         return;
       }
     }
-  }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  });
+  document.querySelectorAll('.view').forEach(v =>
+    viewObserver.observe(v, { attributes: true, attributeFilter: ['class'] }));
 })();
 
 // ---- Hero ember drift ----
@@ -2388,6 +2394,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // when the hero is off-screen or the tab is hidden.
 (function(){
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // Skip the continuous canvas animation where it costs the most for the least:
+  // phones (weakest CPUs, where responsiveness matters most), data-saver mode,
+  // and genuinely low-memory / low-core devices. The video hero still plays; this
+  // just keeps the main thread free for scrolling and taps.
+  const conn = navigator.connection || {};
+  const lowPower = (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+                   (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  if (conn.saveData || lowPower || window.matchMedia('(max-width: 760px)').matches) return;
   const hero = document.querySelector('.hero.hero-video');
   if (!hero) return;
   const canvas = document.createElement('canvas');
