@@ -569,6 +569,17 @@
     border-left: 1px solid var(--line);
   }
   .cart-drawer.open { transform: translateX(0); }
+  /* Mobile: keep the cart a slide-in drawer, not a full-screen page. Leave a
+     dimmed sliver of the page visible on the left and round the leading edge so
+     it clearly reads as an overlay you can dismiss, the way it does on desktop. */
+  @media (max-width: 560px) {
+    .cart-drawer {
+      width: 90%;
+      border-top-left-radius: 18px;
+      border-bottom-left-radius: 18px;
+      box-shadow: -12px 0 40px rgba(0, 0, 0, 0.45);
+    }
+  }
   .cart-head {
     padding: 24px 28px;
     border-bottom: 1px solid var(--line);
