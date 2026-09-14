@@ -472,8 +472,10 @@
 <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&display=swap" rel="stylesheet">
+<!-- Fonts: one combined request instead of two render-blocking round trips.
+     Figtree drops the unused 900 weight; Fraunces is pinned to the 600 italic the
+     CSS actually uses (it was requesting 500+700 and the browser substituted). -->
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" rel="stylesheet">
 {{ 'theme.css' | asset_url | stylesheet_tag }}
 {{ content_for_header }}
 </head>

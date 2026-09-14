@@ -8,8 +8,9 @@
   {%- if page_description -%}<meta name="description" content="{{ page_description | escape }}">{%- endif -%}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&display=swap" rel="stylesheet">
+  <!-- One combined Google Fonts request (was two). Figtree drops the unused 900
+       weight; Fraunces pinned to the 600 italic the CSS actually uses. -->
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" rel="stylesheet">
   {{ content_for_header }}
   <style>
     :root{
