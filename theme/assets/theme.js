@@ -145,6 +145,10 @@ const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2026-04/graphql.json`;
 // Shopify variant IDs keyed by our SKU (e.g. 'EMB-001' -> 'gid://shopify/ProductVariant/xxx')
 // Populated after loadShopifyProducts() runs
 const shopifyVariantIds = {};
+// Resolves when the initial product/variant sync has finished. Checkout awaits
+// this so a customer who clicks "Proceed to checkout" before the async sync lands
+// (slow mobile connection) waits for it instead of seeing "Checkout unavailable".
+let shopifyReady = null;
 
 // Baked Shopify URL handles so product links are crawlable in the static HTML
 // (real SEO hrefs before/without the live sync; sync keeps them fresh via p.handle)
@@ -1671,7 +1675,17 @@ async function showCheckout() {
   const btn = document.getElementById('checkout-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Taking you to checkout…'; }
   let url = null;
-  try { url = await createShopifyCart(); }
+  try {
+    // Wait for the initial product sync so we don't fail just because the async
+    // fetch hasn't landed yet (the common cause of a false "unavailable").
+    if (shopifyReady) { try { await shopifyReady; } catch (e) {} }
+    // If the sync never populated the variant map (first attempt was blocked or
+    // failed on a flaky connection), try once more before giving up.
+    if (!Object.keys(shopifyVariantIds).length) {
+      try { await loadShopifyProducts(); } catch (e) {}
+    }
+    url = await createShopifyCart();
+  }
   catch (e) { console.warn('[checkout] Shopify cart failed', e); }
   if (url) { window.location.href = url; return; }   // → Shopify-hosted checkout
   // No matching Shopify variants (store not configured / unreachable)
@@ -2266,7 +2280,7 @@ renderProducts();
 renderPackages();
 renderAccessories();
 loadCart();
-loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
+shopifyReady = loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
 updateCartUI();
 updateWishlistUI();
 renderRecentlyViewed();
