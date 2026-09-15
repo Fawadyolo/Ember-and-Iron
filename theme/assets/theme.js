@@ -2327,9 +2327,23 @@ initRouter();
 // rather than each page having its own basket.
 (function () {
   try {
-    if (new URLSearchParams(location.search).get('cart') !== 'open') return;
-    openCart();
-    // Drop the param so a refresh or Back doesn't pop the drawer open again.
+    var q = new URLSearchParams(location.search);
+    var view = q.get('view');                 // e.g. ?view=wishlist
+    var wantCart = q.get('cart') === 'open';
+    if (!view && !wantCart) return;
+    // The SPA's own paths (/wishlist, /faq, ...) 404 on Shopify, so the Liquid
+    // pages deep-link back here with a param rather than a path that doesn't exist.
+    // Go through the view's own show* helper where there is one — those render the
+    // contents before switching, so a bare switchView would land on an empty grid.
+    if (view === 'wishlist' && typeof showWishlist === 'function') {
+      showWishlist();
+    } else if (view === 'accessories' && typeof showAccessories === 'function') {
+      showAccessories();
+    } else if (view && Object.prototype.hasOwnProperty.call(ROUTES, 'view-' + view)) {
+      switchView('view-' + view);
+    }
+    if (wantCart) openCart();
+    // Drop the param so a refresh or Back doesn't re-trigger it.
     history.replaceState({}, '', location.pathname + location.hash);
   } catch (e) {}
 })();
