@@ -220,6 +220,11 @@ async function loadShopifyProducts() {
   // Storefront API token is granted media access; the live featuredImage below
   // then takes over automatically, keeping photos in sync with Shopify.
   const BAKED_IMAGES = {
+    'EMB-001': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-skewer-mode-34-1x1_0260c12f-7a39-48e2-a0b4-b4dc04a06449.png?v=1784581712',
+    'EMB-002': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-skewer-mode-34-1x1_dad26d06-dc88-4ffe-a469-cebb16722c57.png?v=1784582749',
+    'EMB-003': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-rear-34-1x1.png?v=1783263249',
+    'EMB-004': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-rear-34-1x1_0a7d68b2-2925-4507-bfb6-d6ce321c65a3.png?v=1784583308',
+    'EMB-013': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/H86b681d959d4416da285d08ffed298cdq.jpg_960x960q80.jpg?v=1784097319',
     'EMB-010': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/9228085797105354232_677cdeaf-91f3-4c16-8044-0c16a4dc661f.jpg?v=1780958038',
     'EMB-011': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/zeeshan-local-electronics-kitchen-home-appliances-kitchen-appliances-digital-meat-thermometer-7054415593601_1024x_5d989b00-417c-447a-89f8-45e366c4a8cd.webp?v=1780957836',
     'EMB-016': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/images.jpg?v=1780957407',
@@ -329,6 +334,16 @@ async function createShopifyCart() {
 }
 
 // ===== Media helper: real image if uploaded, else line-art SVG =====
+// Resize Shopify-hosted images to the size actually displayed. Raw featuredImage
+// URLs are up to 1024px / ~1 MB each dropped into a ~300px card slot — that is why
+// photos crawled in on scroll. Appending a width param makes the CDN serve a
+// right-sized file, and srcset lets each device pick the smallest one it needs.
+function shopifyImg(url, w) {
+  if (!url) return url;
+  if (url.indexOf('cdn.shopify.com') === -1 && url.indexOf('/cdn/shop/') === -1) return url;
+  if (/[?&]width=/.test(url)) return url; // already sized — leave it
+  return url + (url.indexOf('?') === -1 ? '?' : '&') + 'width=' + w;
+}
 function mediaFor(item, opts) {
   opts = opts || {};
   const cls = opts.className || 'product-art';
@@ -336,7 +351,17 @@ function mediaFor(item, opts) {
   const altRaw = item ? `${item.name} — ${item.cat === 'grills' ? 'charcoal BBQ grill' : 'BBQ grilling accessory'} | Ember & Iron Pakistan` : '';
   const altText = altRaw.replace(/"/g, '&quot;');
   if (id && window.PRODUCT_IMAGES && window.PRODUCT_IMAGES[id]) {
-    return `<img src="${window.PRODUCT_IMAGES[id]}" alt="${altText}" class="${cls} real-photo" width="600" height="600" loading="lazy" decoding="async">`;
+    const raw = window.PRODUCT_IMAGES[id];
+    // First card row (and the PDP hero image) load eagerly so the shopper isn't
+    // staring at empty tiles; everything else stays lazy.
+    const load = opts.eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+    const sizes = opts.sizes || '(max-width: 700px) 45vw, 300px';
+    const resizable = (raw.indexOf('cdn.shopify.com') !== -1 || raw.indexOf('/cdn/shop/') !== -1) && !/[?&]width=/.test(raw);
+    if (resizable) {
+      const srcset = [300, 450, 600, 900, 1024].map(w => `${shopifyImg(raw, w)} ${w}w`).join(', ');
+      return `<img src="${shopifyImg(raw, 600)}" srcset="${srcset}" sizes="${sizes}" alt="${altText}" class="${cls} real-photo" width="600" height="600" ${load} decoding="async">`;
+    }
+    return `<img src="${raw}" alt="${altText}" class="${cls} real-photo" width="600" height="600" ${load} decoding="async">`;
   }
   // Give the line-art an accessible, keyword-relevant label
   return artSvg(item && item.art).replace('<svg ', `<svg role="img" aria-label="${altText}" `);
@@ -909,7 +934,7 @@ function renderProduct(p) {
         <button class="wishlist-btn ${wished ? 'active' : ''}" data-wid="${p.id}" type="button" onclick="toggleWishlist('${p.id}', event)" aria-label="${wished ? 'Remove from wishlist' : 'Save to wishlist'}" aria-pressed="${wished}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        ${mediaFor(p)}
+        ${mediaFor(p, { eager: true, sizes: '(max-width: 700px) 92vw, 520px' })}
       </div>
       <div class="pdp-info">
         <div class="pdp-meta">${p.id} · ${p.cat}</div>
@@ -942,8 +967,9 @@ function renderProduct(p) {
 }
 
 // Shared product card markup
-function productCardHtml(p, idPrefix) {
+function productCardHtml(p, idPrefix, opts) {
   idPrefix = idPrefix || 'prod';
+  opts = opts || {};
   const s = stockState(p);
   const articleClass = 'product' + (s.soldOut ? ' sold-out' : '');
   const addBtn = s.soldOut
@@ -960,7 +986,7 @@ function productCardHtml(p, idPrefix) {
         <button class="wishlist-btn ${wished ? 'active' : ''}" data-wid="${p.id}" onclick="toggleWishlist('${p.id}', event)" aria-label="${wished ? 'Remove from wishlist' : 'Save to wishlist'}" aria-pressed="${wished}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <a class="art-clickable" href="${productUrl(p)}" onclick="showProduct(event, '${p.id}')" aria-label="View ${p.name}">${mediaFor(p)}</a>
+        <a class="art-clickable" href="${productUrl(p)}" onclick="showProduct(event, '${p.id}')" aria-label="View ${p.name}">${mediaFor(p, { eager: opts.eager })}</a>
       </div>
       <div class="product-meta">
         <span>${p.id}</span>
@@ -1370,7 +1396,9 @@ function renderProducts() {
   const items = featuredGrillIds
     .map(id => products.find(p => p.id === id))
     .filter(Boolean);
-  grid.innerHTML = items.map(p => productCardHtml(p, 'prod')).join('');
+  // Eager-load the first row (the first products a shopper reaches) so they are
+  // never staring at empty tiles; the rest lazy-load as they scroll.
+  grid.innerHTML = items.map((p, i) => productCardHtml(p, 'prod', { eager: i < 2 })).join('');
 }
 
 // ===== Render bundles =====
