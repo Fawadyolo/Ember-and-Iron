@@ -79,6 +79,9 @@
     .cart-foot{display:flex;justify-content:space-between;align-items:center;padding-top:20px;flex-wrap:wrap;gap:16px}
     .cart-foot strong{font-size:1.2rem;color:var(--ink)}
     @media (max-width:760px){.pdp-grid{grid-template-columns:1fr;gap:24px}}
+    #ember-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);z-index:60;max-width:calc(100% - 32px);background:var(--solid,#16110D);color:var(--on-dark,#F4EFE6);border:1px solid var(--line);border-radius:12px;padding:12px 18px;font-size:.92rem;box-shadow:0 12px 34px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+    #ember-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+    #ember-toast a{color:var(--flame,#FF9D5C);font-weight:700;text-decoration:underline}
   </style>
 </head>
 <body>
@@ -88,7 +91,7 @@
       <nav class="site-nav" aria-label="Store">
         <a href="{{ collections.grills.url }}">Grills</a>
         <a href="{{ collections.accessories.url }}">Accessories</a>
-        <a href="{{ routes.cart_url }}" class="cart-link" aria-label="Cart, {{ cart.item_count }} items">Cart{% if cart.item_count > 0 %}<em>{{ cart.item_count }}</em>{% endif %}</a>
+        <a href="{{ routes.root_url }}?cart=open" class="cart-link" aria-label="Cart">Cart<em data-cart-count hidden>0</em></a>
       </nav>
     </div>
   </header>
@@ -99,5 +102,59 @@
       <a href="{{ routes.root_url }}">Back to store &rarr;</a>
     </div>
   </footer>
+  <script>
+  /* Cart bridge. These Liquid pages don't load theme.js, so on their own they post
+     into Shopify's native cart while the homepage drawer reads a localStorage cart —
+     a shopper moving between the two finds their basket empty and the sale is lost.
+     Write to the same localStorage cart the drawer uses, and point "Cart" at it.
+     (Superseded once the storefront moves onto Shopify's own cart.) */
+  (function () {
+    var KEY = 'ember-cart-v1';
+    function read() {
+      try { var r = localStorage.getItem(KEY), o = r ? JSON.parse(r) : null;
+            return (o && typeof o === 'object') ? o : {}; } catch (e) { return {}; }
+    }
+    function write(c) { try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) {} }
+    function paint() {
+      var c = read(), n = 0, k;
+      for (k in c) { if (c[k] && c[k].qty > 0) n += c[k].qty; }
+      var els = document.querySelectorAll('[data-cart-count]');
+      for (var i = 0; i < els.length; i++) { els[i].textContent = n; els[i].hidden = (n === 0); }
+    }
+    function toast(html) {
+      var t = document.getElementById('ember-toast');
+      if (!t) { t = document.createElement('div'); t.id = 'ember-toast'; document.body.appendChild(t); }
+      t.innerHTML = html;
+      t.classList.add('show');
+      clearTimeout(t._h);
+      t._h = setTimeout(function () { t.classList.remove('show'); }, 4000);
+    }
+    document.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form || !form.matches || !form.matches('form.pdp-form')) return;
+      var btn = form.querySelector('.pdp-add[data-sku]');
+      if (!btn || !btn.getAttribute('data-sku')) return;  // no SKU mapped: let Shopify handle it
+      e.preventDefault();
+      var qEl = form.querySelector('[name="quantity"]');
+      var qty = Math.max(1, parseInt(qEl && qEl.value, 10) || 1);
+      var id = btn.getAttribute('data-sku');
+      var title = btn.getAttribute('data-title') || id;
+      var c = read();
+      if (c[id]) { c[id].qty += qty; }
+      else {
+        var type = (btn.getAttribute('data-cat') || '').toLowerCase();
+        c[id] = { id: id, name: title,
+                  price: parseInt(btn.getAttribute('data-price'), 10) || 0,
+                  cat: type.indexOf('grill') !== -1 ? 'grills' : 'accessories',
+                  handle: btn.getAttribute('data-handle') || '',
+                  qty: qty };
+      }
+      write(c); paint();
+      toast('\u2713 ' + title + ' added \u2014 <a href="/?cart=open">View cart</a>');
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paint);
+    else paint();
+  })();
+  </script>
 </body>
 </html>

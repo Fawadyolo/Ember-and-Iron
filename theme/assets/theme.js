@@ -2322,6 +2322,18 @@ showCookieBannerIfNeeded();
 if (getCookieConsent() === 'accept') initAnalytics();
 initRouter();
 
+// The Liquid pages (product / collection / search / cart) send shoppers here with
+// ?cart=open, so the drawer is the single cart surface across the whole store
+// rather than each page having its own basket.
+(function () {
+  try {
+    if (new URLSearchParams(location.search).get('cart') !== 'open') return;
+    openCart();
+    // Drop the param so a refresh or Back doesn't pop the drawer open again.
+    history.replaceState({}, '', location.pathname + location.hash);
+  } catch (e) {}
+})();
+
 // Hero video: the <source media=...> pair in the markup lets the preload scanner
 // pick the right render and start fetching within ~100ms of navigation. It used
 // to be JS-assigned behind window.onload, which put the hero behind every

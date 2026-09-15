@@ -73,7 +73,12 @@
               <input type="number" name="quantity" id="pdpQty" value="1" min="1" inputmode="numeric" aria-label="Quantity">
               <button type="button" class="qty-btn" data-d="1" aria-label="Increase quantity">+</button>
             </div>
-            <button type="submit" class="pdp-add"{% unless product.available %} disabled{% endunless %}>
+            <button type="submit" class="pdp-add"
+                    data-sku="{{ v.sku | escape }}"
+                    data-title="{{ product.title | escape }}"
+                    data-price="{{ v.price | divided_by: 100 }}"
+                    data-cat="{{ product.type | escape }}"
+                    data-handle="{{ product.handle }}"{% unless product.available %} disabled{% endunless %}>
               {% if product.available %}Add to cart{% else %}Sold out{% endif %}
             </button>
           </div>
