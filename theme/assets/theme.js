@@ -2329,8 +2329,20 @@ initRouter();
   try {
     var q = new URLSearchParams(location.search);
     var view = q.get('view');                 // e.g. ?view=wishlist
+    var spa = q.get('spa');                   // a route rescued by the 404 page
     var wantCart = q.get('cart') === 'open';
-    if (!view && !wantCart) return;
+    if (!view && !wantCart && !spa) return;
+    if (spa) {
+      var m = viewFromPath('/' + spa);
+      if (m) {
+        applyRouteContent(m);
+        switchView(m.viewId, { skipRoute: true });
+        // Put the pretty path back in the address bar; a refresh round-trips
+        // through the 404 rescue again and lands in the same place.
+        history.replaceState({}, '', '/' + spa);
+        return;
+      }
+    }
     // The SPA's own paths (/wishlist, /faq, ...) 404 on Shopify, so the Liquid
     // pages deep-link back here with a param rather than a path that doesn't exist.
     // Go through the view's own show* helper where there is one — those render the
