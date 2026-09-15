@@ -358,7 +358,7 @@ function mediaFor(item, opts) {
     const sizes = opts.sizes || '(max-width: 700px) 45vw, 300px';
     const resizable = (raw.indexOf('cdn.shopify.com') !== -1 || raw.indexOf('/cdn/shop/') !== -1) && !/[?&]width=/.test(raw);
     if (resizable) {
-      const srcset = [300, 450, 600, 900, 1024].map(w => `${shopifyImg(raw, w)} ${w}w`).join(', ');
+      const srcset = [150, 300, 450, 600, 900, 1024].map(w => `${shopifyImg(raw, w)} ${w}w`).join(', ');
       return `<img src="${shopifyImg(raw, 600)}" srcset="${srcset}" sizes="${sizes}" alt="${altText}" class="${cls} real-photo" width="600" height="600" ${load} decoding="async">`;
     }
     return `<img src="${raw}" alt="${altText}" class="${cls} real-photo" width="600" height="600" ${load} decoding="async">`;
@@ -366,6 +366,12 @@ function mediaFor(item, opts) {
   // Give the line-art an accessible, keyword-relevant label
   return artSvg(item && item.art).replace('<svg ', `<svg role="img" aria-label="${altText}" `);
 }
+
+// Small thumbnails that appear on demand (cart drawer, checkout summary, search,
+// order detail): only a handful at a time and revealed on a tap, so load them
+// eagerly at thumbnail size. Lazy-loading left blank white tiles in the cart for
+// several seconds on a slow phone — at the highest-intent moment in the funnel.
+const THUMB = { eager: true, sizes: '72px' };
 
 // ===== Product art SVGs =====
 function artSvg(type) {
@@ -687,7 +693,7 @@ function updateCartUI() {
   }
   itemsEl.innerHTML = items.map(i => `
     <div class="cart-item">
-      <div class="cart-item-art">${mediaFor(i)}</div>
+      <div class="cart-item-art">${mediaFor(i, THUMB)}</div>
       <div class="cart-item-info">
         <div class="name">${i.name}</div>
         <div class="qty-row">
@@ -814,7 +820,7 @@ function renderRecentlyViewed() {
   section.style.display = 'block';
   rail.innerHTML = items.map(p => `
     <article class="rv-card" onclick="showProduct(event, '${p.id}')">
-      <div class="rv-art">${mediaFor(p)}</div>
+      <div class="rv-art">${mediaFor(p, { sizes: '(max-width: 700px) 40vw, 180px' })}</div>
       <div class="rv-meta">${p.id} · ${p.cat}</div>
       <div class="name">${p.name}</div>
       <div class="price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
@@ -847,7 +853,7 @@ function renderSuggestions() {
   section.style.display = 'block';
   list.innerHTML = items.map(p => `
     <div class="cart-suggest-item">
-      <div class="cart-suggest-art">${mediaFor(p)}</div>
+      <div class="cart-suggest-art">${mediaFor(p, THUMB)}</div>
       <div class="cart-suggest-info">
         <div class="name">${p.name}</div>
         <div class="price">PKR ${fmt(p.price)}</div>
@@ -1744,7 +1750,7 @@ function renderCheckoutSummary() {
 
   document.getElementById('summary-items').innerHTML = items.map(i => `
     <div class="summary-item">
-      <div class="summary-item-art">${mediaFor(i)}</div>
+      <div class="summary-item-art">${mediaFor(i, THUMB)}</div>
       <div class="summary-item-info">
         <div class="name">${i.name}</div>
         <div class="qty">QTY ${i.qty} · ${i.id}</div>
@@ -2145,7 +2151,7 @@ function showOrderDetail(ref) {
         <h3>Items</h3>
         ${o.items.map(i => `
           <div class="order-detail-item">
-            <div class="order-detail-art">${mediaFor(i)}</div>
+            <div class="order-detail-art">${mediaFor(i, THUMB)}</div>
             <div class="order-detail-info">
               <div class="name">${i.name}</div>
               <div class="qty">QTY ${i.qty} · ${i.id}</div>
@@ -2264,7 +2270,7 @@ function runSearch(query) {
   container.innerHTML = `<div class="search-grid">
     ${matches.map(p => `
       <button class="search-result" onclick="jumpToProduct('${p.id}')">
-        <div class="search-result-art">${mediaFor(p)}</div>
+        <div class="search-result-art">${mediaFor(p, THUMB)}</div>
         <div class="search-result-info">
           <div class="search-result-meta">${p.id} · ${p.cat}</div>
           <div class="search-result-name">${highlightMatch(p.name, q)}</div>
