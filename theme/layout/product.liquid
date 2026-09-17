@@ -88,13 +88,15 @@
     .pdp-desc p{margin:10px 0}
     .pdp-meta{margin-top:20px;font-size:.82rem;color:var(--muted-soft);border-top:1px solid var(--line);padding-top:16px}
     .coll-head{padding:40px 0 8px}
-    .coll-head h1{font-size:2.3rem;font-weight:800;letter-spacing:-0.02em;color:var(--on-dark)}
+    .coll-head h1{font-family:'Anton','Figtree',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.015em;line-height:1.04;font-size:clamp(1.9rem,3.4vw,2.9rem);color:var(--on-dark)}
+    .coll-head h1 em{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;text-transform:none;letter-spacing:-.01em;color:var(--ember)}
     .coll-head p{color:var(--ink-soft);max-width:620px;margin-top:10px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;padding:24px 0}
     .card{background:var(--paper-light);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .2s,transform .2s;display:block}
     .card:hover{border-color:var(--line-strong);transform:translateY(-2px)}
     .card-media{background:var(--media);aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:22px}
     .card-media img,.card-media svg{object-fit:contain;max-height:100%;width:auto}
+    .card-media img{mix-blend-mode:multiply}
     .card-body{padding:16px}
     .card-body h3{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:6px}
     .card-price{color:var(--ember);font-weight:700}

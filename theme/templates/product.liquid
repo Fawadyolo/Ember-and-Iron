@@ -51,10 +51,10 @@
         <h1>{{ product.title }}</h1>
 
         <div class="pdp-price-row">
-          <span class="pdp-price">{{ v.price | money }}</span>
+          <span class="pdp-price">PKR {{ v.price | money_without_currency | split: '.' | first }}</span>
           {%- if v.compare_at_price > v.price -%}
-            <s class="pdp-compare">{{ v.compare_at_price | money }}</s>
-            <span class="pdp-save">Save {{ v.compare_at_price | minus: v.price | money }}</span>
+            <s class="pdp-compare">PKR {{ v.compare_at_price | money_without_currency | split: '.' | first }}</s>
+            <span class="pdp-save">Save PKR {{ v.compare_at_price | minus: v.price | money_without_currency | split: '.' | first }}</span>
           {%- endif -%}
         </div>
 

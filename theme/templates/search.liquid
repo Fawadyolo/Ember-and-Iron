@@ -26,7 +26,7 @@
           </div>
           <div class="card-body">
             <h3>{{ item.title }}</h3>
-            {%- if item.price -%}<div class="card-price">{{ item.price | money }}</div>{%- endif -%}
+            {%- if item.price -%}<div class="card-price">PKR {{ item.price | money_without_currency | split: '.' | first }}</div>{%- endif -%}
           </div>
         </a>
       {%- else -%}

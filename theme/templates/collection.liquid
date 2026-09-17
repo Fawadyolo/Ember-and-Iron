@@ -18,7 +18,7 @@
         </div>
         <div class="card-body">
           <h3>{{ product.title }}</h3>
-          <div class="card-price">{{ product.price | money }}</div>
+          <div class="card-price">PKR {{ product.price | money_without_currency | split: '.' | first }}</div>
         </div>
       </a>
     {%- else -%}
