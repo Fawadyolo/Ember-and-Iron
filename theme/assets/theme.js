@@ -1303,7 +1303,7 @@ const POLICY_PAGES = {
       </div>
     </div>`
   },
-  contact: {
+  'contact-us': {
     eyebrow: 'Get in touch',
     title: 'Contact <em>us</em>',
     body: `<div class="contact-grid">
