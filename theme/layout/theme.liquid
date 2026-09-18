@@ -7,6 +7,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{%- comment -%}
+  Google Search Console verification. The token lives in a theme setting so it can
+  be changed in the theme editor without a code change. Accepts whichever form gets
+  pasted: the full <meta> tag, the DNS-style "google-site-verification=..." string,
+  or the bare token. Renders nothing when the setting is empty.
+{%- endcomment -%}
+{%- assign gsv = settings.google_site_verification | strip -%}
+{%- if gsv contains 'content="' -%}
+  {%- assign gsv = gsv | split: 'content="' | last | split: '"' | first -%}
+{%- endif -%}
+{%- if gsv contains 'google-site-verification=' -%}
+  {%- assign gsv = gsv | split: 'google-site-verification=' | last -%}
+{%- endif -%}
+{%- assign gsv = gsv | strip -%}
+{%- if gsv != blank -%}
+<meta name="google-site-verification" content="{{ gsv | escape }}">
+{%- endif -%}
+
 <title>BBQ Grills, Smokers & Charcoal in Pakistan | Ember &amp; Iron</title>
 <meta name="description" content="Shop hand-built BBQ grills, smokers, charcoal and fire tools in Pakistan. Perfect for Eid tikka, chicken BBQ, winter cookouts, camping, picnics, festivals and outdoor hosting. Free delivery over Rs 12,000.">
 <meta name="keywords" content="BBQ grills Pakistan, charcoal grill, smokers, coal, camping grill, outdoor cooking, picnic BBQ, adventure, Eid BBQ, chicken tikka grill, festival grill, celebrations, hosting, winter BBQ, portable collapsible grill, fire tools, grilling accessories, fire starter, lump charcoal">

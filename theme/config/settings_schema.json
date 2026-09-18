@@ -1,1 +1,28 @@
-[]
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Ember & Iron",
+    "theme_version": "2.6",
+    "theme_author": "Ember & Iron",
+    "theme_documentation_url": "https://emberandiron.pk"
+  },
+  {
+    "name": "Site verification",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Search engine verification"
+      },
+      {
+        "type": "paragraph",
+        "content": "Used to prove you own this domain. Leave blank and nothing is added to the page."
+      },
+      {
+        "type": "text",
+        "id": "google_site_verification",
+        "label": "Google Search Console token",
+        "info": "From Search Console's HTML tag method. Paste the whole tag or just the token — either works."
+      }
+    ]
+  }
+]
