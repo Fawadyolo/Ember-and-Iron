@@ -8,7 +8,7 @@ const products = [
     name: '24" Collapsible Grill',
     cat: 'grills',
     desc: 'Compact 24-inch charcoal grill that folds flat for transport and storage.',
-    price: 0,
+    price: 10999,
     tag: '',
     art: 'portable',
     stock: 12,
@@ -20,10 +20,10 @@ const products = [
     name: '30" Collapsible Grill',
     cat: 'grills',
     desc: 'Larger 30-inch charcoal grill that folds flat for transport and storage.',
-    price: 0,
+    price: 13999,
     tag: '',
     art: 'portable',
-    stock: 8,
+    stock: 13,
     rating: 4.8,
     reviewCount: 31
   },
@@ -32,7 +32,7 @@ const products = [
     name: '24" Collapsible Grill with Grilling Top',
     cat: 'grills',
     desc: 'Foldable 24-inch grill with a flat grilling top for more cooking surface.',
-    price: 0,
+    price: 14999,
     tag: '',
     art: 'tabletop',
     stock: 15,
@@ -44,7 +44,7 @@ const products = [
     name: '30" Collapsible Grill with Grilling Top',
     cat: 'grills',
     desc: 'Foldable 30-inch grill with a flat grilling top for more cooking surface.',
-    price: 0,
+    price: 17999,
     tag: '',
     art: 'tabletop',
     stock: 6,
@@ -53,10 +53,10 @@ const products = [
   },
   {
     id: 'EMB-010',
-    name: 'Lump Charcoal · 10kg',
+    name: 'Lump Charcoal · 5kg',
     cat: 'accessories',
     desc: 'Single-origin acacia lump charcoal. Slow, clean burn.',
-    price: 4200,
+    price: 499,
     tag: '',
     art: 'fuel',
     stock: 50,
@@ -68,22 +68,22 @@ const products = [
     name: 'Instant-Read Meat Thermometer',
     cat: 'accessories',
     desc: 'Digital instant-read probe thermometer with backlit display.',
-    price: 3800,
+    price: 699,
     tag: 'new',
     art: 'thermometer',
-    stock: 3,
+    stock: 33,
     rating: 4.8,
     reviewCount: 65
   },
   {
     id: 'EMB-013',
-    name: 'Fire Starter',
+    name: 'Fire Starter - Natural Waxed Wood Starters - 10 Pieces',
     cat: 'accessories',
     desc: 'Natural wood-wool and wax fire-starter cubes.',
     price: 850,
     tag: '',
     art: 'firestarter',
-    stock: 100,
+    stock: 91,
     rating: 4.4,
     reviewCount: 112
   },
@@ -92,7 +92,7 @@ const products = [
     name: 'BBQ Grill Brush',
     cat: 'accessories',
     desc: 'Brass-bristle grill brush with a built-in scraper.',
-    price: 1400,
+    price: 499,
     tag: '',
     art: 'grillbrush',
     stock: 15,
@@ -104,16 +104,16 @@ const products = [
     name: 'Handheld BBQ Air Blower',
     cat: 'accessories',
     desc: 'Battery-powered handheld blower for fast coal ignition.',
-    price: 3200,
+    price: 1199,
     tag: 'new',
     art: 'blower',
-    stock: 0,
+    stock: 9,
     rating: 4.7,
     reviewCount: 28
   },
   {
     id: 'EMB-019',
-    name: 'Charcoal Bag · 5kg',
+    name: 'Charcoal Bag · 1.5kg',
     cat: 'accessories',
     desc: 'Hardwood charcoal in a resealable kraft bag.',
     price: 1800,
@@ -128,7 +128,7 @@ const products = [
     name: 'Brass Cleaning Brush',
     cat: 'accessories',
     desc: 'Solid brass-bristle brush for deep-cleaning grates, burners and cast iron.',
-    price: 0,
+    price: 1800,
     tag: 'new',
     art: 'brassbrush',
     stock: 25,
@@ -669,6 +669,13 @@ function fmt(n) {
   return n.toLocaleString('en-PK');
 }
 
+// Never print "PKR 0". A zero price means the Shopify sync hasn't supplied one yet,
+// or the product is misconfigured — a real-looking price of zero costs more trust
+// than a placeholder does, and the sync overwrites this within a second anyway.
+function fmtPrice(n) {
+  return (typeof n === 'number' && n > 0) ? fmt(n) : '—';
+}
+
 function updateCartUI() {
   saveCart();
   const items = Object.values(cart);
@@ -823,7 +830,7 @@ function renderRecentlyViewed() {
       <div class="rv-art">${mediaFor(p, { sizes: '(max-width: 700px) 40vw, 180px' })}</div>
       <div class="rv-meta">${p.id} · ${p.cat}</div>
       <div class="name">${p.name}</div>
-      <div class="price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+      <div class="price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
     </article>
   `).join('');
 }
@@ -856,7 +863,7 @@ function renderSuggestions() {
       <div class="cart-suggest-art">${mediaFor(p, THUMB)}</div>
       <div class="cart-suggest-info">
         <div class="name">${p.name}</div>
-        <div class="price">PKR ${fmt(p.price)}</div>
+        <div class="price">PKR ${fmtPrice(p.price)}</div>
       </div>
       <button type="button" class="cart-suggest-add" onclick="addToCart('${p.id}', 1)" aria-label="Add ${p.name}">+</button>
     </div>
@@ -946,7 +953,7 @@ function renderProduct(p) {
         <div class="pdp-meta">${p.id} · ${p.cat}</div>
         <h1>${p.name}</h1>
         ${ratingHtml}
-        <div class="pdp-price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+        <div class="pdp-price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
         <div class="stock-indicator ${s.cls}" style="margin-bottom:24px;"><span class="dot" aria-hidden="true"></span>${s.label}</div>
         <p class="pdp-desc">${p.desc}</p>
         <div class="pdp-actions">
@@ -1004,7 +1011,7 @@ function productCardHtml(p, idPrefix, opts) {
         <span class="dot" aria-hidden="true"></span>${s.label}
       </div>
       <div class="product-foot">
-        <div class="price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+        <div class="price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
         <div class="qty-add">
           <div class="qty-stepper-mini" role="group" aria-label="Quantity for ${p.name}">
             <button type="button" onclick="changeCardQty('${p.id}', -1)" aria-label="Decrease quantity"${s.soldOut ? ' disabled' : ''}>−</button>
@@ -2276,7 +2283,7 @@ function runSearch(query) {
           <div class="search-result-name">${highlightMatch(p.name, q)}</div>
           <div class="search-result-desc">${highlightMatch(p.desc, q)}</div>
         </div>
-        <div class="search-result-price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+        <div class="search-result-price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
       </button>
     `).join('')}
   </div>`;
