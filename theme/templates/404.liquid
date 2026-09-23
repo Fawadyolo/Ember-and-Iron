@@ -7,8 +7,11 @@
    the real 404 below (and its 404 status), so genuine dead links stay dead. */
 (function () {
   var SPA = ['accessories','wishlist','orders','order-confirmed',
-             'shipping','returns','warranty','care','privacy','terms','about','faq','get-in-touch'];
+             'shipping','returns','privacy','terms','about','get-in-touch'];
   var seg = location.pathname.replace(/^\/+|\/+$/g, '');
+  // The FAQ is now a section on the homepage, not its own page — send old /faq
+  // links to that anchor instead of the retired policy view.
+  if (seg === 'faq') { location.replace('/#faq'); return; }
   // Product views are pushed as /product/<sku> by the storefront, so a shared or
   // refreshed product link lands here too.
   var isProduct = /^product\/[A-Za-z0-9._-]+$/.test(seg);

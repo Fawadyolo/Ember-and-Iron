@@ -900,10 +900,10 @@ function renderStars(rating) {
 // ===== Product Detail Page (PDP) =====
 function productSpecsHtml(p) {
   const grillsSpecs = [
-    'Hand-welded 4mm steel cookbox',
+    'Hand-welded 211-grade stainless steel & 16-gauge reinforced metal',
     'Folds flat for easy storage and transport',
     'Includes cast-iron grate',
-    'Hand-built in Lahore, lifetime warranty on cookbox'
+    'Built in Lahore — light to move, built to last'
   ];
   const accSpecs = {
     fuel: ['Single-origin acacia lump charcoal', '10kg resealable kraft bag', 'Low ash, clean smoke'],
@@ -1160,72 +1160,24 @@ const POLICY_PAGES = {
     eyebrow: 'Logistics',
     title: 'Shipping &amp; <em>delivery</em>',
     body: `
-      <p class="lead">Most orders leave the workshop within 48 hours. Delivery is handled by our own riders inside Lahore and by major couriers across Pakistan.</p>
-      <h2>Coverage</h2>
-      <ul>
-        <li>Lahore, Karachi, Islamabad: 2–3 business days</li>
-        <li>Other major cities: 3–5 business days</li>
-        <li>Remote areas: 5–7 business days</li>
-      </ul>
-      <h2>Fees</h2>
-      <p>Free delivery on orders over PKR 12,000. Standard delivery is PKR 1,500 anywhere in Pakistan.</p>
-      <h2>Installation</h2>
-      <p>Free workshop installation in Lahore for grills over PKR 100,000. We unbox, assemble, and brief you on care.</p>
+      <p class="lead">We deliver nationwide across Pakistan.</p>
+      <h2>Delivery time</h2>
+      <p>Orders arrive within 3–5 working days. Cash on delivery is available nationwide.</p>
+      <h2>Free delivery</h2>
+      <p>Free delivery on orders of PKR 15,000 or more.</p>
+      <h2>Questions?</h2>
+      <p>Email <strong>emberandirongrills@gmail.com</strong> or WhatsApp <strong>+92 300 1688772</strong>.</p>
     `
   },
   returns: {
     eyebrow: 'Policy',
     title: 'Returns &amp; <em>refunds</em>',
     body: `
-      <p class="lead">If something isn't right, return it within 30 days for a full refund or exchange.</p>
-      <h2>Eligibility</h2>
-      <ul>
-        <li>Item must be unused and in original packaging</li>
-        <li>Within 30 days of delivery</li>
-        <li>Consumables (charcoal, fire starters) are non-returnable once opened</li>
-      </ul>
-      <h2>Process</h2>
-      <p>Email <strong>returns@emberandiron.pk</strong> with your order number. We'll arrange pickup and process the refund within 7 business days of receipt.</p>
-      <h2>Damage in transit</h2>
-      <p>Photograph the package on receipt before opening if it looks damaged. We replace any transit-damaged item at no cost.</p>
-    `
-  },
-  warranty: {
-    eyebrow: 'Promise',
-    title: 'Lifetime <em>warranty</em>',
-    body: `
-      <p class="lead">Every cookbox we build carries a lifetime warranty against structural failure and burn-through, to the original owner.</p>
-      <h2>What's covered</h2>
-      <ul>
-        <li>Cookbox structural welds</li>
-        <li>Cookbox burn-through</li>
-        <li>Manufacturing defects in tools and accessories (1 year)</li>
-      </ul>
-      <h2>What's not covered</h2>
-      <ul>
-        <li>Cosmetic wear, patina, surface rust from normal use</li>
-        <li>Damage from neglect, modification, or commercial use</li>
-        <li>Consumables and replaceable parts (grates, brush heads)</li>
-      </ul>
-      <h2>How to claim</h2>
-      <p>Email <strong>warranty@emberandiron.pk</strong> with photos and your purchase reference. We respond within 48 hours.</p>
-    `
-  },
-  care: {
-    eyebrow: 'Maintenance',
-    title: 'Care &amp; <em>service</em>',
-    body: `
-      <p class="lead">A well-cared-for grill outlasts its owner. Our cookboxes are designed for daily use and decades of fire.</p>
-      <h2>After every cook</h2>
-      <ul>
-        <li>Brush the grate while still warm</li>
-        <li>Empty ash once cool</li>
-        <li>Leave the lid open until fully cool</li>
-      </ul>
-      <h2>Monthly</h2>
-      <p>Wipe down with a dry cloth. Inspect grates for cracks. Re-season cast-iron grates with food-grade oil.</p>
-      <h2>Seasonal service</h2>
-      <p>We offer free annual servicing for all Ember grills in Lahore. Book a slot at <strong>service@emberandiron.pk</strong>.</p>
+      <p class="lead">Items that arrive damaged or defective are replaced or refunded. All other sales are final.</p>
+      <h2>Damaged or defective on arrival</h2>
+      <p>Report it within 48 hours of delivery at <strong>emberandirongrills@gmail.com</strong> or WhatsApp <strong>+92 300 1688772</strong>, and we'll arrange a replacement or refund.</p>
+      <h2>All other sales</h2>
+      <p>Because each grill is made to order, we're unable to accept returns or exchanges outside of damage or defect.</p>
     `
   },
   privacy: {
@@ -1242,7 +1194,7 @@ const POLICY_PAGES = {
       <h2>How we use it</h2>
       <p>To process your order, deliver products, send shipping updates, and respond to your queries. Marketing emails only with your explicit consent.</p>
       <h2>Your rights</h2>
-      <p>Request a copy of your data, deletion of your account, or unsubscribe from marketing at any time: <strong>privacy@emberandiron.pk</strong>.</p>
+      <p>Request a copy of your data, deletion of your account, or unsubscribe from marketing at any time: <strong>emberandirongrills@gmail.com</strong>.</p>
     `
   },
   terms: {
@@ -1262,95 +1214,37 @@ const POLICY_PAGES = {
   },
   about: {
     eyebrow: 'The workshop',
-    title: 'Our <em>workshop</em>',
+    title: 'Our <em>story</em>',
     body: `
-      <p class="lead">Ember &amp; Iron started in 2018 in a small Lahore workshop with one welder, one anvil, and a stubborn idea: that fire deserves better tools.</p>
-      <h2>How we make things</h2>
-      <p>Every cookbox is hand-welded from 4mm steel. Cast iron is sand-cast at a foundry in Gujranwala that has been pouring metal since 1962. Wooden handles are turned from walnut offcuts in Sialkot.</p>
-      <h2>Why collapsible</h2>
-      <p>Most of our customers live in homes that weren't designed for backyards. Collapsible grills fold flat against a wall when not in use, then come back out for friends, weekends, and slow afternoons. Same fire, less footprint.</p>
-      <h2>Where we are</h2>
-      <p>Workshop visits welcome by appointment. Walton Road, Lahore.</p>
+      <p class="lead">My father loves to barbecue — and he also hates inconvenience. He's a problem-solving brown dad, and it bothered him that he could never comfortably take his grill anywhere.</p>
+      <p>So he did something about it. He took a design, found the vendors and fabricators, and built his own collapsible BBQ grill — one that folds flat, travels anywhere, and solves the hassle of hauling a grill around.</p>
+      <p>A while later I found that grill in the garage. I could see the ingenuity in it — the functional personality of the thing. I started working on it, and here we are: a product designed by my father and engineered by me.</p>
+      <p>Ember &amp; Iron launched in 2024, built in Lahore.</p>
     `
-  },
-  faq: {
-    eyebrow: 'Help',
-    title: 'Frequently asked <em>questions</em>',
-    body: `<div class="faq-list">
-      <div class="faq-item">
-        <button class="faq-q" type="button" onclick="toggleFaq(this)">Do you deliver BBQ grills, charcoal and smokers across Pakistan?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes — we deliver grills, smokers, charcoal and accessories across Pakistan, with free delivery in Lahore, Karachi and Islamabad on orders over Rs 12,000.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button" onclick="toggleFaq(this)">Which grill is best for Eid, tikka parties and hosting?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>For Eid, tikka nights, festivals and hosting, our 30-inch collapsible grills with a grilling top give you the most cooking surface for chicken, koftas and beef tikka.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button" onclick="toggleFaq(this)">Are your grills good for camping, picnics and outdoor adventures?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Absolutely. Our collapsible charcoal grills fold flat and are light enough to carry for camping, picnics, beach trips and outdoor adventures.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button" onclick="toggleFaq(this)">What charcoal or coal do you recommend for BBQ?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>We recommend our single-origin acacia lump charcoal for a clean, long, hot burn — perfect for BBQ, chicken tikka and low-and-slow smoking.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button" onclick="toggleFaq(this)">Can I use a charcoal grill in winter?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes — charcoal grilling is a winter favourite for warm gatherings. Our fire starters and handheld air blower get coals glowing fast even on cold evenings.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" type="button" onclick="toggleFaq(this)">Do your grills and smokers come with a warranty?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Every hand-built cookbox carries a lifetime warranty against burn-through, and accessories carry a 1-year warranty.</p></div>
-      </div>
-    </div>`
   },
   'get-in-touch': {
     eyebrow: 'Get in touch',
     title: 'Contact <em>us</em>',
     body: `<div class="contact-grid">
       <div class="contact-info">
-        <div class="contact-block">
-          <h3>Workshop</h3>
-          <p>Walton Road<br>Lahore 54000, Pakistan</p>
-        </div>
-        <div class="contact-block">
-          <h3>Phone</h3>
-          <p>+92 42 1234 5678<br><span class="hours">Mon–Sat · 10am–7pm</span></p>
-        </div>
-        <div class="contact-block">
-          <h3>WhatsApp</h3>
-          <p>+92 300 1234 567</p>
-        </div>
+        <p class="lead">Questions about a grill, an order, or a delivery? We're glad to help.</p>
         <div class="contact-block">
           <h3>Email</h3>
-          <p>hello@emberandiron.pk<br>support@emberandiron.pk</p>
+          <p><a href="mailto:emberandirongrills@gmail.com">emberandirongrills@gmail.com</a></p>
+        </div>
+        <div class="contact-block">
+          <h3>Phone &amp; WhatsApp</h3>
+          <p><a href="tel:+923001688772">+92 300 1688772</a></p>
+        </div>
+        <div class="contact-block">
+          <h3>Workshop</h3>
+          <p>Walton Road, Lahore, Pakistan</p>
+        </div>
+        <div class="contact-block">
+          <h3>Delivery</h3>
+          <p>We deliver nationwide across Pakistan.</p>
         </div>
       </div>
-      <form class="contact-form" id="contact-form" onsubmit="return submitContactForm(event)">
-        <h3>Send us a note</h3>
-        <div class="field">
-          <label>Your name</label>
-          <input type="text" id="ct-name" required>
-        </div>
-        <div class="field">
-          <label>Email</label>
-          <input type="email" id="ct-email" required>
-        </div>
-        <div class="field">
-          <label>Subject</label>
-          <select id="ct-subject">
-            <option>General enquiry</option>
-            <option>Order status</option>
-            <option>Warranty claim</option>
-            <option>Workshop visit</option>
-            <option>Press</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Message</label>
-          <textarea id="ct-message" rows="5" required></textarea>
-        </div>
-        <button type="submit" class="contact-submit">Send message</button>
-      </form>
     </div>`
   }
 };
@@ -1401,6 +1295,57 @@ function showShop(e, anchor) {
   } else if (onShop) {
     window.scrollTo({top: 0, behavior: 'smooth'});
   }
+}
+
+// ===== Revolving Q&A rotator (homepage #faq) =====
+let faqIndex = 0;
+let faqTimer = null;
+
+function faqSlides() {
+  return Array.from(document.querySelectorAll('#faqRotator .faq-slide'));
+}
+
+function showFaqSlide(i) {
+  const slides = faqSlides();
+  if (!slides.length) return;
+  faqIndex = (i + slides.length) % slides.length;
+  slides.forEach((s, idx) => s.classList.toggle('is-active', idx === faqIndex));
+  const dots = document.querySelectorAll('#faqDots .faq-dot');
+  dots.forEach((d, idx) => d.classList.toggle('is-active', idx === faqIndex));
+}
+
+function rotateFaq(dir) {
+  showFaqSlide(faqIndex + dir);
+  startFaqAuto(); // reset the timer on manual interaction
+}
+
+function startFaqAuto() {
+  if (faqTimer) clearInterval(faqTimer);
+  const slides = faqSlides();
+  if (slides.length < 2) return;
+  faqTimer = setInterval(() => showFaqSlide(faqIndex + 1), 7000);
+}
+
+function initFaqRotator() {
+  const slides = faqSlides();
+  const dotsWrap = document.getElementById('faqDots');
+  if (!slides.length || !dotsWrap) return;
+  dotsWrap.innerHTML = '';
+  slides.forEach((_, idx) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'faq-dot' + (idx === 0 ? ' is-active' : '');
+    b.setAttribute('aria-label', 'Question ' + (idx + 1));
+    b.addEventListener('click', () => { showFaqSlide(idx); startFaqAuto(); });
+    dotsWrap.appendChild(b);
+  });
+  showFaqSlide(0);
+  startFaqAuto();
+}
+
+// Jump to the homepage Q&A section (FAQ links)
+function showFaq(e) {
+  showShop(e, 'faq');
 }
 
 // ===== Render featured products (4 grills) =====
@@ -1555,8 +1500,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===== View switching =====
-const FREE_SHIPPING_THRESHOLD = 12000;
-const SHIPPING_FEE = 1500;
+const FREE_SHIPPING_THRESHOLD = 15000;
+const SHIPPING_FEE = 0; // Delivery fee is never shown in-cart (COD, arranged on delivery)
 const TAX_RATE = 0.17;
 
 // ===== Promo / discount codes =====
@@ -2320,6 +2265,7 @@ loadRecent();
 renderProducts();
 renderPackages();
 renderAccessories();
+initFaqRotator();
 loadCart();
 shopifyReady = loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
 updateCartUI();

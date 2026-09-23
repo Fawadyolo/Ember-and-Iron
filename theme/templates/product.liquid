@@ -65,8 +65,7 @@
         {%- endif -%}
 
         <ul class="pdp-points">
-          <li><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Hand-welded carbon steel &mdash; built to outlive trends</li>
-          <li><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Lifetime warranty against cookbox burn-through</li>
+          <li><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Hand-welded 211-grade stainless steel &amp; 16-gauge reinforced metal &mdash; light to move, built to last</li>
           <li><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Cash on delivery, nationwide</li>
         </ul>
 
@@ -92,7 +91,7 @@
         <div class="pdp-ship">
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
           <div>
-            <strong>Free delivery</strong> on orders over PKR&nbsp;12,000
+            <strong>Free delivery</strong> on orders over PKR&nbsp;15,000
             <span>Ships nationwide &middot; Cash on delivery available</span>
           </div>
         </div>
@@ -104,10 +103,21 @@
           </details>
         {%- endif -%}
         <details class="pdp-detail">
+          <summary>Care &amp; upkeep</summary>
+          <div class="pdp-desc">
+            <ul>
+              <li>Brush the grate while it&rsquo;s still warm after each cook.</li>
+              <li>Let the ash cool completely, then empty it.</li>
+              <li>Leave the lid open until the grill is fully cool.</li>
+              <li>Wipe down with a dry cloth and store somewhere dry.</li>
+            </ul>
+          </div>
+        </details>
+        <details class="pdp-detail">
           <summary>Delivery &amp; returns</summary>
           <div class="pdp-desc">
-            <p>Standard delivery is PKR 350; orders over PKR 12,000 ship free anywhere in Pakistan. Cash on delivery is available nationwide.</p>
-            <p>Items that arrive damaged, or an incorrect order, are replaced or refunded &mdash; report within 48 hours at returns@emberandiron.pk. All other sales are final.</p>
+            <p>Free delivery on orders over PKR 15,000, anywhere in Pakistan. Cash on delivery available nationwide; orders arrive within 3&ndash;5 working days.</p>
+            <p>Items that arrive damaged or defective are replaced or refunded &mdash; report within 48 hours at emberandirongrills@gmail.com. All other sales are final.</p>
           </div>
         </details>
 
@@ -285,6 +295,7 @@
   {%- endif -%}
   "sku": {{ v.sku | json }},
   "brand": { "@type": "Brand", "name": "Ember & Iron" },
+  {%- if product.type == "Grills" -%}"material": "211-grade stainless steel and 16-gauge reinforced metal",{%- endif -%}
   "offers": {
     "@type": "Offer",
     "price": {{ v.price | divided_by: 100.0 | json }},
