@@ -93,6 +93,26 @@
 -%}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{%- if request.path contains '/product/' %}
+<script>
+  // Old in-app product links (/product/EMB-001) render from the app's built-in
+  // demo catalog: line-art placeholder and no live data. Send them to the real
+  // Shopify product page (/products/<handle>) before anything paints.
+  (function () {
+    var m = location.pathname.match(/^\/product\/([^\/]+)\/?$/);
+    if (!m) return;
+    var urls = {
+      {%- for product in collections.all.products limit: 250 -%}
+        {%- for variant in product.variants -%}
+          {%- unless variant.sku == blank %}{{ variant.sku | json }}: {{ product.url | json }},{% endunless -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    };
+    var url = urls[decodeURIComponent(m[1])];
+    if (url) location.replace(url + location.search);
+  })();
+</script>
+{%- endif %}
 <title>BBQ Grills, Smokers & Charcoal in Pakistan | Ember &amp; Iron</title>
 <meta name="description" content="Shop hand-built BBQ grills, smokers, charcoal and fire tools in Pakistan. Perfect for Eid tikka, chicken BBQ, winter cookouts, camping, picnics, festivals and outdoor hosting. Free delivery over Rs 12,000.">
 <meta name="keywords" content="BBQ grills Pakistan, charcoal grill, smokers, coal, camping grill, outdoor cooking, picnic BBQ, adventure, Eid BBQ, chicken tikka grill, festival grill, celebrations, hosting, winter BBQ, portable collapsible grill, fire tools, grilling accessories, fire starter, lump charcoal">
