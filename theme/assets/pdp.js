@@ -7,7 +7,14 @@
     var full = btn.getAttribute('data-full');
     var alt = btn.getAttribute('data-alt') || '';
     var mi = mainImg();
-    if (mi && full) { mi.src = full; mi.alt = alt; }
+    if (mi && full) {
+      // The first image ships a responsive srcset for LCP. srcset wins over src, so
+      // it must be cleared before swapping or the gallery keeps showing image one.
+      mi.removeAttribute('srcset');
+      mi.removeAttribute('sizes');
+      mi.src = full;
+      mi.alt = alt;
+    }
     var all = document.querySelectorAll('.pgal-thumb');
     for (var i = 0; i < all.length; i++) all[i].classList.toggle('on', all[i] === btn);
     if (btn.scrollIntoView) btn.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });

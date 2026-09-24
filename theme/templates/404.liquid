@@ -1,4 +1,20 @@
 {% layout 'product' %}
+<script>
+/* The storefront's info pages (/faq, /shipping, ...) and the accessories/wishlist
+   views are client-side routes on the homepage — as real URLs Shopify has nothing
+   to serve, so a shared or refreshed link used to dead-end here. Hand those few
+   known routes back to the homepage, which restores the view. Anything else keeps
+   the real 404 below (and its 404 status), so genuine dead links stay dead. */
+(function () {
+  var SPA = ['accessories','wishlist','orders','order-confirmed',
+             'shipping','returns','warranty','care','privacy','terms','about','faq','contact-us'];
+  var seg = location.pathname.replace(/^\/+|\/+$/g, '');
+  // Product views are pushed as /product/<sku> by the storefront, so a shared or
+  // refreshed product link lands here too.
+  var isProduct = /^product\/[A-Za-z0-9._-]+$/.test(seg);
+  if (SPA.indexOf(seg) !== -1 || isProduct) location.replace('/?spa=' + encodeURIComponent(seg));
+})();
+</script>
 <div class="wrap" style="text-align:center;padding:80px 24px">
   <div class="pdp-cat">404 — Not found</div>
   <h1 style="font-size:2.3rem;font-weight:800;color:var(--on-dark);margin:12px 0">This page went cold.</h1>

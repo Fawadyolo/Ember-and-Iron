@@ -4,12 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#16110D">
+{%- comment -%}
+  Google Search Console verification. The token lives in a theme setting so it can
+  be changed in the theme editor without a code change. Accepts whichever form gets
+  pasted: the full <meta> tag, the DNS-style "google-site-verification=..." string,
+  or the bare token. Renders nothing when the setting is empty.
+{%- endcomment -%}
+{%- assign gsv = settings.google_site_verification | strip -%}
+{%- if gsv contains 'content="' -%}
+  {%- assign gsv = gsv | split: 'content="' | last | split: '"' | first -%}
+{%- endif -%}
+{%- if gsv contains 'google-site-verification=' -%}
+  {%- assign gsv = gsv | split: 'google-site-verification=' | last -%}
+{%- endif -%}
+{%- assign gsv = gsv | strip -%}
+{%- if gsv != blank -%}
+<meta name="google-site-verification" content="{{ gsv | escape }}">
+{%- endif -%}
+
   <title>{{ page_title }}</title>
   {%- if page_description -%}<meta name="description" content="{{ page_description | escape }}">{%- endif -%}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&display=swap" rel="stylesheet">
+  <!-- One combined Google Fonts request (was two). Figtree drops the unused 900
+       weight; Fraunces pinned to the 600 italic the CSS actually uses. -->
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" rel="stylesheet">
   {{ content_for_header }}
   <style>
     :root{
@@ -22,21 +41,44 @@
     a{color:inherit;text-decoration:none}
     img{max-width:100%;display:block}
     .wrap{max-width:100%;margin:0;padding:0 40px}
-    .site-head{position:sticky;top:0;z-index:10;background:rgba(22,17,13,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-    .site-head .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
-    .brand{font-weight:800;letter-spacing:-0.01em;font-size:1.15rem;color:var(--on-dark)}
-    .brand em{color:var(--ember);font-style:normal}
-    .site-nav{display:flex;align-items:center;gap:22px}
-    .site-nav a{color:var(--ink-soft);font-weight:500;font-size:0.95rem;white-space:nowrap}
-    .site-nav a:hover{color:var(--ember)}
-    .cart-link em{font-style:normal;display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;margin-left:6px;border-radius:999px;background:var(--ember);color:#fff;font-size:.72rem;font-weight:800;vertical-align:2px}
-    @media(max-width:520px){
-      .wrap{padding:0 20px}
-      .site-head .wrap{height:56px}
-      .brand{font-size:1rem;white-space:nowrap}
-      .site-nav{gap:14px}
-      .site-nav a{font-size:.85rem}
+    /* Header mirrors the homepage so the store reads as one site. These pages don't
+       load theme.css, so the matching rules live here. */
+    .announce{background:var(--solid);color:var(--on-dark);font-size:11px;letter-spacing:.12em;text-transform:uppercase;display:flex;justify-content:center;align-items:center;gap:10px;padding:8px 16px;flex-wrap:wrap;text-align:center}
+    .announce .sep{opacity:.45}
+    .site-head{position:sticky;top:0;z-index:50;background:var(--paper);border-bottom:1px solid var(--line)}
+    .header-inner{max-width:1320px;margin:0 auto;padding:18px 32px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+    .primary{display:flex;align-items:center;gap:22px}
+    .primary a{color:var(--ink);font-weight:500;font-size:14px;white-space:nowrap}
+    .primary a:hover{color:var(--ember)}
+    .logo{font-weight:700;font-size:26px;letter-spacing:-.04em;text-align:center;color:var(--on-dark);white-space:nowrap}
+    .logo .ampersand{color:var(--ember);font-weight:400}
+    .header-tools{display:flex;justify-content:flex-end;align-items:center;gap:22px;font-size:14px}
+    .header-tools a{display:flex;align-items:center;gap:6px;color:var(--ink);padding:4px}
+    .header-tools a:hover{color:var(--ember)}
+    .header-tools .count{font-style:normal;display:inline-grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--ember);color:#fff;font-size:.72rem;font-weight:800}
+    .header-tools .count[hidden]{display:none}
+    .mobile-menu-btn{display:none;background:none;border:none;cursor:pointer;padding:4px;color:var(--ink);flex-direction:column;gap:5px;align-items:center;justify-content:center;width:36px;height:36px}
+    .mobile-menu-btn span{display:block;width:20px;height:2px;background:currentColor;border-radius:2px}
+    .mobile-nav{position:fixed;inset:0;z-index:70;background:var(--paper);display:none;flex-direction:column;align-items:flex-start;gap:4px;padding:84px 28px}
+    .mobile-nav.open{display:flex}
+    .mobile-nav a{font-size:1.35rem;font-weight:700;color:var(--ink);padding:12px 0}
+    .mobile-nav a:hover{color:var(--ember)}
+    .mobile-nav-close{position:absolute;top:22px;right:22px;background:none;border:none;color:var(--ink);font-size:1.5rem;line-height:1;cursor:pointer}
+    /* Phones get the single strongest message instead of a three-line stack */
+    @media(max-width:700px){
+      .announce{gap:0;font-size:10px;padding:7px 14px;flex-wrap:nowrap;white-space:nowrap}
+      .announce .sep,.announce .a1,.announce .a2{display:none}
     }
+    @media(max-width:900px){
+      .header-inner{grid-template-columns:auto 1fr auto;padding:14px 20px}
+      .primary{display:none}
+      .mobile-menu-btn{display:flex}
+      .header-tools{gap:12px}
+      .header-tools a span:not(.count){display:none}
+      .header-tools .wishlist-link{display:none}
+      .logo{font-size:21px}
+    }
+    @media(max-width:520px){ .wrap{padding:0 20px} }
     .site-foot{border-top:1px solid var(--line);margin-top:72px;padding:38px 0;color:var(--muted-soft);font-size:0.9rem}
     .site-foot .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
     .site-foot a:hover{color:var(--ember)}
@@ -64,13 +106,15 @@
     .pdp-desc p{margin:10px 0}
     .pdp-meta{margin-top:20px;font-size:.82rem;color:var(--muted-soft);border-top:1px solid var(--line);padding-top:16px}
     .coll-head{padding:40px 0 8px}
-    .coll-head h1{font-size:2.3rem;font-weight:800;letter-spacing:-0.02em;color:var(--on-dark)}
+    .coll-head h1{font-family:'Anton','Figtree',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.015em;line-height:1.04;font-size:clamp(1.9rem,3.4vw,2.9rem);color:var(--on-dark)}
+    .coll-head h1 em{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:600;text-transform:none;letter-spacing:-.01em;color:var(--ember)}
     .coll-head p{color:var(--ink-soft);max-width:620px;margin-top:10px}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;padding:24px 0}
     .card{background:var(--paper-light);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:border-color .2s,transform .2s;display:block}
     .card:hover{border-color:var(--line-strong);transform:translateY(-2px)}
     .card-media{background:var(--media);aspect-ratio:1;display:flex;align-items:center;justify-content:center;padding:22px}
     .card-media img,.card-media svg{object-fit:contain;max-height:100%;width:auto}
+    .card-media img{mix-blend-mode:multiply}
     .card-body{padding:16px}
     .card-body h3{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:6px}
     .card-price{color:var(--ember);font-weight:700}
@@ -78,17 +122,51 @@
     .cart-foot{display:flex;justify-content:space-between;align-items:center;padding-top:20px;flex-wrap:wrap;gap:16px}
     .cart-foot strong{font-size:1.2rem;color:var(--ink)}
     @media (max-width:760px){.pdp-grid{grid-template-columns:1fr;gap:24px}}
+    #ember-toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,16px);z-index:60;max-width:calc(100% - 32px);background:var(--solid,#16110D);color:var(--on-dark,#F4EFE6);border:1px solid var(--line);border-radius:12px;padding:12px 18px;font-size:.92rem;box-shadow:0 12px 34px rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease}
+    #ember-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+    #ember-toast a{color:var(--flame,#FF9D5C);font-weight:700;text-decoration:underline}
   </style>
 </head>
 <body>
+  <div class="announce">
+    <span class="a1">Delivering all over Pakistan</span><span class="sep">&middot;</span>
+    <span class="a2">Hand-built in Lahore</span><span class="sep">&middot;</span>
+    <span class="a3">Free delivery over PKR&nbsp;12,000</span>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" aria-hidden="true">
+    <button class="mobile-nav-close" type="button" aria-label="Close menu">&#10005;</button>
+    <a href="{{ routes.root_url }}#catalog">Shop</a>
+    <a href="{{ collections.accessories.url }}">Accessories</a>
+    <a href="{{ routes.root_url }}#how-to">How to Grill</a>
+    <a href="{{ routes.root_url }}?view=wishlist">Saved items</a>
+    <a href="{{ routes.root_url }}?cart=open">Cart</a>
+  </nav>
   <header class="site-head">
-    <div class="wrap">
-      <a href="{{ routes.root_url }}" class="brand">Ember <em>&amp;</em> Iron</a>
-      <nav class="site-nav" aria-label="Store">
-        <a href="{{ collections.grills.url }}">Grills</a>
+    <div class="header-inner">
+      <nav class="primary" aria-label="Store">
+        <a href="{{ routes.root_url }}#catalog">Shop</a>
         <a href="{{ collections.accessories.url }}">Accessories</a>
-        <a href="{{ routes.cart_url }}" class="cart-link" aria-label="Cart, {{ cart.item_count }} items">Cart{% if cart.item_count > 0 %}<em>{{ cart.item_count }}</em>{% endif %}</a>
+        <a href="{{ routes.root_url }}#how-to">How to Grill</a>
       </nav>
+      <button class="mobile-menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a class="logo" href="{{ routes.root_url }}">Ember <span class="ampersand">&amp;</span> Iron</a>
+      <div class="header-tools">
+        <a href="{{ routes.search_url }}" aria-label="Search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span>Search</span>
+        </a>
+        <a class="wishlist-link" href="{{ routes.root_url }}?view=wishlist" aria-label="Saved items">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span>Saved</span>
+        </a>
+        <a class="cart-link" href="{{ routes.root_url }}?cart=open" aria-label="Cart">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h2l2.4 11.4a2 2 0 0 0 2 1.6h8.2a2 2 0 0 0 2-1.6L21 8H6"/><circle cx="9" cy="21" r="1"/><circle cx="18" cy="21" r="1"/></svg>
+          <span>Cart</span>
+          <em class="count" data-cart-count hidden>0</em>
+        </a>
+      </div>
     </div>
   </header>
   <main>{{ content_for_layout }}</main>
@@ -98,5 +176,75 @@
       <a href="{{ routes.root_url }}">Back to store &rarr;</a>
     </div>
   </footer>
+  <script>
+  /* Cart bridge. These Liquid pages don't load theme.js, so on their own they post
+     into Shopify's native cart while the homepage drawer reads a localStorage cart —
+     a shopper moving between the two finds their basket empty and the sale is lost.
+     Write to the same localStorage cart the drawer uses, and point "Cart" at it.
+     (Superseded once the storefront moves onto Shopify's own cart.) */
+  (function () {
+    var KEY = 'ember-cart-v1';
+    function read() {
+      try { var r = localStorage.getItem(KEY), o = r ? JSON.parse(r) : null;
+            return (o && typeof o === 'object') ? o : {}; } catch (e) { return {}; }
+    }
+    function write(c) { try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) {} }
+    function paint() {
+      var c = read(), n = 0, k;
+      for (k in c) { if (c[k] && c[k].qty > 0) n += c[k].qty; }
+      var els = document.querySelectorAll('[data-cart-count]');
+      for (var i = 0; i < els.length; i++) { els[i].textContent = n; els[i].hidden = (n === 0); }
+    }
+    function toast(html) {
+      var t = document.getElementById('ember-toast');
+      if (!t) { t = document.createElement('div'); t.id = 'ember-toast'; document.body.appendChild(t); }
+      t.innerHTML = html;
+      t.classList.add('show');
+      clearTimeout(t._h);
+      t._h = setTimeout(function () { t.classList.remove('show'); }, 4000);
+    }
+    document.addEventListener('submit', function (e) {
+      var form = e.target;
+      if (!form || !form.matches || !form.matches('form.pdp-form')) return;
+      var btn = form.querySelector('.pdp-add[data-sku]');
+      if (!btn || !btn.getAttribute('data-sku')) return;  // no SKU mapped: let Shopify handle it
+      e.preventDefault();
+      var qEl = form.querySelector('[name="quantity"]');
+      var qty = Math.max(1, parseInt(qEl && qEl.value, 10) || 1);
+      var id = btn.getAttribute('data-sku');
+      var title = btn.getAttribute('data-title') || id;
+      var c = read();
+      if (c[id]) { c[id].qty += qty; }
+      else {
+        var type = (btn.getAttribute('data-cat') || '').toLowerCase();
+        c[id] = { id: id, name: title,
+                  price: parseInt(btn.getAttribute('data-price'), 10) || 0,
+                  cat: type.indexOf('grill') !== -1 ? 'grills' : 'accessories',
+                  handle: btn.getAttribute('data-handle') || '',
+                  qty: qty };
+      }
+      write(c); paint();
+      toast('\u2713 ' + title + ' added \u2014 <a href="/?cart=open">View cart</a>');
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', paint);
+    else paint();
+
+    // Mobile menu (same drawer behaviour as the homepage header)
+    var mb = document.querySelector('.mobile-menu-btn');
+    var mn = document.getElementById('mobile-nav');
+    if (mb && mn) {
+      var setOpen = function (on) {
+        mn.classList.toggle('open', on);
+        mn.setAttribute('aria-hidden', on ? 'false' : 'true');
+        mb.setAttribute('aria-expanded', on ? 'true' : 'false');
+        document.body.style.overflow = on ? 'hidden' : '';
+      };
+      mb.addEventListener('click', function () { setOpen(true); });
+      var close = mn.querySelector('.mobile-nav-close');
+      if (close) close.addEventListener('click', function () { setOpen(false); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    }
+  })();
+  </script>
 </body>
 </html>

@@ -8,7 +8,7 @@ const products = [
     name: '24" Collapsible Grill',
     cat: 'grills',
     desc: 'Compact 24-inch charcoal grill that folds flat for transport and storage.',
-    price: 0,
+    price: 10999,
     tag: '',
     art: 'portable',
     stock: 12,
@@ -20,10 +20,10 @@ const products = [
     name: '30" Collapsible Grill',
     cat: 'grills',
     desc: 'Larger 30-inch charcoal grill that folds flat for transport and storage.',
-    price: 0,
+    price: 13999,
     tag: '',
     art: 'portable',
-    stock: 8,
+    stock: 13,
     rating: 4.8,
     reviewCount: 31
   },
@@ -32,7 +32,7 @@ const products = [
     name: '24" Collapsible Grill with Grilling Top',
     cat: 'grills',
     desc: 'Foldable 24-inch grill with a flat grilling top for more cooking surface.',
-    price: 0,
+    price: 14999,
     tag: '',
     art: 'tabletop',
     stock: 15,
@@ -44,7 +44,7 @@ const products = [
     name: '30" Collapsible Grill with Grilling Top',
     cat: 'grills',
     desc: 'Foldable 30-inch grill with a flat grilling top for more cooking surface.',
-    price: 0,
+    price: 17999,
     tag: '',
     art: 'tabletop',
     stock: 6,
@@ -53,10 +53,10 @@ const products = [
   },
   {
     id: 'EMB-010',
-    name: 'Lump Charcoal · 10kg',
+    name: 'Lump Charcoal · 5kg',
     cat: 'accessories',
     desc: 'Single-origin acacia lump charcoal. Slow, clean burn.',
-    price: 4200,
+    price: 499,
     tag: '',
     art: 'fuel',
     stock: 50,
@@ -68,22 +68,22 @@ const products = [
     name: 'Instant-Read Meat Thermometer',
     cat: 'accessories',
     desc: 'Digital instant-read probe thermometer with backlit display.',
-    price: 3800,
+    price: 699,
     tag: 'new',
     art: 'thermometer',
-    stock: 3,
+    stock: 33,
     rating: 4.8,
     reviewCount: 65
   },
   {
     id: 'EMB-013',
-    name: 'Fire Starter',
+    name: 'Fire Starter - Natural Waxed Wood Starters - 10 Pieces',
     cat: 'accessories',
     desc: 'Natural wood-wool and wax fire-starter cubes.',
     price: 850,
     tag: '',
     art: 'firestarter',
-    stock: 100,
+    stock: 91,
     rating: 4.4,
     reviewCount: 112
   },
@@ -92,7 +92,7 @@ const products = [
     name: 'BBQ Grill Brush',
     cat: 'accessories',
     desc: 'Brass-bristle grill brush with a built-in scraper.',
-    price: 1400,
+    price: 499,
     tag: '',
     art: 'grillbrush',
     stock: 15,
@@ -104,16 +104,16 @@ const products = [
     name: 'Handheld BBQ Air Blower',
     cat: 'accessories',
     desc: 'Battery-powered handheld blower for fast coal ignition.',
-    price: 3200,
+    price: 1199,
     tag: 'new',
     art: 'blower',
-    stock: 0,
+    stock: 9,
     rating: 4.7,
     reviewCount: 28
   },
   {
     id: 'EMB-019',
-    name: 'Charcoal Bag · 5kg',
+    name: 'Charcoal Bag · 1.5kg',
     cat: 'accessories',
     desc: 'Hardwood charcoal in a resealable kraft bag.',
     price: 1800,
@@ -128,7 +128,7 @@ const products = [
     name: 'Brass Cleaning Brush',
     cat: 'accessories',
     desc: 'Solid brass-bristle brush for deep-cleaning grates, burners and cast iron.',
-    price: 0,
+    price: 1800,
     tag: 'new',
     art: 'brassbrush',
     stock: 25,
@@ -145,6 +145,10 @@ const SHOPIFY_API_URL = `https://${SHOPIFY_DOMAIN}/api/2026-04/graphql.json`;
 // Shopify variant IDs keyed by our SKU (e.g. 'EMB-001' -> 'gid://shopify/ProductVariant/xxx')
 // Populated after loadShopifyProducts() runs
 const shopifyVariantIds = {};
+// Resolves when the initial product/variant sync has finished. Checkout awaits
+// this so a customer who clicks "Proceed to checkout" before the async sync lands
+// (slow mobile connection) waits for it instead of seeing "Checkout unavailable".
+let shopifyReady = null;
 
 // Baked Shopify URL handles so product links are crawlable in the static HTML
 // (real SEO hrefs before/without the live sync; sync keeps them fresh via p.handle)
@@ -216,6 +220,11 @@ async function loadShopifyProducts() {
   // Storefront API token is granted media access; the live featuredImage below
   // then takes over automatically, keeping photos in sync with Shopify.
   const BAKED_IMAGES = {
+    'EMB-001': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-skewer-mode-34-1x1_0260c12f-7a39-48e2-a0b4-b4dc04a06449.png?v=1784581712',
+    'EMB-002': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-skewer-mode-34-1x1_dad26d06-dc88-4ffe-a469-cebb16722c57.png?v=1784582749',
+    'EMB-003': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-rear-34-1x1.png?v=1783263249',
+    'EMB-004': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/studio-rear-34-1x1_0a7d68b2-2925-4507-bfb6-d6ce321c65a3.png?v=1784583308',
+    'EMB-013': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/H86b681d959d4416da285d08ffed298cdq.jpg_960x960q80.jpg?v=1784097319',
     'EMB-010': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/9228085797105354232_677cdeaf-91f3-4c16-8044-0c16a4dc661f.jpg?v=1780958038',
     'EMB-011': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/zeeshan-local-electronics-kitchen-home-appliances-kitchen-appliances-digital-meat-thermometer-7054415593601_1024x_5d989b00-417c-447a-89f8-45e366c4a8cd.webp?v=1780957836',
     'EMB-016': 'https://cdn.shopify.com/s/files/1/0832/3498/0059/files/images.jpg?v=1780957407',
@@ -325,6 +334,16 @@ async function createShopifyCart() {
 }
 
 // ===== Media helper: real image if uploaded, else line-art SVG =====
+// Resize Shopify-hosted images to the size actually displayed. Raw featuredImage
+// URLs are up to 1024px / ~1 MB each dropped into a ~300px card slot — that is why
+// photos crawled in on scroll. Appending a width param makes the CDN serve a
+// right-sized file, and srcset lets each device pick the smallest one it needs.
+function shopifyImg(url, w) {
+  if (!url) return url;
+  if (url.indexOf('cdn.shopify.com') === -1 && url.indexOf('/cdn/shop/') === -1) return url;
+  if (/[?&]width=/.test(url)) return url; // already sized — leave it
+  return url + (url.indexOf('?') === -1 ? '?' : '&') + 'width=' + w;
+}
 function mediaFor(item, opts) {
   opts = opts || {};
   const cls = opts.className || 'product-art';
@@ -332,11 +351,27 @@ function mediaFor(item, opts) {
   const altRaw = item ? `${item.name} — ${item.cat === 'grills' ? 'charcoal BBQ grill' : 'BBQ grilling accessory'} | Ember & Iron Pakistan` : '';
   const altText = altRaw.replace(/"/g, '&quot;');
   if (id && window.PRODUCT_IMAGES && window.PRODUCT_IMAGES[id]) {
-    return `<img src="${window.PRODUCT_IMAGES[id]}" alt="${altText}" class="${cls} real-photo" width="600" height="600" loading="lazy" decoding="async">`;
+    const raw = window.PRODUCT_IMAGES[id];
+    // First card row (and the PDP hero image) load eagerly so the shopper isn't
+    // staring at empty tiles; everything else stays lazy.
+    const load = opts.eager ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+    const sizes = opts.sizes || '(max-width: 700px) 45vw, 300px';
+    const resizable = (raw.indexOf('cdn.shopify.com') !== -1 || raw.indexOf('/cdn/shop/') !== -1) && !/[?&]width=/.test(raw);
+    if (resizable) {
+      const srcset = [150, 300, 450, 600, 900, 1024].map(w => `${shopifyImg(raw, w)} ${w}w`).join(', ');
+      return `<img src="${shopifyImg(raw, 600)}" srcset="${srcset}" sizes="${sizes}" alt="${altText}" class="${cls} real-photo" width="600" height="600" ${load} decoding="async">`;
+    }
+    return `<img src="${raw}" alt="${altText}" class="${cls} real-photo" width="600" height="600" ${load} decoding="async">`;
   }
   // Give the line-art an accessible, keyword-relevant label
   return artSvg(item && item.art).replace('<svg ', `<svg role="img" aria-label="${altText}" `);
 }
+
+// Small thumbnails that appear on demand (cart drawer, checkout summary, search,
+// order detail): only a handful at a time and revealed on a tap, so load them
+// eagerly at thumbnail size. Lazy-loading left blank white tiles in the cart for
+// several seconds on a slow phone — at the highest-intent moment in the funnel.
+const THUMB = { eager: true, sizes: '72px' };
 
 // ===== Product art SVGs =====
 function artSvg(type) {
@@ -634,6 +669,13 @@ function fmt(n) {
   return n.toLocaleString('en-PK');
 }
 
+// Never print "PKR 0". A zero price means the Shopify sync hasn't supplied one yet,
+// or the product is misconfigured — a real-looking price of zero costs more trust
+// than a placeholder does, and the sync overwrites this within a second anyway.
+function fmtPrice(n) {
+  return (typeof n === 'number' && n > 0) ? fmt(n) : '—';
+}
+
 function updateCartUI() {
   saveCart();
   const items = Object.values(cart);
@@ -658,7 +700,7 @@ function updateCartUI() {
   }
   itemsEl.innerHTML = items.map(i => `
     <div class="cart-item">
-      <div class="cart-item-art">${mediaFor(i)}</div>
+      <div class="cart-item-art">${mediaFor(i, THUMB)}</div>
       <div class="cart-item-info">
         <div class="name">${i.name}</div>
         <div class="qty-row">
@@ -785,10 +827,10 @@ function renderRecentlyViewed() {
   section.style.display = 'block';
   rail.innerHTML = items.map(p => `
     <article class="rv-card" onclick="showProduct(event, '${p.id}')">
-      <div class="rv-art">${mediaFor(p)}</div>
+      <div class="rv-art">${mediaFor(p, { sizes: '(max-width: 700px) 40vw, 180px' })}</div>
       <div class="rv-meta">${p.id} · ${p.cat}</div>
       <div class="name">${p.name}</div>
-      <div class="price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+      <div class="price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
     </article>
   `).join('');
 }
@@ -818,10 +860,10 @@ function renderSuggestions() {
   section.style.display = 'block';
   list.innerHTML = items.map(p => `
     <div class="cart-suggest-item">
-      <div class="cart-suggest-art">${mediaFor(p)}</div>
+      <div class="cart-suggest-art">${mediaFor(p, THUMB)}</div>
       <div class="cart-suggest-info">
         <div class="name">${p.name}</div>
-        <div class="price">PKR ${fmt(p.price)}</div>
+        <div class="price">PKR ${fmtPrice(p.price)}</div>
       </div>
       <button type="button" class="cart-suggest-add" onclick="addToCart('${p.id}', 1)" aria-label="Add ${p.name}">+</button>
     </div>
@@ -905,13 +947,13 @@ function renderProduct(p) {
         <button class="wishlist-btn ${wished ? 'active' : ''}" data-wid="${p.id}" type="button" onclick="toggleWishlist('${p.id}', event)" aria-label="${wished ? 'Remove from wishlist' : 'Save to wishlist'}" aria-pressed="${wished}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        ${mediaFor(p)}
+        ${mediaFor(p, { eager: true, sizes: '(max-width: 700px) 92vw, 520px' })}
       </div>
       <div class="pdp-info">
         <div class="pdp-meta">${p.id} · ${p.cat}</div>
         <h1>${p.name}</h1>
         ${ratingHtml}
-        <div class="pdp-price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+        <div class="pdp-price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
         <div class="stock-indicator ${s.cls}" style="margin-bottom:24px;"><span class="dot" aria-hidden="true"></span>${s.label}</div>
         <p class="pdp-desc">${p.desc}</p>
         <div class="pdp-actions">
@@ -938,8 +980,9 @@ function renderProduct(p) {
 }
 
 // Shared product card markup
-function productCardHtml(p, idPrefix) {
+function productCardHtml(p, idPrefix, opts) {
   idPrefix = idPrefix || 'prod';
+  opts = opts || {};
   const s = stockState(p);
   const articleClass = 'product' + (s.soldOut ? ' sold-out' : '');
   const addBtn = s.soldOut
@@ -956,7 +999,7 @@ function productCardHtml(p, idPrefix) {
         <button class="wishlist-btn ${wished ? 'active' : ''}" data-wid="${p.id}" onclick="toggleWishlist('${p.id}', event)" aria-label="${wished ? 'Remove from wishlist' : 'Save to wishlist'}" aria-pressed="${wished}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
-        <a class="art-clickable" href="${productUrl(p)}" onclick="showProduct(event, '${p.id}')" aria-label="View ${p.name}">${mediaFor(p)}</a>
+        <a class="art-clickable" href="${productUrl(p)}" onclick="showProduct(event, '${p.id}')" aria-label="View ${p.name}">${mediaFor(p, { eager: opts.eager })}</a>
       </div>
       <div class="product-meta">
         <span>${p.id}</span>
@@ -968,7 +1011,7 @@ function productCardHtml(p, idPrefix) {
         <span class="dot" aria-hidden="true"></span>${s.label}
       </div>
       <div class="product-foot">
-        <div class="price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+        <div class="price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
         <div class="qty-add">
           <div class="qty-stepper-mini" role="group" aria-label="Quantity for ${p.name}">
             <button type="button" onclick="changeCardQty('${p.id}', -1)" aria-label="Decrease quantity"${s.soldOut ? ' disabled' : ''}>−</button>
@@ -1260,7 +1303,7 @@ const POLICY_PAGES = {
       </div>
     </div>`
   },
-  contact: {
+  'contact-us': {
     eyebrow: 'Get in touch',
     title: 'Contact <em>us</em>',
     body: `<div class="contact-grid">
@@ -1366,7 +1409,9 @@ function renderProducts() {
   const items = featuredGrillIds
     .map(id => products.find(p => p.id === id))
     .filter(Boolean);
-  grid.innerHTML = items.map(p => productCardHtml(p, 'prod')).join('');
+  // Eager-load the first row (the first products a shopper reaches) so they are
+  // never staring at empty tiles; the rest lazy-load as they scroll.
+  grid.innerHTML = items.map((p, i) => productCardHtml(p, 'prod', { eager: i < 2 })).join('');
 }
 
 // ===== Render bundles =====
@@ -1671,7 +1716,17 @@ async function showCheckout() {
   const btn = document.getElementById('checkout-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Taking you to checkout…'; }
   let url = null;
-  try { url = await createShopifyCart(); }
+  try {
+    // Wait for the initial product sync so we don't fail just because the async
+    // fetch hasn't landed yet (the common cause of a false "unavailable").
+    if (shopifyReady) { try { await shopifyReady; } catch (e) {} }
+    // If the sync never populated the variant map (first attempt was blocked or
+    // failed on a flaky connection), try once more before giving up.
+    if (!Object.keys(shopifyVariantIds).length) {
+      try { await loadShopifyProducts(); } catch (e) {}
+    }
+    url = await createShopifyCart();
+  }
   catch (e) { console.warn('[checkout] Shopify cart failed', e); }
   if (url) { window.location.href = url; return; }   // → Shopify-hosted checkout
   // No matching Shopify variants (store not configured / unreachable)
@@ -1702,7 +1757,7 @@ function renderCheckoutSummary() {
 
   document.getElementById('summary-items').innerHTML = items.map(i => `
     <div class="summary-item">
-      <div class="summary-item-art">${mediaFor(i)}</div>
+      <div class="summary-item-art">${mediaFor(i, THUMB)}</div>
       <div class="summary-item-info">
         <div class="name">${i.name}</div>
         <div class="qty">QTY ${i.qty} · ${i.id}</div>
@@ -2103,7 +2158,7 @@ function showOrderDetail(ref) {
         <h3>Items</h3>
         ${o.items.map(i => `
           <div class="order-detail-item">
-            <div class="order-detail-art">${mediaFor(i)}</div>
+            <div class="order-detail-art">${mediaFor(i, THUMB)}</div>
             <div class="order-detail-info">
               <div class="name">${i.name}</div>
               <div class="qty">QTY ${i.qty} · ${i.id}</div>
@@ -2222,13 +2277,13 @@ function runSearch(query) {
   container.innerHTML = `<div class="search-grid">
     ${matches.map(p => `
       <button class="search-result" onclick="jumpToProduct('${p.id}')">
-        <div class="search-result-art">${mediaFor(p)}</div>
+        <div class="search-result-art">${mediaFor(p, THUMB)}</div>
         <div class="search-result-info">
           <div class="search-result-meta">${p.id} · ${p.cat}</div>
           <div class="search-result-name">${highlightMatch(p.name, q)}</div>
           <div class="search-result-desc">${highlightMatch(p.desc, q)}</div>
         </div>
-        <div class="search-result-price"><span class="ccy">PKR</span>${fmt(p.price)}</div>
+        <div class="search-result-price"><span class="ccy">PKR</span>${fmtPrice(p.price)}</div>
       </button>
     `).join('')}
   </div>`;
@@ -2266,13 +2321,51 @@ renderProducts();
 renderPackages();
 renderAccessories();
 loadCart();
-loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
+shopifyReady = loadShopifyProducts(); // fetch live prices, stock + variant IDs from Shopify
 updateCartUI();
 updateWishlistUI();
 renderRecentlyViewed();
 showCookieBannerIfNeeded();
 if (getCookieConsent() === 'accept') initAnalytics();
 initRouter();
+
+// The Liquid pages (product / collection / search / cart) send shoppers here with
+// ?cart=open, so the drawer is the single cart surface across the whole store
+// rather than each page having its own basket.
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    var view = q.get('view');                 // e.g. ?view=wishlist
+    var spa = q.get('spa');                   // a route rescued by the 404 page
+    var wantCart = q.get('cart') === 'open';
+    if (!view && !wantCart && !spa) return;
+    if (spa) {
+      var m = viewFromPath('/' + spa);
+      if (m) {
+        applyRouteContent(m);
+        switchView(m.viewId, { skipRoute: true });
+        // Put the pretty path back in the address bar; a refresh round-trips
+        // through the 404 rescue again and lands in the same place.
+        history.replaceState({}, '', '/' + spa);
+        return;
+      }
+    }
+    // The SPA's own paths (/wishlist, /faq, ...) 404 on Shopify, so the Liquid
+    // pages deep-link back here with a param rather than a path that doesn't exist.
+    // Go through the view's own show* helper where there is one — those render the
+    // contents before switching, so a bare switchView would land on an empty grid.
+    if (view === 'wishlist' && typeof showWishlist === 'function') {
+      showWishlist();
+    } else if (view === 'accessories' && typeof showAccessories === 'function') {
+      showAccessories();
+    } else if (view && Object.prototype.hasOwnProperty.call(ROUTES, 'view-' + view)) {
+      switchView('view-' + view);
+    }
+    if (wantCart) openCart();
+    // Drop the param so a refresh or Back doesn't re-trigger it.
+    history.replaceState({}, '', location.pathname + location.hash);
+  } catch (e) {}
+})();
 
 // Hero video: the <source media=...> pair in the markup lets the preload scanner
 // pick the right render and start fetching within ~100ms of navigation. It used
@@ -2358,14 +2451,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.view.active .reveal:not(.in), .view.active .reveal-group:not(.in)')
       .forEach(el => el.classList.add('in'));
   };
-  new MutationObserver((muts) => {
+  // Watch only the view containers for their active-class flip, not the whole
+  // <body> subtree — the old subtree observer fired its callback on every class
+  // change anywhere on the page (hovers, toggles, animations), needless main-
+  // thread work. The views are static, so binding each one directly is enough.
+  const viewObserver = new MutationObserver((muts) => {
     for (const m of muts) {
-      if (m.target.classList && m.target.classList.contains('view') && m.target.classList.contains('active')) {
+      if (m.target.classList && m.target.classList.contains('active')) {
         setTimeout(pinActive, 350);
         return;
       }
     }
-  }).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
+  });
+  document.querySelectorAll('.view').forEach(v =>
+    viewObserver.observe(v, { attributes: true, attributeFilter: ['class'] }));
 })();
 
 // ---- Hero ember drift ----
@@ -2374,6 +2473,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // when the hero is off-screen or the tab is hidden.
 (function(){
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // Skip the continuous canvas animation where it costs the most for the least:
+  // phones (weakest CPUs, where responsiveness matters most), data-saver mode,
+  // and genuinely low-memory / low-core devices. The video hero still plays; this
+  // just keeps the main thread free for scrolling and taps.
+  const conn = navigator.connection || {};
+  const lowPower = (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+                   (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  if (conn.saveData || lowPower || window.matchMedia('(max-width: 760px)').matches) return;
   const hero = document.querySelector('.hero.hero-video');
   if (!hero) return;
   const canvas = document.createElement('canvas');
