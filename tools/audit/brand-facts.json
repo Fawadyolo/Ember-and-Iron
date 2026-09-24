@@ -34,6 +34,7 @@
     { "pattern": "USB-C|battery-powered", "flags": "i", "why": "the air blower is manual" },
     { "pattern": "10\\s?kg\\s+(resealable|bag|kraft)|>10kg<", "flags": "i", "why": "charcoal comes in 5kg and 1.5kg bags" },
     { "pattern": "Read the guide", "flags": "i", "why": "there are no written guides on the site" },
-    { "pattern": "\\b(over|above)\\s+(PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" }
+    { "pattern": "\\b(over|above)\\s+(PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" },
+    { "pattern": "\\bsmokers?\\b", "flags": "i", "why": "Ember & Iron doesn't sell smokers (owner, 24 Sept)" }
   ]
 }

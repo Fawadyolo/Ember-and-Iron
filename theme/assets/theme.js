@@ -2299,7 +2299,9 @@ initRouter();
   let everPlayed = false;
   v.addEventListener('playing', () => { everPlayed = true; }, { once: true });
   const retry = () => { if (!everPlayed) tryPlay(); };
-  ['pointerdown', 'touchstart', 'keydown'].forEach(evt =>
+  // touchend/click are the events iOS actually counts as a user gesture;
+  // touchstart/pointerdown alone never unlock playback on an iPhone.
+  ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown'].forEach(evt =>
     window.addEventListener(evt, retry, { passive: true }));
   document.addEventListener('visibilitychange', () => { if (!document.hidden) retry(); });
   // Pause when scrolled well past the hero to save resources; resume when back

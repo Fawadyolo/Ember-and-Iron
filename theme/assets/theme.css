@@ -294,7 +294,7 @@
     background: var(--line);
     border: 1px solid var(--line);
   }
-  /* BBQ Grills & Smokers: two products per row, block centered in the layout */
+  /* Grills grid: two products per row, block centered in the layout */
   #product-grid {
     grid-template-columns: repeat(2, 1fr);
     max-width: 884px;
@@ -2736,7 +2736,11 @@
     text-decoration: none;
     transition: color 0.15s;
   }
-  .product h3 .product-name-link:hover { color: var(--ember); }
+  /* Only where there's a real pointer: on phones a touch leaves :hover stuck,
+     so names turned orange mid-scroll. */
+  @media (hover: hover) and (pointer: fine) {
+    .product h3 .product-name-link:hover { color: var(--ember); }
+  }
 
   /* ---------- Product detail page ---------- */
   .pdp-page {
@@ -3137,6 +3141,17 @@
     min-height: 86vh;
     overflow: hidden;
     background: radial-gradient(130% 110% at 22% 62%, #3a1c0e 0%, #20140d 52%, #16110d 100%); /* warm "forge" placeholder until the video loads */
+  }
+  /* When a phone refuses autoplay (iPhone Low Power Mode, data savers) the
+     browser paints its own big play button over the hero. The hero is
+     decoration, not a player: hide that overlay; theme.js starts the clip on
+     the first tap. */
+  .hero-bg-video::-webkit-media-controls,
+  .hero-bg-video::-webkit-media-controls-panel,
+  .hero-bg-video::-webkit-media-controls-overlay-play-button,
+  .hero-bg-video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
   }
   .hero-bg-video {
     position: absolute;
