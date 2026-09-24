@@ -5,7 +5,9 @@ Thumbs.db
 # Editors / agents
 .vscode/
 .idea/
-.claude/
+.claude/*
+# ...except the shared project settings, which carry the audit Stop hook
+!.claude/settings.json
 
 # Dev backups — not part of the deployable site
 *.backup-*.html

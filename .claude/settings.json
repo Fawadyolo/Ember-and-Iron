@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/tools/audit/stop-hook.sh",
+            "timeout": 60,
+            "statusMessage": "Running independent audit…"
+          }
+        ]
+      }
+    ]
+  }
+}

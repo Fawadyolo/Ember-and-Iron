@@ -7,6 +7,47 @@
 
 ---
 
+## 0. Read first: what is live, and the mandatory audit
+
+### What emberandiron.pk actually serves
+- The store runs on **Shopify**, on the published theme (currently
+  *ember-and-iron-theme-deploy*, id `165150425307`). Its files are mirrored in
+  **`theme/`** (`layout/theme.liquid`, `assets/theme.js`, `assets/theme.css`, …).
+- **The source of truth is the live Shopify theme, not git.** The owner edits it
+  in Shopify admin, so `theme/` goes stale. **Before changing anything**, pull the
+  current files through the Shopify Admin API (`themes` → `files` → `body`), check
+  them against Shopify's `checksumMd5`, and update `theme/` with them. Build every
+  change on top of the live files — never on top of an older repo copy, which
+  silently reverts the owner's edits when uploaded.
+- `index.html` / `404.html` are the standalone GitHub Pages build of the same app.
+  They are **not** what Shopify serves. Don't hand them over as "the file to upload".
+- **Tracking is owned by the Google & YouTube Shopify app** (Google tag
+  `GT-T9KKCNQ3` + Ads `AW-18285906090`, conversion events included), injected by
+  `{{ content_for_header }}`. Never hand-code gtag.js — two tags double-count
+  conversions. The Meta pixel follows the same rule via its Shopify app.
+
+### Independent audit before every hand-over (not optional)
+Nothing counts as done, ready or "upload this" until all of these pass, and the
+hand-over message must say what was run and what it showed:
+1. **Static audit:** `node tools/audit/static-check.mjs`. It checks JS syntax,
+   JSON-LD, Liquid block balance, the layout's Shopify hooks, hand-coded Google
+   tags, and 404.html = index.html. A Claude Code **Stop hook**
+   (`.claude/settings.json`) runs it automatically and blocks the turn while it fails.
+2. **Rendered audit** for anything that will reach Shopify: upload to an
+   **unpublished** theme and run
+   `node tools/audit/render-check.mjs --theme <theme id>`. Also run it without
+   `--theme` to get a live baseline. Only failures that are new relative to the
+   baseline were introduced by the change.
+3. **Second look from a fresh context:** have a separate reviewer (a subagent
+   with no stake in the change) compare the diff against the request and try to
+   break it. Verify every finding before acting on it, because auditors produce
+   false positives too.
+4. **Tell facts from inferences.** Don't claim something is missing, broken or
+   fixed from a summary or a single signal. Check the raw evidence (server HTML,
+   checksums, the API) and say how you checked.
+
+---
+
 ## 1. What this project is
 
 **Ember & Iron** — an e‑commerce storefront for a Pakistani brand that sells
@@ -227,7 +268,11 @@ installed `shopify-dev-mcp` dev tool, and the `npx` cache gotcha are documented 
 
 ## 9. Definition of done
 
-- [ ] Change implemented in `index.html` (vanilla, token‑based).
+- [ ] Started from the **live** Shopify theme files (pulled + checksum-verified), not a stale repo copy (§0).
+- [ ] Change made in `theme/` for the store (and mirrored in `index.html` only if the GitHub Pages build needs it). Vanilla, token-based.
+- [ ] `node tools/audit/static-check.mjs` passes.
+- [ ] `node tools/audit/render-check.mjs --theme <unpublished id>` shows no new failures relative to the live baseline.
+- [ ] Independent fresh-context review done, and its findings verified (§0).
 - [ ] No new browser‑console errors.
 - [ ] Core flow still works (browse → cart → checkout → success → orders).
 - [ ] Responsive (desktop + ≤900px mobile) still correct.

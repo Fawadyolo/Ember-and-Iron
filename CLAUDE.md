@@ -5,9 +5,20 @@
 > adds Claude Code–specific notes. Do not duplicate content here; update
 > `AGENTS.md` instead so every agent stays in sync.
 
+## Before anything else
+- **What's live is the Shopify theme, not this repo.** Pull the live theme files
+  through the Shopify Admin API and verify their checksums before editing
+  (`AGENTS.md` §0). `index.html` is **not** what Shopify serves.
+- **Every hand-over goes through the independent audit** in `AGENTS.md` §0. The
+  Stop hook in `.claude/settings.json` runs `tools/audit/static-check.mjs` and
+  blocks the turn while it fails. Rendered checks and a fresh-context review are
+  also required before saying "ready to upload".
+
 ## TL;DR
-- **Ember & Iron** BBQ storefront. One self‑contained file: `index.html`
-  (HTML + CSS + JS, ~240 KB). No build, no deps, vanilla everything.
+- **Ember & Iron** BBQ storefront. Live on Shopify from `theme/`
+  (`layout/theme.liquid` + `assets/theme.js`/`theme.css`). `index.html` is the
+  standalone GitHub Pages build of the same app (HTML + CSS + JS, ~240 KB).
+  No build, no deps, vanilla everything.
 - It's a client‑side SPA (`.view` divs + History API routing). Commerce is
   **simulated** (payment/orders/email/inventory are stubs).
 - Theme = token‑driven "cast‑iron steel" (Figtree font). Never hard‑code colours.
