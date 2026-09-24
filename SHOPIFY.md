@@ -89,14 +89,15 @@ in **both** places, tied together by one Pixel ID:
    `InitiateCheckout` + `Purchase` on Shopify's checkout/thank-you pages and
    syncs the product catalog to Meta. **Enable the Conversions API** there too
    (server-side, iOS-resilient, dedupes with the browser pixel).
-2. **On our custom site** (the browsing events): add the **base Meta Pixel** to
-   `index.html` and fire `PageView`, `ViewContent` (PDP), and
-   `AddToCart`. **Gate it behind the existing cookie-consent system** — only fire
-   after `ember-cookie-consent === 'accept'` (hook into `initAnalytics()` /
-   `trackPageView()`, which are currently console stubs).
+2. **~~On our custom site~~ — superseded.** The storefront now runs on the
+   Shopify theme (`theme/`, see `AGENTS.md` §0), so the app's pixel is injected
+   on every page through `{{ content_for_header }}` and already covers the
+   browsing events. **Do not hand-code a base Meta Pixel** (or gtag) anywhere.
+   It would double-count events, and `tools/audit/static-check.mjs` fails on
+   `fbq('init')`.
 
-To implement the site half, the only thing needed is the **Pixel ID**
-(~15-digit number from Meta Events Manager).
+The only thing needed is the **Pixel ID** (~15-digit number from Meta Events
+Manager), pasted into the Shopify app, not into code.
 
 ---
 
@@ -184,7 +185,7 @@ access.**
 
 | To do this | Provide |
 |------------|---------|
-| Wire the **Meta Pixel** (site half) | Your **Meta Pixel ID** |
+| Connect the **Meta Pixel** in the Facebook & Instagram app | Your **Meta Pixel ID** |
 | Wire **products / cart / checkout** | Your **`*.myshopify.com` domain** + **Storefront API token**, with products created in Shopify |
 
 Until those exist, the storefront runs on its built-in demo data with simulated

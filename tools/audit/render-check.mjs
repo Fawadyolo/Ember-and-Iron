@@ -48,6 +48,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const origin = new URL(base).origin;
 const failures = [];
 const warnings = new Set(); // third-party request failures: reported, not fatal
+const checkedImages = new Map(); // url -> status, so shared og/logo images are fetched once
 const fail = (page, msg) => failures.push(`${page}: ${msg}`);
 
 // Console noise from third parties we don't control (Shopify's own scripts,
@@ -65,7 +66,9 @@ for (const path of pages) {
   const errs = [], badReqs = [];
   p.on('pageerror', e => errs.push(`JS error: ${e.message}`));
   // "Failed to load resource" duplicates the response handler below, which knows the URL.
-  p.on('console', m => { if (m.type() === 'error' && !m.text().startsWith('Failed to load resource') && !THIRD_PARTY.test(m.location()?.url || '') && !THIRD_PARTY.test(m.text())) errs.push(`console.error: ${m.text().slice(0, 200)}`); });
+  // Filtered by the script URL that logged it, never by message text — a
+  // first-party error that merely mentions "Shopify" must still count.
+  p.on('console', m => { if (m.type() === 'error' && !m.text().startsWith('Failed to load resource') && !THIRD_PARTY.test(m.location()?.url || '')) errs.push(`console.error: ${m.text().slice(0, 200)}`); });
   p.on('response', r => {
     const u = r.url(); if (r.status() < 400) return;
     if (u.startsWith(origin) && !/\/(monorail|\.well-known|api\/collect|sf_private|web-pixels)/.test(u)) badReqs.push(`${r.status()} ${u.replace(origin, '')}`);
@@ -90,6 +93,8 @@ for (const path of pages) {
     themeId: window.Shopify && Shopify.theme && Shopify.theme.id,
     ld: [...document.querySelectorAll('script[type="application/ld+json"]')].map(s => s.textContent),
     title: document.title,
+    shareImages: ['meta[property="og:image"]', 'meta[name="twitter:image"]'].map(s => document.querySelector(s)?.content).filter(Boolean),
+    spa404: !!document.querySelector('#view-404.active'),
   })).catch(e => ({ evalError: e.message }));
   if (info.evalError) { fail(path, `could not inspect page: ${info.evalError}`); await p.close(); continue; }
   // Tracking checks read the SERVER html, not the live DOM: the Google & YouTube
@@ -105,7 +110,29 @@ for (const path of pages) {
   if (/http-equiv=["']refresh["']/i.test(raw)) info.appTag = true;
 
   if (themeId && String(info.themeId) !== String(themeId)) fail(path, `served theme ${info.themeId}, expected preview ${themeId} (preview cookie lost?)`);
-  info.ld.forEach((t, i) => { try { JSON.parse(t); } catch (e) { fail(path, `JSON-LD block ${i + 1} invalid: ${e.message}`); } });
+  // A shopper on a real URL must never land on the app's own 404 view.
+  if (info.spa404) fail(path, 'page shows the in-app 404 view (#view-404) — the URL is not routed');
+  // Every image Google / social previews will fetch must exist.
+  const images = new Set(info.shareImages);
+  info.ld.forEach((t, i) => {
+    let data;
+    try { data = JSON.parse(t); } catch (e) { fail(path, `JSON-LD block ${i + 1} invalid: ${e.message}`); return; }
+    (function collect(n) {
+      if (Array.isArray(n)) return n.forEach(collect);
+      if (!n || typeof n !== 'object') return;
+      for (const k of ['image', 'logo']) for (const v of [].concat(n[k] || [])) {
+        const u = typeof v === 'string' ? v : v && v.url;
+        if (typeof u === 'string' && /^https?:/.test(u)) images.add(u);
+      }
+      Object.values(n).forEach(collect);
+    })(data);
+  });
+  for (const u of images) {
+    if (checkedImages.has(u)) { if (checkedImages.get(u) >= 400) fail(path, `image ${checkedImages.get(u)}: ${u}`); continue; }
+    const st = await ctx.request.get(u, { maxRedirects: 3 }).then(r => r.status()).catch(() => 0);
+    checkedImages.set(u, st);
+    if (st >= 400 || st === 0) fail(path, `image ${st || 'unreachable'}: ${u}`);
+  }
   if (info.manualGtag.length) fail(path, `hand-coded gtag.js present (${info.manualGtag.join(', ')}) — Google & YouTube app already tags the store; this double-counts conversions`);
   if (expectAppTag && !info.appTag) fail(path, 'Google & YouTube app pixel (google_tag_ids) missing — is {{ content_for_header }} in the layout?');
   errs.forEach(e => fail(path, e));

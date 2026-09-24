@@ -1,20 +1,23 @@
 // Static audit: offline, ~1s. Catches the mistakes that have actually shipped
 // (or nearly shipped) on this project, before anything is handed over:
 //   - JS syntax errors (one stray comma blanks the whole store)
-//   - broken JSON-LD (Google silently drops it)
+//   - broken JSON-LD / theme JSON (Google silently drops it; Shopify rejects it)
 //   - unbalanced Liquid blocks (Shopify refuses the save, or renders garbage)
-//   - a layout missing {{ content_for_header }} / {{ content_for_layout }}
-//     (drops the Google & YouTube pixel, Shopify analytics, checkout scripts)
-//   - hand-coded Google tags (the Google & YouTube app already owns tracking;
+//   - a layout render path missing {{ content_for_header }} / {{ content_for_layout }}
+//     (drops the Google & YouTube pixel, Search Console verification, checkout scripts)
+//   - hand-coded Google / Meta tags (the Shopify apps already own tracking;
 //     a second tag double-counts conversions)
 //   - 404.html drifting from index.html (GitHub Pages deep-link fallback)
 //
 //   node tools/audit/static-check.mjs [repo-root]
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import vm from 'node:vm';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(process.argv[2] || path.join(path.dirname(new URL(import.meta.url).pathname), '../..'));
+const root = path.resolve(process.argv[2] || fileURLToPath(new URL('../..', import.meta.url)));
 const rel = f => path.relative(root, f);
 const failures = [];
 const notes = [];
@@ -24,11 +27,32 @@ const lineOf = (src, idx) => src.slice(0, idx).split('\n').length;
 const walk = dir => fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }).flatMap(d =>
   d.isDirectory() ? walk(path.join(dir, d.name)) : [path.join(dir, d.name)]) : [];
 
+// Refuse to "pass" an audit that looked at nothing (wrong root, bad checkout).
+if (!fs.existsSync(path.join(root, 'theme', 'layout', 'theme.liquid'))) {
+  console.log(`STATIC AUDIT FAILED: ${root} has no theme/layout/theme.liquid — wrong root or incomplete checkout`);
+  process.exit(1);
+}
+
 const themeFiles = walk(path.join(root, 'theme'));
 const pages = ['index.html', '404.html'].map(f => path.join(root, f)).filter(fs.existsSync);
 const hasLiquid = s => /\{\{|\{%/.test(s);
+// Comments are blanked (same length, newlines kept) so line numbers stay right
+// and commented-out code can't satisfy — or trip — the checks below.
+const blank = s => s.replace(/[^\n]/g, ' ');
+const stripComments = src => src
+  .replace(/\{%-?\s*(comment|doc)\s*-?%\}[\s\S]*?\{%-?\s*end\1\s*-?%\}/g, blank)
+  .replace(/\{%-?\s*#[\s\S]*?-?%\}/g, blank)
+  .replace(/<!--[\s\S]*?-->/g, blank);
 
-function checkJs(file, code, where) {
+function checkJs(file, code, where, isModule) {
+  if (isModule) {
+    const tmp = path.join(os.tmpdir(), `ember-audit-${process.pid}.mjs`);
+    fs.writeFileSync(tmp, code);
+    const r = spawnSync(process.execPath, ['--check', tmp], { encoding: 'utf8' });
+    fs.rmSync(tmp, { force: true });
+    if (r.status !== 0) fail(file, `JS syntax error${where ? ` in ${where}` : ''}: ${(r.stderr.match(/SyntaxError.*$/m) || [r.stderr.trim()])[0]}`);
+    return;
+  }
   try { new vm.Script(code, { filename: rel(file) }); }
   catch (e) {
     const m = /:(\d+)/.exec((e.stack || '').split('\n')[0]);
@@ -38,35 +62,39 @@ function checkJs(file, code, where) {
 
 // ---- inline <script> blocks + JSON-LD (html + liquid) ----
 for (const file of [...pages, ...themeFiles.filter(f => f.endsWith('.liquid'))]) {
-  const src = fs.readFileSync(file, 'utf8');
+  const src = stripComments(fs.readFileSync(file, 'utf8'));
   for (const m of src.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
     const attrs = m[1], body = m[2], line = lineOf(src, m.index);
     if (/\bsrc=/.test(attrs) || !body.trim()) continue;
     const type = (/type=["']?([^"'\s>]+)/i.exec(attrs) || [])[1] || 'text/javascript';
-    if (hasLiquid(body)) { notes.push(`${rel(file)}:${line} <script type=${type}> contains Liquid — verified by render-check, not here`); continue; }
+    if (hasLiquid(body)) { notes.push(`${rel(file)}:${line} <script type=${type}> is Liquid-templated — only checkable rendered (render-check on a page using this template)`); continue; }
     if (type === 'application/ld+json') {
       try { JSON.parse(body); } catch (e) { fail(file, `JSON-LD at line ${line} is invalid JSON: ${e.message}`); }
-    } else if (/^(text\/javascript|application\/javascript)$/i.test(type)) {
-      checkJs(file, body, `<script> at line ${line}`);
+    } else if (/^(text\/javascript|application\/javascript|module)$/i.test(type)) {
+      checkJs(file, body, `<script> at line ${line}`, type === 'module');
     }
   }
 }
 
 // ---- external JS assets ----
-for (const file of [...themeFiles.filter(f => f.endsWith('.js')), path.join(root, 'product-images.js')].filter(fs.existsSync)) {
-  const src = fs.readFileSync(file, 'utf8');
-  if (hasLiquid(src) && file.endsWith('.js.liquid')) continue;
-  checkJs(file, src);
+for (const file of [...themeFiles.filter(f => f.endsWith('.js')), path.join(root, 'product-images.js')].filter(fs.existsSync))
+  checkJs(file, fs.readFileSync(file, 'utf8'));
+
+// ---- theme JSON (config, locales, JSON templates) ----
+for (const file of themeFiles.filter(f => f.endsWith('.json'))) {
+  const src = fs.readFileSync(file, 'utf8').replace(/^\s*\/\*[\s\S]*?\*\//, ''); // Shopify's auto-generated header
+  try { JSON.parse(src); } catch (e) { fail(file, `invalid JSON: ${e.message}`); }
 }
 
 // ---- Liquid block balance ----
 const PAIRS = { if: 'endif', unless: 'endunless', for: 'endfor', case: 'endcase', capture: 'endcapture',
-  comment: 'endcomment', raw: 'endraw', form: 'endform', paginate: 'endpaginate', tablerow: 'endtablerow',
-  schema: 'endschema', style: 'endstyle', javascript: 'endjavascript', stylesheet: 'endstylesheet' };
+  comment: 'endcomment', doc: 'enddoc', raw: 'endraw', form: 'endform', paginate: 'endpaginate',
+  tablerow: 'endtablerow', schema: 'endschema', style: 'endstyle', javascript: 'endjavascript', stylesheet: 'endstylesheet' };
 const CLOSERS = Object.fromEntries(Object.entries(PAIRS).map(([o, c]) => [c, o]));
+const OPAQUE = new Set(['comment', 'doc', 'raw']);           // contents are not Liquid
+const BRANCHES = { else: ['if', 'unless', 'for', 'case'], elsif: ['if', 'unless'], when: ['case'] };
 for (const file of themeFiles.filter(f => f.endsWith('.liquid'))) {
   const src = fs.readFileSync(file, 'utf8');
-  const stack = [];
   const tags = [];
   for (const m of src.matchAll(/\{%-?\s*(\w+)([\s\S]*?)-?%\}/g)) {
     const name = m[1], line = lineOf(src, m.index);
@@ -74,33 +102,48 @@ for (const file of themeFiles.filter(f => f.endsWith('.liquid'))) {
       m[2].split('\n').forEach((l, i) => { const w = (/^\s*(\w+)/.exec(l) || [])[1]; if (w) tags.push([w, line + i]); });
     } else tags.push([name, line]);
   }
-  let inComment = false, inRaw = false;
+  const stack = [];
+  let opaque = null, broken = false;
   for (const [name, line] of tags) {
-    if (inComment && name !== 'endcomment') continue;
-    if (inRaw && name !== 'endraw') continue;
-    if (PAIRS[name]) { stack.push([name, line]); if (name === 'comment') inComment = true; if (name === 'raw') inRaw = true; }
+    if (opaque) { if (name === PAIRS[opaque]) { opaque = null; stack.pop(); } continue; }
+    if (PAIRS[name]) { stack.push([name, line]); if (OPAQUE.has(name)) opaque = name; }
     else if (CLOSERS[name]) {
       const top = stack.pop();
-      if (!top) { fail(file, `{% ${name} %} at line ${line} has no opening {% ${CLOSERS[name]} %}`); break; }
-      if (top[0] !== CLOSERS[name]) { fail(file, `{% ${name} %} at line ${line} closes {% ${top[0]} %} opened at line ${top[1]}`); break; }
-      if (name === 'endcomment') inComment = false; if (name === 'endraw') inRaw = false;
+      if (!top) { fail(file, `{% ${name} %} at line ${line} has no opening {% ${CLOSERS[name]} %}`); broken = true; break; }
+      if (top[0] !== CLOSERS[name]) { fail(file, `{% ${name} %} at line ${line} closes {% ${top[0]} %} opened at line ${top[1]}`); broken = true; break; }
+    } else if (BRANCHES[name]) {
+      const top = stack[stack.length - 1];
+      if (!top || !BRANCHES[name].includes(top[0])) { fail(file, `{% ${name} %} at line ${line} is outside any ${BRANCHES[name].join('/')} block`); broken = true; break; }
     }
   }
-  if (stack.length && !failures.some(f => f.startsWith(rel(file)))) stack.forEach(([n, l]) => fail(file, `{% ${n} %} opened at line ${l} is never closed`));
+  if (!broken) stack.forEach(([n, l]) => fail(file, `{% ${n} %} opened at line ${l} is never closed`));
 }
 
-// ---- layouts must keep Shopify's hooks ----
+// ---- layouts must keep Shopify's hooks in EVERY render path ----
+// A layout can emit several complete documents from if/else branches (e.g. the
+// server-rendered policy pages); each <html> needs its own pair of hooks.
 for (const file of themeFiles.filter(f => /[\\/]layout[\\/][^\\/]+\.liquid$/.test(f))) {
-  const src = fs.readFileSync(file, 'utf8');
-  if (!/\{\{-?\s*content_for_header\s*-?\}\}/.test(src)) fail(file, 'missing {{ content_for_header }} — drops the Google & YouTube pixel, analytics and checkout scripts');
-  if (!/\{\{-?\s*content_for_layout\s*-?\}\}/.test(src)) fail(file, 'missing {{ content_for_layout }} — Shopify will reject the layout');
+  const src = stripComments(fs.readFileSync(file, 'utf8'));
+  const docs = Math.max(1, (src.match(/<html[\s>]/gi) || []).length);
+  const header = (src.match(/\{\{-?\s*content_for_header\s*-?\}\}/g) || []).length;
+  const layout = (src.match(/\{\{-?\s*content_for_layout\s*-?\}\}/g) || []).length;
+  if (header < docs) fail(file, `${docs} <html> document(s) but ${header} {{ content_for_header }} — a render path loses the Google & YouTube pixel, Search Console verification and checkout scripts`);
+  if (layout < docs) fail(file, `${docs} <html> document(s) but ${layout} {{ content_for_layout }} — a render path drops the page content`);
 }
 
-// ---- tracking ownership: no hand-coded Google tags ----
+// ---- tracking ownership: no hand-coded Google / Meta tags ----
+const TRACKING = [
+  [/googletagmanager\.com\/(gtag\/js|gtm\.js)/, 'Google tag script'],
+  [/gtag\(\s*['"`](config|event)['"`]/, 'gtag() call'],
+  [/\bAW-\d{6,}/, 'Google Ads ID'],
+  [/fbq\(\s*['"`]init['"`]/, 'Meta pixel init'],
+];
 for (const file of [...pages, ...themeFiles.filter(f => /\.(liquid|js|html)$/.test(f))]) {
-  const src = fs.readFileSync(file, 'utf8');
-  const m = /googletagmanager\.com\/gtag\/js|gtag\(\s*['"]config['"]/.exec(src);
-  if (m) fail(file, `hand-coded Google tag at line ${lineOf(src, m.index)} — the Google & YouTube app already tags the store; a second tag double-counts conversions`);
+  const src = /\.(liquid|html)$/.test(file) ? stripComments(fs.readFileSync(file, 'utf8')) : fs.readFileSync(file, 'utf8');
+  for (const [re, what] of TRACKING) {
+    const m = re.exec(src);
+    if (m) { fail(file, `hand-coded ${what} at line ${lineOf(src, m.index)} ("${m[0]}") — tracking is owned by the Shopify Google & YouTube / Meta apps; a second tag double-counts conversions`); break; }
+  }
 }
 
 // ---- GitHub Pages deep-link fallback must mirror index.html ----
@@ -114,4 +157,4 @@ if (failures.length) {
   failures.forEach(f => console.log('  ✗ ' + f));
   process.exit(1);
 }
-console.log(`STATIC AUDIT PASSED (${themeFiles.length + pages.length} files; ${notes.length} Liquid-templated scripts left to render-check)`);
+console.log(`STATIC AUDIT PASSED (${themeFiles.length + pages.length} files; ${notes.length} Liquid-templated scripts need render-check)`);

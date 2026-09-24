@@ -30,9 +30,12 @@
 Nothing counts as done, ready or "upload this" until all of these pass, and the
 hand-over message must say what was run and what it showed:
 1. **Static audit:** `node tools/audit/static-check.mjs`. It checks JS syntax,
-   JSON-LD, Liquid block balance, the layout's Shopify hooks, hand-coded Google
+   JSON-LD and theme JSON, Liquid block balance, that every layout render path
+   keeps `content_for_header` + `content_for_layout`, hand-coded Google
    tags, and 404.html = index.html. A Claude Code **Stop hook**
-   (`.claude/settings.json`) runs it automatically and blocks the turn while it fails.
+   (`.claude/settings.json`) runs it automatically whenever Claude tries to end a
+   turn. It blocks the turn up to 3 times for the same failure, then warns the
+   user on every turn until the audit passes.
 2. **Rendered audit** for anything that will reach Shopify: upload to an
    **unpublished** theme and run
    `node tools/audit/render-check.mjs --theme <theme id>`. Also run it without
@@ -59,7 +62,8 @@ runs directly in the browser.
 
 | File | Purpose |
 |------|---------|
-| `index.html` | **The entire app** — HTML + CSS + JS in one file. This is what you edit. |
+| `theme/` | **What the live Shopify store serves** (`layout/theme.liquid`, `assets/theme.js`, `assets/theme.css`, templates). Mirror of the published theme — pull the live files first (§0). |
+| `index.html` / `404.html` | Standalone GitHub Pages build of the same app (HTML + CSS + JS in one file). **Not** what Shopify serves. |
 | `product-images.js` | Base64 product photos, loaded `defer` (kept out of the HTML for performance). Sets `window.PRODUCT_IMAGES`. |
 | `robots.txt` | Crawler directives. |
 | `sitemap.xml` | 22 indexable URLs for SEO. |
@@ -73,13 +77,15 @@ runs directly in the browser.
 
 1. **Vanilla only.** No npm, no bundler, no React/Vue, no CSS framework. Plain
    HTML/CSS/JS. If you think you need a dependency, you almost certainly don't.
-2. **One file.** All app code goes in `index.html`. The only exception
-   is `product-images.js` (image data).
+2. **Self-contained.** On Shopify the app is `theme/layout/theme.liquid` +
+   `theme/assets/theme.js` / `theme.css`; in the standalone build it is one file,
+   `index.html` (plus `product-images.js` image data). Know which one you are
+   changing, and never hand one over as the other (§0).
 3. **It's a client‑side SPA.** "Pages" are `.view` divs toggled by `switchView()`,
    with real URLs via the History API. There is **no server/router**.
 4. **Commerce is currently simulated.** Payments, orders, email, inventory and
-   analytics are front‑end stubs (see §7). Treat them as placeholders; the
-   intended production path is **headless Shopify** (see `README.md`).
+   analytics are front‑end stubs in the standalone build (see §7). The live
+   store runs on Shopify (§0).
 5. **The theme is token‑driven.** Never hard‑code colours — use the CSS custom
    properties in `:root` (see §5). Adding a hard‑coded hex is a bug.
 6. **Light product tiles are mandatory.** The page is dark steel, but product
@@ -234,7 +240,9 @@ These **look** real but do nothing server‑side:
 - **Orders** — saved to `localStorage`, not a database.
 - **Confirmation email** — `sendOrderEmail()` `console.log`s the receipt.
 - **Newsletter / contact form** — show a success toast; nothing is sent.
-- **Analytics** — `trackPageView()` `console.log`s; no real GA/Pixel yet.
+- **Analytics** — in the standalone build `trackPageView()` only `console.log`s.
+  On the live Shopify store, Google tracking is real and owned by the Google &
+  YouTube app (§0). Never hand-code a tag.
 - **Inventory** — `stock` is hard‑coded and does not decrement.
 
 **Production direction:** headless **Shopify** (Storefront API for products +

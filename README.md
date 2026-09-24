@@ -96,7 +96,7 @@ The buying experience is fully built, but the backend pieces are **placeholders*
 | Orders | saved to `localStorage`, not a database |
 | Confirmation email | `console.log` only |
 | Newsletter / contact | success toast only |
-| Analytics | `console.log` stub (no GA/Meta Pixel yet) |
+| Analytics | `console.log` stub in this standalone build. The live Shopify store's Google tag is real, via the Google & YouTube app. |
 | Inventory | hard‑coded `stock`, doesn't decrement |
 
 ---

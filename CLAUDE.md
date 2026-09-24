@@ -15,8 +15,9 @@
   also required before saying "ready to upload".
 
 ## TL;DR
-- **Ember & Iron** BBQ storefront. Live on Shopify from `theme/`
-  (`layout/theme.liquid` + `assets/theme.js`/`theme.css`). `index.html` is the
+- **Ember & Iron** BBQ storefront. Live on Shopify. `theme/` mirrors the
+  published theme (`layout/theme.liquid` + `assets/theme.js`/`theme.css`), but it
+  can go stale, so pull the live files first. `index.html` is the
   standalone GitHub Pages build of the same app (HTML + CSS + JS, ~240 KB).
   No build, no deps, vanilla everything.
 - It's a client‑side SPA (`.view` divs + History API routing). Commerce is
