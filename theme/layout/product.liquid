@@ -23,6 +23,12 @@
 {%- endif -%}
 
   <title>{{ page_title }}</title>
+  <!-- Favicon: ember flame mark. The inline SVG is for browsers; the PNG copies
+       (uploaded in Shopify admin > Content > Files under these exact names) are
+       what Google Search results, Safari and iPhone home screens use. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231C1714'/><path d='M16 5 C 12 11 10 14 10 18 a 6 6 0 0 0 12 0 c 0 -3 -2 -6 -6 -13 z' fill='%23D64E1E'/><circle cx='16' cy='20' r='2.4' fill='%23F7F2E9'/></svg>">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ 'ember-favicon-192.png' | file_url }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ 'ember-apple-touch-icon.png' | file_url }}">
   {%- if page_description -%}<meta name="description" content="{{ page_description | escape }}">{%- endif -%}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

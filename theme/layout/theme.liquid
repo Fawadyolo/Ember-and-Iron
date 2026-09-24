@@ -1,3 +1,86 @@
+{%- comment -%}
+  Store policies (Settings > Policies) render here as plain server-side pages.
+  The single-page app below doesn't know the /policies/* URLs, so a direct
+  visit (Google, Merchant Center, a shared link, the checkout footer) used to
+  fall through to its 404 view, with Shopify's policy text hidden in the
+  display:none div at the bottom. Rendering them here makes the official,
+  checkout-linked policy the one shoppers and crawlers actually see.
+{%- endcomment -%}
+{%- if request.page_type == 'policy' -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#16110D">
+  <title>{{ page_title }}{% unless page_title contains shop.name %} | {{ shop.name }}{% endunless %}</title>
+  {%- if page_description %}
+  <meta name="description" content="{{ page_description | escape }}">
+  {%- endif %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <!-- Favicon: ember flame mark. The inline SVG is for browsers; the PNG copies
+       (uploaded in Shopify admin > Content > Files under these exact names) are
+       what Google Search results, Safari and iPhone home screens use. -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231C1714'/><path d='M16 5 C 12 11 10 14 10 18 a 6 6 0 0 0 12 0 c 0 -3 -2 -6 -6 -13 z' fill='%23D64E1E'/><circle cx='16' cy='20' r='2.4' fill='%23F7F2E9'/></svg>">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ 'ember-favicon-192.png' | file_url }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ 'ember-apple-touch-icon.png' | file_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  {{ content_for_header }}
+  <style>
+    :root{--paper:#16110D;--ink:#F2EBDE;--ink-soft:#D9CFBF;--muted-soft:#A09280;--on-dark:#F4EFE6;--ember:#E8571F;--line:rgba(242,235,222,0.14)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Figtree',sans-serif;background:var(--paper);color:var(--ink);line-height:1.7;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:820px;margin:0 auto;padding:0 24px}
+    .site-head{position:sticky;top:0;z-index:10;background:rgba(22,17,13,0.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+    .site-head .wrap{max-width:none;display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 40px}
+    .brand{font-weight:800;letter-spacing:-0.01em;font-size:1.15rem;color:var(--on-dark)}
+    .brand em{color:var(--ember);font-style:normal}
+    .site-nav{display:flex;gap:22px}
+    .site-nav a{color:var(--ink-soft);font-weight:500;font-size:.95rem}
+    .site-nav a:hover{color:var(--ember)}
+    main{padding:48px 0 24px}
+    .shopify-policy__title h1{font-size:2.2rem;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:var(--on-dark);margin-bottom:28px}
+    .rte{color:var(--ink-soft)}
+    .rte h2,.rte h3,.rte h4{color:var(--ink);margin:28px 0 10px;line-height:1.3}
+    .rte p,.rte ul,.rte ol{margin:12px 0}
+    .rte ul,.rte ol{padding-left:22px}
+    .rte a{color:var(--ember);text-decoration:underline}
+    .rte strong{color:var(--ink)}
+    .site-foot{border-top:1px solid var(--line);margin-top:56px;padding:32px 0;color:var(--muted-soft);font-size:.9rem}
+    .policy-links{display:flex;flex-wrap:wrap;gap:10px 22px;margin-bottom:16px}
+    .policy-links a:hover,.policy-links a[aria-current]{color:var(--ember)}
+    @media(max-width:520px){.site-head .wrap{height:56px;padding:0 20px}.brand{font-size:1rem}.site-nav{gap:14px}.site-nav a{font-size:.85rem}.shopify-policy__title h1{font-size:1.7rem}}
+  </style>
+</head>
+<body>
+  <header class="site-head">
+    <div class="wrap">
+      <a href="{{ routes.root_url }}" class="brand">Ember <em>&amp;</em> Iron</a>
+      <nav class="site-nav" aria-label="Store">
+        <a href="{{ routes.root_url }}">Shop</a>
+        <a href="/pages/contact">Contact</a>
+        <a href="{{ routes.cart_url }}">Cart{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">{{ content_for_layout }}</main>
+  <footer class="site-foot">
+    <div class="wrap">
+      <nav class="policy-links" aria-label="Policies">
+        {%- for policy in shop.policies %}
+        <a href="{{ policy.url }}"{% if policy.url == request.path %} aria-current="page"{% endif %}>{{ policy.title }}</a>
+        {%- endfor %}
+        <a href="/pages/contact">Contact</a>
+      </nav>
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} &mdash; Hand-built BBQ grills, Pakistan</span>
+    </div>
+  </footer>
+</body>
+</html>
+{%- else -%}
 <!DOCTYPE html>
 <!-- ============================================================ -->
 <!-- Ember & Iron storefront — VERSION 2  (active development)     -->
@@ -5,26 +88,17 @@
 <!-- ============================================================ -->
 <html lang="en">
 <head>
+{%- liquid
+  # Social + schema image. Shopify's social sharing image (Online Store >
+  # Preferences) wins; otherwise the flagship grill's photo. The old
+  # /og-image.jpg and /logo.png were repo files Shopify never served (404).
+  assign share_image = page_image
+  unless share_image
+    assign share_image = all_products['24-collapsible-grill-with-grilling-top'].featured_image
+  endunless
+-%}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-{%- comment -%}
-  Google Search Console verification. The token lives in a theme setting so it can
-  be changed in the theme editor without a code change. Accepts whichever form gets
-  pasted: the full <meta> tag, the DNS-style "google-site-verification=..." string,
-  or the bare token. Renders nothing when the setting is empty.
-{%- endcomment -%}
-{%- assign gsv = settings.google_site_verification | strip -%}
-{%- if gsv contains 'content="' -%}
-  {%- assign gsv = gsv | split: 'content="' | last | split: '"' | first -%}
-{%- endif -%}
-{%- if gsv contains 'google-site-verification=' -%}
-  {%- assign gsv = gsv | split: 'google-site-verification=' | last -%}
-{%- endif -%}
-{%- assign gsv = gsv | strip -%}
-{%- if gsv != blank -%}
-<meta name="google-site-verification" content="{{ gsv | escape }}">
-{%- endif -%}
-
 <title>BBQ Grills, Smokers & Charcoal in Pakistan | Ember &amp; Iron</title>
 <meta name="description" content="Shop hand-built BBQ grills, smokers, charcoal and fire tools in Pakistan. Perfect for Eid tikka, chicken BBQ, winter cookouts, camping, picnics, festivals and outdoor hosting. Free delivery over Rs 12,000.">
 <meta name="keywords" content="BBQ grills Pakistan, charcoal grill, smokers, coal, camping grill, outdoor cooking, picnic BBQ, adventure, Eid BBQ, chicken tikka grill, festival grill, celebrations, hosting, winter BBQ, portable collapsible grill, fire tools, grilling accessories, fire starter, lump charcoal">
@@ -41,16 +115,24 @@
 <meta property="og:description" content="Hand-built BBQ grills, smokers & charcoal for Eid tikka, camping, picnics, winter cookouts and outdoor hosting across Pakistan.">
 <meta property="og:url" content="https://emberandiron.pk/">
 <meta property="og:locale" content="en_PK">
-<meta property="og:image" content="https://emberandiron.pk/og-image.jpg">
+{%- if share_image %}
+<meta property="og:image" content="{{ share_image | image_url: width: 1200 | prepend: 'https:' }}">
+{%- endif %}
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="BBQ Grills, Smokers &amp; Charcoal — Ember &amp; Iron Pakistan">
 <meta name="twitter:description" content="Charcoal grills, smokers & fire tools for Eid, tikka, camping, picnics & winter BBQ. Free delivery over Rs 12,000.">
-<meta name="twitter:image" content="https://emberandiron.pk/og-image.jpg">
+{%- if share_image %}
+<meta name="twitter:image" content="{{ share_image | image_url: width: 1200 | prepend: 'https:' }}">
+{%- endif %}
 
-<!-- Favicon (inline SVG flame mark) -->
+<!-- Favicon: ember flame mark. The inline SVG is for browsers; the PNG copies
+     (uploaded in Shopify admin > Content > Files under these exact names) are
+     what Google Search results, Safari and iPhone home screens use. -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231C1714'/><path d='M16 5 C 12 11 10 14 10 18 a 6 6 0 0 0 12 0 c 0 -3 -2 -6 -6 -13 z' fill='%23D64E1E'/><circle cx='16' cy='20' r='2.4' fill='%23F7F2E9'/></svg>">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ 'ember-favicon-192.png' | file_url }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ 'ember-apple-touch-icon.png' | file_url }}">
 
 <!-- Structured data: Organization/Store + WebSite + Product catalog + FAQ -->
 <script type="application/ld+json">
@@ -65,8 +147,12 @@
       "@id": "https://emberandiron.pk/#org",
       "name": "Ember & Iron",
       "url": "https://emberandiron.pk/",
-      "logo": "https://emberandiron.pk/logo.png",
-      "image": "https://emberandiron.pk/og-image.jpg",
+      {%- if shop.brand.logo %}
+      "logo": {{ shop.brand.logo | image_url: width: 600 | prepend: 'https:' | json }},
+      {%- endif %}
+      {%- if share_image %}
+      "image": {{ share_image | image_url: width: 1200 | prepend: 'https:' | json }},
+      {%- endif %}
       "description": "Hand-built BBQ grills, smokers, charcoal and fire tools for Eid tikka, camping, picnics, winter cookouts and outdoor hosting across Pakistan.",
       "slogan": "Fire, built for generations.",
       "address": {
@@ -133,297 +219,45 @@
       },
       "potentialAction": {
         "@type": "SearchAction",
-        "target": "https://emberandiron.pk/?q={search_term_string}",
+        "target": "https://emberandiron.pk/search?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     },
     {
       "@type": "ItemList",
       "@id": "https://emberandiron.pk/#catalog",
-      "name": "BBQ Grills, Smokers & Charcoal Accessories",
-      "numberOfItems": 11,
+      "name": "BBQ Grills, Charcoal & Accessories",
+      "numberOfItems": {{ collections.all.products_count }},
       "itemListElement": [
+        {%- for product in collections.all.products limit: 50 %}
         {
           "@type": "ListItem",
-          "position": 1,
+          "position": {{ forloop.index }},
           "item": {
             "@type": "Product",
-            "@id": "https://emberandiron.pk/products/24-collapsible-grill#product",
-            "name": "24\" Collapsible Grill",
-            "sku": "EMB-001",
-            "description": "Built for weekends that start with charcoal and end with stories. The 24\" Collapsible Grill is the most portable grill in the Ember & Iron collection.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Grills",
-            "url": "https://emberandiron.pk/products/24-collapsible-grill",
+            "@id": {{ shop.url | append: product.url | append: '#product' | json }},
+            "name": {{ product.title | json }},
+            {%- if product.selected_or_first_available_variant.sku != blank %}
+            "sku": {{ product.selected_or_first_available_variant.sku | json }},
+            {%- endif %}
+            "description": {{ product.description | strip_html | strip_newlines | truncate: 300 | json }},
+            "brand": { "@type": "Brand", "name": {{ product.vendor | default: shop.name | json }} },
+            "category": {{ product.type | json }},
+            {%- if product.featured_image %}
+            "image": {{ product.featured_image | image_url: width: 1200 | prepend: 'https:' | json }},
+            {%- endif %}
+            "url": {{ shop.url | append: product.url | json }},
             "offers": {
               "@type": "Offer",
-              "price": "8499",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
+              "price": {{ product.price | divided_by: 100.0 | json }},
+              "priceCurrency": {{ shop.currency | json }},
+              "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
               "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/24-collapsible-grill"
+              "url": {{ shop.url | append: product.url | json }}
             }
           }
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/30-collapsible-grill#product",
-            "name": "30\" Collapsible Grill",
-            "sku": "EMB-002",
-            "description": "The 30\" Collapsible Grill offers the same workshop-built durability as our compact model, with a larger cooking surface designed for family gatherings, rooftop cookouts, and Eid celebrations.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Grills",
-            "url": "https://emberandiron.pk/products/30-collapsible-grill",
-            "offers": {
-              "@type": "Offer",
-              "price": "9999",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/30-collapsible-grill"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 3,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/24-collapsible-grill-with-grilling-top#product",
-            "name": "24\" Collapsible Grill with Grilling Top",
-            "sku": "EMB-003",
-            "description": "The versatility of a grill. The functionality of a steel griddle. Designed for cooks who want more than traditional grilling, the 24\" Collapsible Grill with Grilling Top replaces the standard grate with a solid steel cooking surface that unlocks a wider range of outdoor cooking p…",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Grills",
-            "url": "https://emberandiron.pk/products/24-collapsible-grill-with-grilling-top",
-            "offers": {
-              "@type": "Offer",
-              "price": "10999",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/24-collapsible-grill-with-grilling-top"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 4,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/30-collapsible-grill-with-grilling-top#product",
-            "name": "30\" Collapsible Grill with Grilling Top",
-            "sku": "EMB-004",
-            "description": "he 30\" Collapsible Grill with Grilling Top combines a generous cooking surface with the versatility of a full steel griddle, making it the ultimate choice for serious hosts and outdoor cooks.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Grills",
-            "url": "https://emberandiron.pk/products/30-collapsible-grill-with-grilling-top",
-            "offers": {
-              "@type": "Offer",
-              "price": "12999",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/30-collapsible-grill-with-grilling-top"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 5,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/lump-charcoal-10kg#product",
-            "name": "Lump Charcoal · 5kg",
-            "sku": "EMB-010",
-            "description": "Ember & Iron Lump Charcoal is selected for cooks who care about heat, control, and flavour. It lights reliably, burns cleanly, and delivers the steady, high-heat performance serious grilling needs. No fillers. No unnecessary additives.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "image": "https://cdn.shopify.com/s/files/1/0832/3498/0059/files/9228085797105354232_677cdeaf-91f3-4c16-8044-0c16a4dc661f.jpg?v=1780958038",
-            "url": "https://emberandiron.pk/products/lump-charcoal-10kg",
-            "offers": {
-              "@type": "Offer",
-              "price": "499",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/lump-charcoal-10kg"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 6,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/instant-read-meat-thermometer#product",
-            "name": "Instant-Read Meat Thermometer",
-            "sku": "EMB-011",
-            "description": "he Ember & Iron Instant-Read Meat Thermometer gives you fast, accurate temperature readings so you can cook with confidence. From juicy chicken to perfectly done steaks and kebabs, it helps you control doneness without cutting into the food or losing heat from the grill.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "image": "https://cdn.shopify.com/s/files/1/0832/3498/0059/files/zeeshan-local-electronics-kitchen-home-appliances-kitchen-appliances-digital-meat-thermometer-7054415593601_1024x_5d989b00-417c-447a-89f8-45e366c4a8cd.webp?v=1780957836",
-            "url": "https://emberandiron.pk/products/instant-read-meat-thermometer",
-            "offers": {
-              "@type": "Offer",
-              "price": "699",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/instant-read-meat-thermometer"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 7,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/fire-starter#product",
-            "name": "Fire Starter",
-            "sku": "EMB-013",
-            "description": "Natural wood-wool and wax fire-starter cubes.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "url": "https://emberandiron.pk/products/fire-starter",
-            "offers": {
-              "@type": "Offer",
-              "price": "850",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/fire-starter"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 8,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/bbq-grill-brush#product",
-            "name": "BBQ Grill Brush",
-            "sku": "EMB-016",
-            "description": "The Ember & Iron BBQ Grill Brush is made for cooks who like to keep flavour moving across the grill. Its cotton head soaks oil well, while the wooden handle gives you a comfortable, practical grip during longer cooking sessions.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "image": "https://cdn.shopify.com/s/files/1/0832/3498/0059/files/images.jpg?v=1780957407",
-            "url": "https://emberandiron.pk/products/bbq-grill-brush",
-            "offers": {
-              "@type": "Offer",
-              "price": "499",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/bbq-grill-brush"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 9,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/handheld-bbq-air-blower#product",
-            "name": "Handheld BBQ Air Blower",
-            "sku": "EMB-018",
-            "description": "The Ember & Iron Handheld BBQ Air Blower is a simple but highly useful tool for charcoal cooking. It helps increase airflow where you need it, making it easier to build heat, revive embers, and maintain a stronger fire during the cook.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "image": "https://cdn.shopify.com/s/files/1/0832/3498/0059/files/download_5.jpg?v=1780957074",
-            "url": "https://emberandiron.pk/products/handheld-bbq-air-blower",
-            "offers": {
-              "@type": "Offer",
-              "price": "1199",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/handheld-bbq-air-blower"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 10,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/charcoal-bag-5kg#product",
-            "name": "Charcoal Bag · 1.5kg",
-            "sku": "EMB-019",
-            "description": "Ember & Iron Lump Charcoal is selected for cooks who care about heat, control, and flavour. It lights reliably, burns cleanly, and delivers the steady, high-heat performance serious grilling needs. No fillers. No unnecessary additives.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "image": "https://cdn.shopify.com/s/files/1/0832/3498/0059/files/9228085797105354232.jpg?v=1780953269",
-            "url": "https://emberandiron.pk/products/charcoal-bag-5kg",
-            "offers": {
-              "@type": "Offer",
-              "price": "1800",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/charcoal-bag-5kg"
-            }
-          }
-        },
-        {
-          "@type": "ListItem",
-          "position": 11,
-          "item": {
-            "@type": "Product",
-            "@id": "https://emberandiron.pk/products/brass-cleaning-brush#product",
-            "name": "Brass Cleaning Brush",
-            "sku": "EMB-020",
-            "description": "Solid brass-bristle brush for deep-cleaning grates, burners and cast iron.",
-            "brand": {
-              "@type": "Brand",
-              "name": "Ember & Iron"
-            },
-            "category": "BBQ Accessories",
-            "image": "https://cdn.shopify.com/s/files/1/0832/3498/0059/files/image.avif?v=1780952257",
-            "url": "https://emberandiron.pk/products/brass-cleaning-brush",
-            "offers": {
-              "@type": "Offer",
-              "price": "1800",
-              "priceCurrency": "PKR",
-              "availability": "https://schema.org/InStock",
-              "itemCondition": "https://schema.org/NewCondition",
-              "url": "https://emberandiron.pk/products/brass-cleaning-brush"
-            }
-          }
-        }
+        }{% unless forloop.last %},{% endunless %}
+        {%- endfor %}
       ]
     },
     {
@@ -490,9 +324,6 @@
 <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Fonts: one combined request instead of two render-blocking round trips.
-     Figtree drops the unused 900 weight; Fraunces is pinned to the 600 italic the
-     CSS actually uses (it was requesting 500+700 and the browser substituted). -->
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Figtree:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@1,9..144,600&display=swap" rel="stylesheet">
 {{ 'theme.css' | asset_url | stylesheet_tag }}
 {{ content_for_header }}
@@ -507,7 +338,7 @@
   <button class="mobile-nav-item" onclick="closeMobileNav(); showAccessories(event)">Accessories</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showShop(event, 'how-to')">How to Grill</button>
   <button class="mobile-nav-item" onclick="closeMobileNav(); showWishlist(event)">Saved items</button>
-  <button class="mobile-nav-item" onclick="closeMobileNav(); showPolicy(event, 'contact-us')">Contact</button>
+  <button class="mobile-nav-item" onclick="closeMobileNav(); location.href='/pages/contact'">Contact</button>
 </nav>
 <a href="#main-content" class="skip-link">Skip to content</a>
 
@@ -736,19 +567,19 @@
       <div class="footer-col">
         <h4>Help</h4>
         <ul>
-          <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+          <li><a href="{{ shop.shipping_policy.url | default: '/policies/shipping-policy' }}"{% unless shop.shipping_policy %} onclick="showPolicy(event, 'shipping')"{% endunless %}>Delivery &amp; install</a></li>
           <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
           <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-          <li><a href="/contact-us" onclick="showPolicy(event, 'contact-us')">Contact</a></li>
+          <li><a href="/pages/contact">Contact</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
       <div class="logo-mini">Ember &amp; Iron</div>
       <div class="footer-legal">
-        <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">Privacy</a>
-        <a href="/policies/terms-of-service" onclick="showPolicy(event, 'terms')">Terms</a>
-        <a href="/policies/refund-policy" onclick="showPolicy(event, 'returns')">Returns</a>
+        <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}"{% unless shop.privacy_policy %} onclick="showPolicy(event, 'privacy')"{% endunless %}>Privacy</a>
+        <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}"{% unless shop.terms_of_service %} onclick="showPolicy(event, 'terms')"{% endunless %}>Terms</a>
+        <a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}"{% unless shop.refund_policy %} onclick="showPolicy(event, 'returns')"{% endunless %}>Returns</a>
         <a href="#" onclick="showPolicy(event, 'faq')">FAQ</a>
         <span>© 2026 · Lahore, PK · CN-30924</span>
       </div>
@@ -864,10 +695,10 @@
         <div class="footer-col">
           <h4>Help</h4>
           <ul>
-            <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+            <li><a href="{{ shop.shipping_policy.url | default: '/policies/shipping-policy' }}"{% unless shop.shipping_policy %} onclick="showPolicy(event, 'shipping')"{% endunless %}>Delivery &amp; install</a></li>
             <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
             <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-            <li><a href="/contact-us" onclick="showPolicy(event, 'contact-us')">Contact</a></li>
+            <li><a href="/pages/contact">Contact</a></li>
           </ul>
         </div>
       </div>
@@ -1002,24 +833,24 @@
           <ul>
             <li><a href="#" onclick="showPolicy(event, 'about')">Our workshop</a></li>
             <li><a href="#" onclick="showPolicy(event, 'faq')">FAQ</a></li>
-            <li><a href="/contact-us" onclick="showPolicy(event, 'contact-us')">Contact</a></li>
+            <li><a href="/pages/contact">Contact</a></li>
           </ul>
         </div>
         <div class="footer-col">
           <h4>Help</h4>
           <ul>
-            <li><a href="/policies/shipping-policy" onclick="showPolicy(event, 'shipping')">Delivery &amp; install</a></li>
+            <li><a href="{{ shop.shipping_policy.url | default: '/policies/shipping-policy' }}"{% unless shop.shipping_policy %} onclick="showPolicy(event, 'shipping')"{% endunless %}>Delivery &amp; install</a></li>
             <li><a href="#" onclick="showPolicy(event, 'warranty')">Warranty</a></li>
             <li><a href="#" onclick="showPolicy(event, 'care')">Care &amp; service</a></li>
-            <li><a href="/policies/refund-policy" onclick="showPolicy(event, 'returns')">Returns</a></li>
+            <li><a href="{{ shop.refund_policy.url | default: '/policies/refund-policy' }}"{% unless shop.refund_policy %} onclick="showPolicy(event, 'returns')"{% endunless %}>Returns</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
         <div class="logo-mini">Ember &amp; Iron</div>
         <div class="footer-legal">
-          <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">Privacy</a>
-          <a href="/policies/terms-of-service" onclick="showPolicy(event, 'terms')">Terms</a>
+          <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}"{% unless shop.privacy_policy %} onclick="showPolicy(event, 'privacy')"{% endunless %}>Privacy</a>
+          <a href="{{ shop.terms_of_service.url | default: '/policies/terms-of-service' }}"{% unless shop.terms_of_service %} onclick="showPolicy(event, 'terms')"{% endunless %}>Terms</a>
           <span>© 2026 · Lahore, PK · CN-30924</span>
         </div>
       </div>
@@ -1292,7 +1123,7 @@
 
 <!-- Cookie consent banner -->
 <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent">
-  <p>We use cookies to remember your cart, wishlist, and to understand how the store is used. See our <a href="/policies/privacy-policy" onclick="showPolicy(event, 'privacy')">privacy policy</a>.</p>
+  <p>We use cookies to remember your cart, wishlist, and to understand how the store is used. See our <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}"{% unless shop.privacy_policy %} onclick="showPolicy(event, 'privacy')"{% endunless %}>privacy policy</a>.</p>
   <div class="actions">
     <button type="button" class="decline" onclick="setCookieConsent('decline')">Decline</button>
     <button type="button" class="accept" onclick="setCookieConsent('accept')">Accept all</button>
@@ -1303,3 +1134,4 @@
 <div style="display:none" aria-hidden="true">{{ content_for_layout }}</div>
 </body>
 </html>
+{%- endif -%}

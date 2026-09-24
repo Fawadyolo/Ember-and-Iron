@@ -11,7 +11,7 @@
 
 ### What emberandiron.pk actually serves
 - The store runs on **Shopify**, on the published theme (currently
-  *ember-and-iron-theme-deploy*, id `165150425307`). Its files are mirrored in
+  *23 sept version*, id `165289951451`, published 2026-09-24). Its files are mirrored in
   **`theme/`** (`layout/theme.liquid`, `assets/theme.js`, `assets/theme.css`, …).
 - **The source of truth is the live Shopify theme, not git.** The owner edits it
   in Shopify admin, so `theme/` goes stale. **Before changing anything**, pull the
