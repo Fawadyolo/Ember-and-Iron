@@ -146,6 +146,46 @@ for (const file of [...pages, ...themeFiles.filter(f => /\.(liquid|js|html)$/.te
   }
 }
 
+// ---- owner-briefed business facts (tools/audit/brand-facts.json) ----
+// Everything Shopify serves (theme/) must agree with what the owner has
+// confirmed: one email, one address, no warranty / installation / servicing,
+// current delivery terms. index.html is the legacy GitHub Pages build and is
+// not served by the store, so it is not held to these rules.
+const factsFile = path.join(root, 'tools', 'audit', 'brand-facts.json');
+if (fs.existsSync(factsFile)) {
+  const { forbidden } = JSON.parse(fs.readFileSync(factsFile, 'utf8'));
+  for (const file of themeFiles.filter(f => /\.(liquid|js|json|css)$/.test(f))) {
+    const src = stripComments(fs.readFileSync(file, 'utf8'));
+    for (const rule of forbidden) {
+      const m = new RegExp(rule.pattern, rule.flags).exec(src);
+      if (m) fail(file, `contradicts the owner's brief at line ${lineOf(src, m.index)} ("${m[0]}") — ${rule.why}`);
+    }
+  }
+} else {
+  failures.push('tools/audit/brand-facts.json: missing — the owner-briefed facts cannot be checked');
+}
+
+// ---- visible FAQ and FAQPage JSON-LD must say exactly the same thing ----
+{
+  const file = path.join(root, 'theme', 'layout', 'theme.liquid');
+  const s = fs.readFileSync(file, 'utf8');
+  const decode = t => t.replace(/<[^>]+>/g, '').replace(/&nbsp;| /g, ' ').replace(/&mdash;/g, '—').replace(/&ndash;/g, '–')
+    .replace(/&rsquo;/g, '’').replace(/&amp;/g, '&').replace(/&larr;|&rarr;/g, '').replace(/\s+/g, ' ').trim();
+  const slides = [...s.matchAll(/<h3 class="faq-slide-q">([\s\S]*?)<\/h3>\s*<p class="faq-slide-a">([\s\S]*?)<\/p>/g)].map(m => [decode(m[1]), decode(m[2])]);
+  const at = s.indexOf('"@type": "FAQPage"');
+  if (slides.length && at >= 0) {
+    const k = s.indexOf('"mainEntity": [', at) + '"mainEntity": ['.length;
+    let d = 1, e = k; while (d && e < s.length) { d += (s[e] === '[') - (s[e] === ']'); e++; }
+    let ld = [];
+    try { ld = JSON.parse('[' + s.slice(k, e - 1) + ']').map(q => [q.name, q.acceptedAnswer.text].map(t => t.replace(/\s+/g, ' ').trim())); }
+    catch (err) { fail(file, `FAQPage JSON-LD is not valid JSON: ${err.message}`); }
+    if (ld.length && JSON.stringify(ld) !== JSON.stringify(slides))
+      fail(file, `FAQPage JSON-LD (${ld.length} Q&As) does not match the visible #faq section (${slides.length}) word for word — regenerate one from the other`);
+  } else if (slides.length || at >= 0) {
+    fail(file, 'visible FAQ and FAQPage JSON-LD must both exist, or neither');
+  }
+}
+
 // ---- GitHub Pages deep-link fallback must mirror index.html ----
 if (pages.length === 2 && !fs.readFileSync(pages[0]).equals(fs.readFileSync(pages[1])))
   failures.push('404.html: differs from index.html — regenerate with `cp index.html 404.html`');

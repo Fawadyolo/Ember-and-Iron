@@ -46,6 +46,11 @@ const browser = await chromium.launch(launch);
 const ctx = await browser.newContext({ userAgent: 'Mozilla/5.0 (EmberIronAudit)' });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const origin = new URL(base).origin;
+const FACTS = (() => {
+  const fs = require('node:fs'), p = require('node:path');
+  const f = p.join(p.dirname(new URL(import.meta.url).pathname), 'brand-facts.json');
+  return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')).forbidden : [];
+})();
 const failures = [];
 const warnings = new Set(); // third-party request failures: reported, not fatal
 const checkedImages = new Map(); // url -> status, so shared og/logo images are fetched once
@@ -98,6 +103,9 @@ for (const path of pages) {
     // Google Search and iOS need a real, fetchable file.
     icons: [...document.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"]')].map(l => l.href),
     spa404: !!document.querySelector('#view-404.active'),
+    // Everything a shopper can read, including hidden in-app views and the
+    // server-rendered Shopify pages/policies (content edited in admin).
+    text: document.body ? document.body.textContent : '',
   })).catch(e => ({ evalError: e.message }));
   if (info.evalError) { fail(path, `could not inspect page: ${info.evalError}`); await p.close(); continue; }
   // Tracking checks read the SERVER html, not the live DOM: the Google & YouTube
@@ -113,6 +121,12 @@ for (const path of pages) {
   if (/http-equiv=["']refresh["']/i.test(raw)) info.appTag = true;
 
   if (themeId && String(info.themeId) !== String(themeId)) fail(path, `served theme ${info.themeId}, expected preview ${themeId} (preview cookie lost?)`);
+  // Owner-briefed facts: what shoppers read must not contradict them. This also
+  // covers text that lives in Shopify admin (policies, pages), not the theme.
+  for (const rule of FACTS) {
+    const m = new RegExp(rule.pattern, rule.flags).exec(info.text + '\n' + raw);
+    if (m) fail(path, `contradicts the owner's brief ("${m[0]}") — ${rule.why}`);
+  }
   // A shopper on a real URL must never land on the app's own 404 view.
   if (info.spa404) fail(path, 'page shows the in-app 404 view (#view-404) — the URL is not routed');
   if (!info.icons.length) fail(path, 'no tab icon (<link rel="icon">) on this page');

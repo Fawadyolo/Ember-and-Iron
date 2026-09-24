@@ -1,0 +1,31 @@
+{
+  "_about": "Owner-confirmed business facts. Every rule below is something the owner has briefed; the audit FAILS if the site says otherwise. Update this file (and AGENTS.md §0) when the owner changes a fact — never work around a failing rule.",
+  "facts": {
+    "email": "emberandirongrills@gmail.com (the ONLY public email address)",
+    "phone": "+92 300 1688772 (phone and WhatsApp)",
+    "address": "Walton Road, Lahore, Pakistan",
+    "delivery": "Nationwide across Pakistan, 3–5 working days, cash on delivery available; free delivery on orders of PKR 15,000 or more",
+    "returns": "All sales final; damaged/defective on arrival reported within 48 hours → replacement or refund",
+    "not_offered": "No warranty, no installation / white-glove service, no servicing",
+    "materials": "211-grade stainless steel and 16-gauge reinforced metal",
+    "story": "Designed by the founder's father, engineered by the founder; launched 2024 in Lahore",
+    "shipping_info": "Lives on the Shopify page /pages/shipping — no in-app Shipping & delivery section"
+  },
+  "forbidden": [
+    { "pattern": "@emberandiron\\.pk", "flags": "i", "why": "domain has no mailbox — the only email is emberandirongrills@gmail.com" },
+    { "pattern": "\\bemberandiron@gmail\\.com", "flags": "i", "why": "wrong mailbox — use emberandirongrills@gmail.com" },
+    { "pattern": "warrant(y|ies)", "flags": "i", "why": "no warranty is offered; the owner asked for warranty content to be removed everywhere" },
+    { "pattern": "\\binstall(ation|ed|s)?\\b", "flags": "i", "why": "installation is not offered" },
+    { "pattern": "white[- ]glove", "flags": "i", "why": "no white-glove service" },
+    { "pattern": "(annual|seasonal|free|book a)\\s+(servic|slot)", "flags": "i", "why": "no servicing is offered" },
+    { "pattern": "Askari", "flags": "i", "why": "address is Walton Road, Lahore" },
+    { "pattern": "184 Street", "flags": "i", "why": "address is Walton Road, Lahore" },
+    { "pattern": "Ferozepur", "flags": "i", "why": "address is Walton Road, Lahore" },
+    { "pattern": "(PKR|Rs\\.?)\\s*12,?000", "flags": "i", "why": "free-delivery threshold is PKR 15,000" },
+    { "pattern": "(PKR|Rs\\.?)\\s*1,?500\\b", "flags": "i", "why": "no flat PKR 1,500 delivery fee is quoted" },
+    { "pattern": "304[- ]grade|4\\s?mm cast", "flags": "i", "why": "materials are 211-grade stainless steel and 16-gauge metal" },
+    { "pattern": "team of six|heat[- ]test", "flags": "i", "why": "removed claims" },
+    { "pattern": ">\\s*(Craft journal|Press|Sustainability)\\s*<", "flags": "i", "why": "placeholder footer links that all opened the same page" },
+    { "pattern": "showPolicy\\(event,\\s*'(shipping|warranty|care|faq|get-in-touch)'\\)", "flags": "", "why": "in-app page that no longer exists (shipping lives at /pages/shipping, FAQ at /#faq)" }
+  ]
+}
