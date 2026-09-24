@@ -11,7 +11,7 @@
     "story": "Designed by the founder's father, engineered by the founder; launched 2024 in Lahore",
     "shipping_info": "Lives on the Shopify page /pages/shipping — no in-app Shipping & delivery section",
     "bundles": "Bundle savings per set: Rs 1,168 / 1,217 / 1,675 / 1,405 — no headline 'save up to' figure",
-    "stock": "Products ship from stock (not made to order); blower is manual; charcoal 5kg and 1.5kg; fire starters 10 pieces"
+    "catalogue": "Blower is manual; charcoal 5kg and 1.5kg; fire starters 10 pieces"
   },
   "forbidden": [
     { "pattern": "@emberandiron\\.pk", "flags": "i", "why": "domain has no mailbox — the only email is emberandirongrills@gmail.com" },
@@ -30,10 +30,10 @@
     { "pattern": ">\\s*(Craft journal|Press|Sustainability)\\s*<", "flags": "i", "why": "placeholder footer links that all opened the same page" },
     { "pattern": "showPolicy\\(event,\\s*'(shipping|warranty|care|faq|get-in-touch)'\\)", "flags": "", "why": "in-app page that no longer exists (shipping lives at /pages/shipping, FAQ at /#faq)" },
     { "pattern": "save up to (PKR|Rs)", "flags": "i", "why": "bundle savings differ per set (Rs 1,168–1,675); don't quote a headline figure" },
-    { "pattern": "made to order", "flags": "i", "why": "products ship from stock" },
-    { "pattern": "USB-C|rechargeable|battery-powered", "flags": "i", "why": "the air blower is manual" },
-    { "pattern": "\\b10\\s?kg\\b", "flags": "i", "why": "charcoal comes in 5kg and 1.5kg bags" },
+    { "pattern": "made to order", "flags": "i", "why": "not briefed by the owner — don't claim it" },
+    { "pattern": "USB-C|battery-powered", "flags": "i", "why": "the air blower is manual" },
+    { "pattern": "10\\s?kg\\s+(resealable|bag|kraft)|>10kg<", "flags": "i", "why": "charcoal comes in 5kg and 1.5kg bags" },
     { "pattern": "Read the guide", "flags": "i", "why": "there are no written guides on the site" },
-    { "pattern": "orders over (PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" }
+    { "pattern": "\\b(over|above)\\s+(PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" }
   ]
 }

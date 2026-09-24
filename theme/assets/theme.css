@@ -851,18 +851,6 @@
     line-height: 1.6;
     margin-bottom: 18px;
   }
-  .howto-link {
-    font-family: 'Figtree', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink);
-    text-decoration: none;
-    border-bottom: 1px solid var(--ink);
-    padding-bottom: 2px;
-    transition: color 0.2s, border-color 0.2s;
-  }
-  .howto-link:hover { color: var(--ember); border-color: var(--ember); }
 
   @media (max-width: 900px) {
     .howto-grid { grid-template-columns: 1fr; }
@@ -2021,21 +2009,6 @@
     font-family: 'Figtree', sans-serif;
     font-size: 13px;
     color: var(--muted);
-  }
-  .contact-form {
-    background: var(--paper-light);
-    border: 1px solid var(--line);
-    padding: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .contact-form h3 {
-    font-family: 'Figtree', sans-serif;
-    font-weight: 400;
-    font-size: 22px;
-    margin-bottom: 4px;
-    font-variation-settings: "SOFT" 40;
   }
   .contact-submit {
     background: var(--solid);
