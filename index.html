@@ -34,15 +34,6 @@
 <!-- Favicon (inline SVG flame mark) -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%231C1714'/><path d='M16 5 C 12 11 10 14 10 18 a 6 6 0 0 0 12 0 c 0 -3 -2 -6 -6 -13 z' fill='%23D64E1E'/><circle cx='16' cy='20' r='2.4' fill='%23F7F2E9'/></svg>">
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18285906090"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'AW-18285906090');
-</script>
-
 <!-- Structured data: Organization/Store + WebSite + Product catalog + FAQ -->
 <script type="application/ld+json">
 {
@@ -5426,24 +5417,6 @@ function renderSuggestions() {
   `).join('');
 }
 
-// ===== Google Ads / analytics events (gtag) =====
-// Base tag lives in <head>. These fire GA4-style ecommerce events that Google
-// Ads maps to conversion actions (add_to_cart → "Add to basket", etc.).
-// Guarded so the store never breaks if gtag is blocked or not yet loaded.
-function gtagEvent(name, params) {
-  try {
-    if (typeof gtag === 'function') gtag('event', name, params || {});
-  } catch (e) { /* analytics must never break the store */ }
-}
-function gtagItems(items) {
-  return items.map(i => ({
-    item_id: i.id,
-    item_name: i.name,
-    price: i.price,
-    quantity: i.qty
-  }));
-}
-
 function addToCart(id, qty) {
   qty = Math.max(1, parseInt(qty, 10) || 1);
   const p = products.find(x => x.id === id);
@@ -5463,11 +5436,6 @@ function addToCart(id, qty) {
   updateCartUI();
   const suffix = qty > 1 ? ` (×${qty})` : '';
   showToast(`${p.name}${suffix} added to your order`);
-  gtagEvent('add_to_cart', {
-    currency: 'PKR',
-    value: p.price * qty,
-    items: [{ item_id: p.id, item_name: p.name, price: p.price, quantity: qty }]
-  });
 }
 
 function renderStars(rating) {
@@ -6364,11 +6332,6 @@ function trackPageView(viewId) {
 async function showCheckout() {
   const items = Object.values(cart);
   if (items.length === 0) return;
-  gtagEvent('begin_checkout', {
-    currency: 'PKR',
-    value: items.reduce((s, i) => s + i.qty * i.price, 0),
-    items: gtagItems(items)
-  });
   const btn = document.getElementById('checkout-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Taking you to checkout…'; }
   let url = null;
@@ -6585,14 +6548,6 @@ function placeOrder() {
   };
   saveOrder(order);
   sendOrderEmail(order);
-  gtagEvent('purchase', {
-    transaction_id: ref,
-    currency: 'PKR',
-    value: total,
-    shipping: shipping,
-    tax: tax,
-    items: gtagItems(items)
-  });
   document.getElementById('order-ref').textContent = ref;
   // Clear cart and applied promo
   cart = {};
