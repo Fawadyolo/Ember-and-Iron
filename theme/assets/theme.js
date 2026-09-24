@@ -157,12 +157,12 @@ const PRODUCT_HANDLES = {
   'EMB-002': '30-collapsible-grill',
   'EMB-003': '24-collapsible-grill-with-grilling-top',
   'EMB-004': '30-collapsible-grill-with-grilling-top',
-  'EMB-010': 'lump-charcoal-10kg',
+  'EMB-010': 'lump-charcoal-5kg',
   'EMB-011': 'instant-read-meat-thermometer',
   'EMB-013': 'fire-starter',
   'EMB-016': 'bbq-grill-brush',
   'EMB-018': 'handheld-bbq-air-blower',
-  'EMB-019': 'charcoal-bag-5kg',
+  'EMB-019': 'charcoal-bag-1-5kg',
   'EMB-020': 'brass-cleaning-brush'
 };
 function productUrl(p) {
