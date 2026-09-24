@@ -9,7 +9,9 @@
     "not_offered": "No warranty, no installation / white-glove service, no servicing",
     "materials": "211-grade stainless steel and 16-gauge reinforced metal",
     "story": "Designed by the founder's father, engineered by the founder; launched 2024 in Lahore",
-    "shipping_info": "Lives on the Shopify page /pages/shipping — no in-app Shipping & delivery section"
+    "shipping_info": "Lives on the Shopify page /pages/shipping — no in-app Shipping & delivery section",
+    "bundles": "Bundle savings per set: Rs 1,168 / 1,217 / 1,675 / 1,405 — no headline 'save up to' figure",
+    "stock": "Products ship from stock (not made to order); blower is manual; charcoal 5kg and 1.5kg; fire starters 10 pieces"
   },
   "forbidden": [
     { "pattern": "@emberandiron\\.pk", "flags": "i", "why": "domain has no mailbox — the only email is emberandirongrills@gmail.com" },
@@ -26,6 +28,12 @@
     { "pattern": "304[- ]grade|4\\s?mm cast", "flags": "i", "why": "materials are 211-grade stainless steel and 16-gauge metal" },
     { "pattern": "team of six|heat[- ]test", "flags": "i", "why": "removed claims" },
     { "pattern": ">\\s*(Craft journal|Press|Sustainability)\\s*<", "flags": "i", "why": "placeholder footer links that all opened the same page" },
-    { "pattern": "showPolicy\\(event,\\s*'(shipping|warranty|care|faq|get-in-touch)'\\)", "flags": "", "why": "in-app page that no longer exists (shipping lives at /pages/shipping, FAQ at /#faq)" }
+    { "pattern": "showPolicy\\(event,\\s*'(shipping|warranty|care|faq|get-in-touch)'\\)", "flags": "", "why": "in-app page that no longer exists (shipping lives at /pages/shipping, FAQ at /#faq)" },
+    { "pattern": "save up to (PKR|Rs)", "flags": "i", "why": "bundle savings differ per set (Rs 1,168–1,675); don't quote a headline figure" },
+    { "pattern": "made to order", "flags": "i", "why": "products ship from stock" },
+    { "pattern": "USB-C|rechargeable|battery-powered", "flags": "i", "why": "the air blower is manual" },
+    { "pattern": "\\b10\\s?kg\\b", "flags": "i", "why": "charcoal comes in 5kg and 1.5kg bags" },
+    { "pattern": "Read the guide", "flags": "i", "why": "there are no written guides on the site" },
+    { "pattern": "orders over (PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" }
   ]
 }

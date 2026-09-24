@@ -55,7 +55,7 @@ const products = [
     id: 'EMB-010',
     name: 'Lump Charcoal · 5kg',
     cat: 'accessories',
-    desc: 'Single-origin acacia lump charcoal. Slow, clean burn.',
+    desc: 'Lump charcoal for clean, steady heat. No fillers.',
     price: 499,
     tag: '',
     art: 'fuel',
@@ -91,7 +91,7 @@ const products = [
     id: 'EMB-016',
     name: 'BBQ Grill Brush',
     cat: 'accessories',
-    desc: 'Brass-bristle grill brush with a built-in scraper.',
+    desc: 'Cotton-head basting brush with a wooden handle.',
     price: 499,
     tag: '',
     art: 'grillbrush',
@@ -103,7 +103,7 @@ const products = [
     id: 'EMB-018',
     name: 'Handheld BBQ Air Blower',
     cat: 'accessories',
-    desc: 'Battery-powered handheld blower for fast coal ignition.',
+    desc: 'Manual handheld blower for faster heat and stronger embers.',
     price: 1199,
     tag: 'new',
     art: 'blower',
@@ -479,7 +479,7 @@ function artSvg(type) {
       return `<svg class="product-art" viewBox="0 0 200 200" fill="none" stroke="${stroke}" stroke-width="1.4">
         <rect x="56" y="46" width="88" height="120" rx="2"/>
         <rect x="56" y="46" width="88" height="22"/>
-        <text x="100" y="100" font-family="Figtree" font-size="22" font-weight="300" fill="${stroke}" text-anchor="middle">10kg</text>
+        <text x="100" y="100" font-family="Figtree" font-size="22" font-weight="300" fill="${stroke}" text-anchor="middle">5kg</text>
         <text x="100" y="124" font-family="Figtree" font-size="9" letter-spacing="0.15em" fill="${stroke}" text-anchor="middle">CHARCOAL</text>
         <line x1="68" y1="142" x2="132" y2="142"/>
         <line x1="68" y1="150" x2="132" y2="150"/>
@@ -902,17 +902,16 @@ function productSpecsHtml(p) {
   const grillsSpecs = [
     'Hand-welded 211-grade stainless steel & 16-gauge reinforced metal',
     'Folds flat for easy storage and transport',
-    'Includes cast-iron grate',
     'Built in Lahore — light to move, built to last'
   ];
   const accSpecs = {
-    fuel: ['Single-origin acacia lump charcoal', '10kg resealable kraft bag', 'Low ash, clean smoke'],
-    thermometer: ['2-second instant-read probe', 'Backlit display, IP65 water-resistant', 'CR2032 battery — ~1,500 hours'],
-    firestarter: ['Natural wood-wool and wax cubes', '30+ fires per box', 'No fumes or taste transfer'],
+    fuel: ['Lump charcoal, no fillers or additives', '5kg bag', 'Clean, steady heat'],
+    thermometer: ['Instant-read probe', 'Checks doneness without cutting into the food', 'Compact and easy to use'],
+    firestarter: ['Natural wood & wax', '10 pieces, ~8 minutes burn each', 'No lighter fluid, no chemical taste'],
     bastingmop: ['40cm walnut handle', 'Cotton mop head, replaceable', 'Heat-safe to 260°C, hand-wash only'],
-    grillbrush: ['Brass bristles, food-safe', 'Replaceable head', 'Walnut handle with leather loop'],
-    blower: ['USB-C rechargeable lithium cell', '3 speeds, 2-hour runtime', 'Lights coals in under 90 seconds'],
-    charcoalbag: ['Pakistan-sourced hardwood charcoal', '5kg resealable kraft bag', 'Even, long burn'],
+    grillbrush: ['Cotton head soaks up oil and marinade', 'Wooden handle', 'For tikka, boti and kebabs'],
+    blower: ['Compact and manual', 'Revives embers and builds heat', 'Better fire control while you cook'],
+    charcoalbag: ['Lump charcoal, no fillers or additives', '1.5kg bag', 'Clean, steady heat'],
     longclaws: ['40cm stainless steel arms', 'Food-grade resin grips', 'Dishwasher safe']
   };
   const specs = p.cat === 'grills' ? grillsSpecs : (accSpecs[p.art] || []);
@@ -1164,7 +1163,7 @@ const POLICY_PAGES = {
       <h2>Damaged or defective on arrival</h2>
       <p>Report it within 48 hours of delivery at <strong>emberandirongrills@gmail.com</strong> or WhatsApp <strong>+92 300 1688772</strong>, and we'll arrange a replacement or refund.</p>
       <h2>All other sales</h2>
-      <p>Because each grill is made to order, we're unable to accept returns or exchanges outside of damage or defect.</p>
+      <p>We're unable to accept returns or exchanges outside of damage or defect.</p>
     `
   },
   privacy: {
@@ -1181,7 +1180,7 @@ const POLICY_PAGES = {
       <h2>How we use it</h2>
       <p>To process your order, deliver products, send shipping updates, and respond to your queries. Marketing emails only with your explicit consent.</p>
       <h2>Your rights</h2>
-      <p>Request a copy of your data, deletion of your account, or unsubscribe from marketing at any time: <strong>emberandirongrills@gmail.com</strong>.</p>
+      <p>Request a copy of your data, ask us to delete it, or unsubscribe from marketing at any time: <strong>emberandirongrills@gmail.com</strong>.</p>
     `
   },
   terms: {
@@ -1190,9 +1189,9 @@ const POLICY_PAGES = {
     body: `
       <p class="lead">By placing an order on emberandiron.pk you agree to the following terms. These exist to make expectations clear, not to trap anyone.</p>
       <h2>Orders</h2>
-      <p>Orders are confirmed when payment is received. We reserve the right to cancel orders for products that are out of stock or mispriced; full refunds are issued promptly.</p>
+      <p>Cash on delivery is available nationwide. We reserve the right to cancel orders for products that are out of stock or mispriced; full refunds are issued promptly.</p>
       <h2>Pricing</h2>
-      <p>Prices are in PKR, inclusive of GST. Shipping is calculated at checkout.</p>
+      <p>Prices are in PKR. Delivery is free on orders of PKR 15,000 or more; any delivery charge below that is shown at checkout before you order.</p>
       <h2>Liability</h2>
       <p>Our grills cook with live fire. Use with reasonable care, away from flammable structures, and never leave a lit grill unattended. We are not liable for misuse-related damage.</p>
       <h2>Disputes</h2>
@@ -1246,29 +1245,7 @@ function showPolicy(e, slug) {
   switchView('view-policy', { slug });
 }
 
-function toggleFaq(btn) {
-  const item = btn.closest('.faq-item');
-  if (item) item.classList.toggle('open');
-}
 
-function submitContactForm(e) {
-  if (e) e.preventDefault();
-  const name = (document.getElementById('ct-name')||{}).value || '';
-  const email = (document.getElementById('ct-email')||{}).value || '';
-  const msg = (document.getElementById('ct-message')||{}).value || '';
-  if (!name.trim() || !email.trim() || !msg.trim()) {
-    showToast('Please fill in name, email, and message');
-    return false;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) {
-    showToast('Please enter a valid email');
-    return false;
-  }
-  // In a real build this would POST to /contact. For now we capture in console.
-  document.getElementById('contact-form').reset();
-  showToast("Thanks — we'll reply within 48 hours.");
-  return false;
-}
 
 function showShop(e, anchor) {
   if (e) e.preventDefault();
@@ -1310,6 +1287,7 @@ function startFaqAuto() {
   if (faqTimer) clearInterval(faqTimer);
   const slides = faqSlides();
   if (slides.length < 2) return;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   faqTimer = setInterval(() => showFaqSlide(faqIndex + 1), 7000);
 }
 

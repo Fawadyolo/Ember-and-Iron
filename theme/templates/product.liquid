@@ -65,7 +65,9 @@
         {%- endif -%}
 
         <ul class="pdp-points">
+          {%- if product.type == 'Grills' or product.type == 'Bundles' -%}
           <li><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Hand-welded 211-grade stainless steel &amp; 16-gauge reinforced metal &mdash; light to move, built to last</li>
+          {%- endif -%}
           <li><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>Cash on delivery, nationwide</li>
         </ul>
 
@@ -91,7 +93,7 @@
         <div class="pdp-ship">
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
           <div>
-            <strong>Free delivery</strong> on orders over PKR&nbsp;15,000
+            <strong>Free delivery</strong> on orders of PKR&nbsp;15,000 or more
             <span>Ships nationwide &middot; Cash on delivery available</span>
           </div>
         </div>
@@ -102,6 +104,7 @@
             <div class="pdp-desc">{{ product.description }}</div>
           </details>
         {%- endif -%}
+        {%- if product.type == 'Grills' or product.type == 'Bundles' -%}
         <details class="pdp-detail">
           <summary>Care &amp; upkeep</summary>
           <div class="pdp-desc">
@@ -113,10 +116,11 @@
             </ul>
           </div>
         </details>
+        {%- endif -%}
         <details class="pdp-detail">
           <summary>Delivery &amp; returns</summary>
           <div class="pdp-desc">
-            <p>Free delivery on orders over PKR 15,000, anywhere in Pakistan. Cash on delivery available nationwide; orders arrive within 3&ndash;5 working days.</p>
+            <p>Free delivery on orders of PKR 15,000 or more, anywhere in Pakistan. Cash on delivery available nationwide; orders arrive within 3&ndash;5 working days.</p>
             <p>Items that arrive damaged or defective are replaced or refunded &mdash; report within 48 hours at emberandirongrills@gmail.com. All other sales are final.</p>
           </div>
         </details>

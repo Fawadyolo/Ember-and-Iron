@@ -1,6 +1,6 @@
 {% layout 'product' %}
 <script>
-/* The storefront's info pages (/faq, /shipping, ...) and the accessories/wishlist
+/* The storefront's info pages (/returns, /about, ...) and the accessories/wishlist
    views are client-side routes on the homepage — as real URLs Shopify has nothing
    to serve, so a shared or refreshed link used to dead-end here. Hand those few
    known routes back to the homepage, which restores the view. Anything else keeps
@@ -12,6 +12,8 @@
   // The FAQ is now a section on the homepage, not its own page — send old /faq
   // links to that anchor instead of the retired policy view.
   if (seg === 'faq') { location.replace('/#faq'); return; }
+  // The old in-app delivery page: delivery info lives on the Shopify page now.
+  if (seg === 'shipping') { location.replace('/pages/shipping'); return; }
   // Product views are pushed as /product/<sku> by the storefront, so a shared or
   // refreshed product link lands here too.
   var isProduct = /^product\/[A-Za-z0-9._-]+$/.test(seg);
