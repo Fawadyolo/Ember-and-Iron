@@ -94,6 +94,9 @@ for (const path of pages) {
     ld: [...document.querySelectorAll('script[type="application/ld+json"]')].map(s => s.textContent),
     title: document.title,
     shareImages: ['meta[property="og:image"]', 'meta[name="twitter:image"]'].map(s => document.querySelector(s)?.content).filter(Boolean),
+    // Tab / search-result / home-screen icons. data: URIs are fine for tabs but
+    // Google Search and iOS need a real, fetchable file.
+    icons: [...document.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"]')].map(l => l.href),
     spa404: !!document.querySelector('#view-404.active'),
   })).catch(e => ({ evalError: e.message }));
   if (info.evalError) { fail(path, `could not inspect page: ${info.evalError}`); await p.close(); continue; }
@@ -112,8 +115,10 @@ for (const path of pages) {
   if (themeId && String(info.themeId) !== String(themeId)) fail(path, `served theme ${info.themeId}, expected preview ${themeId} (preview cookie lost?)`);
   // A shopper on a real URL must never land on the app's own 404 view.
   if (info.spa404) fail(path, 'page shows the in-app 404 view (#view-404) — the URL is not routed');
-  // Every image Google / social previews will fetch must exist.
-  const images = new Set(info.shareImages);
+  if (!info.icons.length) fail(path, 'no tab icon (<link rel="icon">) on this page');
+  else if (!info.icons.some(u => /^https?:/.test(u))) fail(path, 'tab icon is only an inline data: URI — Google Search and iPhones need a real image file');
+  // Every image Google / social previews / browsers will fetch must exist.
+  const images = new Set([...info.shareImages, ...info.icons.filter(u => /^https?:/.test(u))]);
   info.ld.forEach((t, i) => {
     let data;
     try { data = JSON.parse(t); } catch (e) { fail(path, `JSON-LD block ${i + 1} invalid: ${e.message}`); return; }
