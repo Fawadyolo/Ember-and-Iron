@@ -34,7 +34,7 @@
     { "pattern": "made to order", "flags": "i", "why": "not briefed by the owner — don't claim it" },
     { "pattern": "USB-C|battery-powered", "flags": "i", "why": "the air blower is manual" },
     { "pattern": "10\\s?kg\\s+(resealable|bag|kraft)|>10kg<", "flags": "i", "why": "charcoal comes in 5kg and 1.5kg bags" },
-    { "pattern": "Read the guide", "flags": "i", "why": "there are no written guides on the site" },
+    { "pattern": "\\bRead the guide\\b", "flags": "i", "why": "there are no written guides on the site" },
     { "pattern": "\\b(over|above)\\s+(PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" },
     { "pattern": "\\bsmokers?\\b", "flags": "i", "why": "Ember & Iron doesn't sell smokers (owner, 24 Sept)" },
     { "pattern": "cash[- ]on[- ]delivery|\\bCOD\\b", "flags": "i", "why": "no cash on delivery — payment is by bank deposit only (owner, 25 Sept)" }
