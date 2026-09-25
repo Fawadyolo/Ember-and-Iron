@@ -1,13 +1,13 @@
 
   :root {
-    --paper: #16110D;          /* forged charcoal — solid brand page */
+    --paper: #16110D;          /* forged charcoal - solid brand page */
     --paper-light: #221B15;    /* raised warm surfaces (cards, inputs, summary) */
     --media: #F3F0E8;          /* light tiles for product art + photos */
-    --ink: #F2EBDE;            /* foreground text — warm off-white */
+    --ink: #F2EBDE;            /* foreground text - warm off-white */
     --ink-soft: #D9CFBF;
     --muted: #B7AA95;
     --muted-soft: #A09280;
-    --solid: #0D0906;          /* near-black — solid dark elements/buttons */
+    --solid: #0D0906;          /* near-black - solid dark elements/buttons */
     --on-dark: #F4EFE6;        /* light text on dark elements */
     --ember: #E8571F;          /* glowing ember accent */
     --ember-deep: #BB3D12;
@@ -781,7 +781,7 @@
     /* Hide text labels on tool buttons; keep icons only */
     .header-tools button span:not(.count):not(.cart-count-el):not(.wishlist-count-el):not(.account-initials) { display: none; }
     .header-tools { gap: 12px; }
-    /* Hide Account and Saved labels/buttons on narrow — keep Cart + Search + Hamburger */
+    /* Hide Account and Saved labels/buttons on narrow - keep Cart + Search + Hamburger */
     .header-tools .account-btn,
     .header-tools .wishlist-btn-header { display: none; }
     .hero { grid-template-columns: 1fr; padding: 56px 24px 72px; gap: 48px; }
@@ -2635,7 +2635,7 @@
     text-transform: none;
     margin-left: 8px;
   }
-  .card-brand:not(:empty)::before { content: '· '; }
+  .card-brand:not(:empty)::before { content: '\00B7  '; }
 
   /* ---------- Account / auth ---------- */
   .account-btn { position: relative; }
@@ -2899,7 +2899,7 @@
   }
 
   /* ============================================================
-     AFTWDS THEME LAYER — minimal single-typeface (Figtree),
+     AFTWDS THEME LAYER - minimal single-typeface (Figtree),
      rounded media, gapped image-forward cards, calm palette
      ============================================================ */
 
@@ -2925,7 +2925,7 @@
   .logo { font-weight: 700; letter-spacing: -0.04em; }
   .logo .ampersand { font-style: normal; font-weight: 400; }
 
-  /* Mono/label text → clean Figtree small-caps style */
+  /* Mono/label text -> clean Figtree small-caps style */
   .mono, .product-meta, .hero-eyebrow, .module-head .meta,
   .announce, .footer-col h4, .footer-bottom, .bundle-meta,
   .stock-indicator, .search-result-meta, .pdp-meta,
@@ -2948,7 +2948,7 @@
   .checkout-btn, .place-order, .bundle-add, .pdp-add,
   .btn-primary, .add-btn, .auth-submit { border-radius: 0; }
 
-  /* ---- Product grid → gapped, borderless, image-forward ---- */
+  /* ---- Product grid -> gapped, borderless, image-forward ---- */
   .products {
     gap: 28px 22px;
     background: transparent;
@@ -2978,7 +2978,7 @@
   .howto-grid { gap: 16px; background: transparent; border: none; }
   .howto-card { border: 1px solid var(--line); border-radius: 14px; }
 
-  /* ---- Dark panels → aftwds deep green ---- */
+  /* ---- Dark panels -> aftwds deep green ---- */
   .editorial { background: var(--forest); }
   .editorial .eyebrow { color: var(--amber); }
   .announce { background: var(--forest); }
@@ -3000,7 +3000,7 @@
   /* Tighten link hover to a calm underline feel */
   nav.primary a:hover { color: var(--ember); }
   /* ============================================================
-     CAST-IRON STEEL THEME — steel-grey page, light text,
+     CAST-IRON STEEL THEME - steel-grey page, light text,
      light tiles for product art so line-art/photos stay legible
      ============================================================ */
   /* Light media tiles */
@@ -3040,11 +3040,11 @@
   .rating .stars, .pdp-rating .stars { color: var(--flame); }
   .promo-feedback.ok { color: var(--flame); }
   .hero-eyebrow { color: var(--ink-soft); }
-  /* Accent tags that sit ON the light media tiles → deep ember reads crisper there */
+  /* Accent tags that sit ON the light media tiles -> deep ember reads crisper there */
   .product-art-frame .tag.new, .hero-visual .tag, .pdp-art .tag { color: var(--ember-deep); }
 
   /* ============================================================
-     VERSION 2 — whiskit-inspired hero (Ember & Iron identity):
+     VERSION 2 - whiskit-inspired hero (Ember & Iron identity):
      punchy two-beat headline, benefit subline, one bold fire CTA
      ============================================================ */
   .hero { align-items: center; gap: 72px; }
@@ -3098,7 +3098,7 @@
   }
 
   /* ============================================================
-     VERSION 2 — carry the bold/punchy hero energy across the page:
+     VERSION 2 - carry the bold/punchy hero energy across the page:
      heavier section headings + fire-coloured primary "buy" CTAs
      ============================================================ */
   /* Punchier section headings everywhere */
@@ -3127,7 +3127,7 @@
   .checkout-btn:disabled, .place-order:disabled { background: var(--ember-deep); opacity: 0.45; }
 
   /* ============================================================
-     VERSION 2 — full-bleed VIDEO HERO (forge/fire).
+     VERSION 2 - full-bleed VIDEO HERO (forge/fire).
      Video plays behind the headline + CTA as the first view.
      ============================================================ */
   .hero.hero-video {
@@ -3230,7 +3230,7 @@
   }
 
   /* ============================================================
-     MOTION LAYER — quiet ember drift + scroll reveals.
+     MOTION LAYER - quiet ember drift + scroll reveals.
      The .reveal/.reveal-group classes are added by JS, never in
      markup, so a no-JS load (and crawlers) see everything; the
      whole layer is disabled under prefers-reduced-motion.
@@ -3257,7 +3257,7 @@
     to   { opacity: 1; transform: none; }
   }
 
-  /* scroll reveals — singles, and grids whose children stagger */
+  /* scroll reveals - singles, and grids whose children stagger */
   html.js-motion .reveal,
   html.js-motion .reveal-group > * {
     opacity: 0;
@@ -3282,10 +3282,10 @@
   }
 
 
-/* ═══════════════════════════════════════════════════════════════════
-   FORGED — premium overrides (solid charcoal, Anton/Fraunces display,
+/* ===================================================================
+   FORGED - premium overrides (solid charcoal, Anton/Fraunces display,
    Traeger-style hero). Appended last so it wins the cascade.
-   ═══════════════════════════════════════════════════════════════════ */
+   =================================================================== */
 
 /* ---- display typography: industrial caps + flame italic accent ---- */
 .hero h1,

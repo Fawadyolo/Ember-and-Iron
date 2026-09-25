@@ -146,6 +146,15 @@ for (const file of [...pages, ...themeFiles.filter(f => /\.(liquid|js|html)$/.te
   }
 }
 
+// ---- stylesheets must be plain ASCII ----
+// The owner pastes files through TextEdit, which can open a stylesheet in the
+// wrong encoding and turn "·" into "Â·". Use CSS escapes (\00B7) instead.
+for (const file of themeFiles.filter(f => f.endsWith('.css'))) {
+  const src = fs.readFileSync(file, 'utf8');
+  const m = /[^\x00-\x7f]/.exec(src);
+  if (m) fail(file, `non-ASCII character "${m[0]}" at line ${lineOf(src, m.index)} — can be garbled when pasted; use a CSS escape or plain ASCII`);
+}
+
 // ---- owner-briefed business facts (tools/audit/brand-facts.json) ----
 // Everything Shopify serves (theme/) must agree with what the owner has
 // confirmed: one email, one address, no warranty / installation / servicing,
