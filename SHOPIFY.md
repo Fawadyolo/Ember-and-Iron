@@ -124,8 +124,9 @@ Manager), pasted into the Shopify app, not into code.
 **Shopify Payments is not available in Pakistan**, so cards can't be taken through
 Shopify directly. Options:
 - A **third-party payment gateway** that Shopify supports, or
-- **Manual payment methods** (Cash on Delivery, bank transfer, Easypaisa/JazzCash
-  handled offline) — which matches the store's current COD/wallet setup.
+- **Manual payment methods** handled offline. The store's current setup is
+  **bank deposit only** — the owner removed cash on delivery (25 Sept 2026), so
+  no page may mention COD (`tools/audit/brand-facts.json` enforces this).
 
 Confirm the gateway before committing, since it affects the checkout experience.
 

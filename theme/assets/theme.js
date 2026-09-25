@@ -1189,7 +1189,7 @@ const POLICY_PAGES = {
     body: `
       <p class="lead">By placing an order on emberandiron.pk you agree to the following terms. These exist to make expectations clear, not to trap anyone.</p>
       <h2>Orders</h2>
-      <p>Cash on delivery is available nationwide. We reserve the right to cancel orders for products that are out of stock or mispriced; full refunds are issued promptly.</p>
+      <p>Payment is by bank deposit. We reserve the right to cancel orders for products that are out of stock or mispriced; full refunds are issued promptly.</p>
       <h2>Pricing</h2>
       <p>Prices are in PKR. Delivery is free on orders of PKR 15,000 or more; any delivery charge below that is shown at checkout before you order.</p>
       <h2>Liability</h2>
@@ -1466,7 +1466,7 @@ document.addEventListener('keydown', (e) => {
 
 // ===== View switching =====
 const FREE_SHIPPING_THRESHOLD = 15000;
-const SHIPPING_FEE = 0; // Delivery fee is never shown in-cart (COD, arranged on delivery)
+const SHIPPING_FEE = 0; // Delivery fee is never shown in-cart; Shopify checkout applies it
 const TAX_RATE = 0.17;
 
 // ===== Promo / discount codes =====
@@ -2095,7 +2095,7 @@ function showOrderDetail(ref) {
         </div>
         <div class="order-side-block">
           <h3>Payment</h3>
-          <p>${o.payment === 'cod' ? 'Cash on delivery' : o.payment === 'bank' ? 'Bank transfer' : 'Card'}</p>
+          <p>${o.payment === 'card' ? 'Card' : 'Bank deposit'}</p>
         </div>
       </div>
     </div>`;

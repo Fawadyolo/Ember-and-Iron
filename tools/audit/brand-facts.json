@@ -4,7 +4,8 @@
     "email": "emberandirongrills@gmail.com (the ONLY public email address)",
     "phone": "+92 300 1688772 (phone and WhatsApp)",
     "address": "Walton Road, Lahore, Pakistan",
-    "delivery": "Nationwide across Pakistan, 3–5 working days, cash on delivery available; free delivery on orders of PKR 15,000 or more",
+    "delivery": "Nationwide across Pakistan, 3–5 working days; free delivery on orders of PKR 15,000 or more",
+    "payment": "Bank deposit only — cash on delivery was removed (owner, 25 Sept)",
     "returns": "All sales final; damaged/defective on arrival reported within 48 hours → replacement or refund",
     "not_offered": "No warranty, no installation / white-glove service, no servicing",
     "materials": "211-grade stainless steel and 16-gauge reinforced metal",
@@ -35,6 +36,7 @@
     { "pattern": "10\\s?kg\\s+(resealable|bag|kraft)|>10kg<", "flags": "i", "why": "charcoal comes in 5kg and 1.5kg bags" },
     { "pattern": "Read the guide", "flags": "i", "why": "there are no written guides on the site" },
     { "pattern": "\\b(over|above)\\s+(PKR|Rs\\.?)(\\s|&nbsp;)*15,?000", "flags": "i", "why": "an order of exactly PKR 15,000 qualifies — say \"of PKR 15,000 or more\"" },
-    { "pattern": "\\bsmokers?\\b", "flags": "i", "why": "Ember & Iron doesn't sell smokers (owner, 24 Sept)" }
+    { "pattern": "\\bsmokers?\\b", "flags": "i", "why": "Ember & Iron doesn't sell smokers (owner, 24 Sept)" },
+    { "pattern": "cash[- ]on[- ]delivery|\\bCOD\\b", "flags": "i", "why": "no cash on delivery — payment is by bank deposit only (owner, 25 Sept)" }
   ]
 }
